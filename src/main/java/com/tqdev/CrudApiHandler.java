@@ -3,6 +3,10 @@ package com.tqdev;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.ServletException;
+import org.eclipse.jetty.util.thread.QueuedThreadPool;
+import org.eclipse.jetty.server.HttpConfiguration;
+import org.eclipse.jetty.server.ServerConnector;
+import org.eclipse.jetty.server.HttpConnectionFactory;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.AbstractHandler;
@@ -23,15 +27,33 @@ public class CrudApiHandler extends AbstractHandler
 
   public static void main(String[] args) throws Exception
   {
-    Server server = new Server(8080);
-    server.setHandler(new CrudApiHandler("jdbc:mysql://localhost/php-crud-api?user=php-crud-api&password=php-crud-api&characterEncoding=UTF-8"));
+    // Threads
+    int cores = Runtime.getRuntime().availableProcessors()*2;
+    Server server = new Server(new QueuedThreadPool(cores,cores));
+    
+    // Configuration
+    HttpConfiguration config = new HttpConfiguration();
+    config.setOutputBufferSize(32768);
+    config.setRequestHeaderSize(8192);
+    config.setResponseHeaderSize(8192);
+    config.setSendServerVersion(false);
+    config.setSendDateHeader(false);
+    config.setSendXPoweredBy(false);
+
+    // Port
+    ServerConnector connector = new ServerConnector(server, new HttpConnectionFactory(config));
+    connector.setPort(8080);
+    server.addConnector(connector);
+
+    // Handler
+    server.setHandler(new CrudApiHandler());
     server.start();
-    server.join();
+    server.join();    
   }
 
-  public CrudApiHandler(String connectString)
+  public CrudApiHandler()
   {
-    this.dataSource = this.getDataSource(connectString);
+    this.dataSource = this.getDataSource("jdbc:mysql://localhost/php-crud-api?user=php-crud-api&password=php-crud-api&useUnicode=true&characterEncoding=utf-8");
   }
 
   protected ComboPooledDataSource getDataSource(String connectString)

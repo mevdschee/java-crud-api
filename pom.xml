@@ -45,23 +45,22 @@
 
   <build>
     <plugins>
-        <plugin>
-            <artifactId>maven-assembly-plugin</artifactId>
-
-            <configuration>
-                <descriptorRefs>
-                    <descriptorRef>jar-with-dependencies</descriptorRef>
-                </descriptorRefs>
-                <outputDirectory>${basedir}</outputDirectory>
-                <finalName>server</finalName>
-                <appendAssemblyId>false</appendAssemblyId>
-                <archive>
-                    <manifest>
-                        <mainClass>com.tqdev.CrudApiHandler</mainClass>
-                    </manifest>
-                </archive>
-            </configuration>
-        </plugin>
+      <plugin>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <configuration>
+          <descriptorRefs>
+            <descriptorRef>jar-with-dependencies</descriptorRef>
+          </descriptorRefs>
+          <outputDirectory>${basedir}</outputDirectory>
+          <finalName>server</finalName>
+          <appendAssemblyId>false</appendAssemblyId>
+          <archive>
+            <manifest>
+              <mainClass>com.tqdev.CrudApiHandler</mainClass>
+            </manifest>
+          </archive>
+        </configuration>
+      </plugin>
     </plugins>
   </build>
 
