@@ -61,7 +61,7 @@ public class CrudApiHandler extends AbstractHandler
     ComboPooledDataSource dataSource;
     try {
       dataSource = new ComboPooledDataSource();
-      dataSource.setDriverClass("com.mysql.cj.jdbc.Driver");
+      dataSource.setDriverClass("com.mysql.jdbc.Driver");
       dataSource.setJdbcUrl(connectString);
     } catch (Exception e) {
       System.out.println(e);
@@ -126,6 +126,7 @@ public class CrudApiHandler extends AbstractHandler
       }
       // print results, insert id or affected row count
       resp.setContentType("application/json; charset=utf-8");
+      resp.setStatus(HttpServletResponse.SC_OK);
       PrintWriter w = resp.getWriter();
       if (method == "GET") {
         ResultSet result = statement.executeQuery();
