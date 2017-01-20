@@ -1,3 +1,8 @@
+
+
+WARNING.. WORK IN PROGRESS.. SLOW AND BUGGY!!
+
+
 ###Building and Running the Web Application
 
 Run with:
