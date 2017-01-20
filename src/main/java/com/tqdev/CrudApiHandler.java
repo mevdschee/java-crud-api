@@ -53,7 +53,7 @@ public class CrudApiHandler extends AbstractHandler
 
   public CrudApiHandler()
   {
-    this.dataSource = this.getDataSource("jdbc:mysql://localhost/php-crud-api?user=php-crud-api&password=php-crud-api");
+    this.dataSource = this.getDataSource("jdbc:mysql://localhost/php-crud-api?user=php-crud-api&password=php-crud-api&useUnicode=true&characterEncoding=utf8");
   }
 
   protected ComboPooledDataSource getDataSource(String connectString)
@@ -125,6 +125,7 @@ public class CrudApiHandler extends AbstractHandler
         statement.setObject(i, input.get(columns[i]));
       }
       // print results, insert id or affected row count
+      resp.setContentType("application/json; charset=utf-8");
       PrintWriter w = resp.getWriter();
       if (method == "GET") {
         ResultSet result = statement.executeQuery();
