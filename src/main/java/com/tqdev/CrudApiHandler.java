@@ -53,7 +53,7 @@ public class CrudApiHandler extends AbstractHandler
 
   public CrudApiHandler()
   {
-    this.dataSource = this.getDataSource("jdbc:mysql://localhost/php-crud-api?user=php-crud-api&password=php-crud-api&useUnicode=true&characterEncoding=utf-8");
+    this.dataSource = this.getDataSource("jdbc:mysql://localhost/php-crud-api?user=php-crud-api&password=php-crud-api");
   }
 
   protected ComboPooledDataSource getDataSource(String connectString)
