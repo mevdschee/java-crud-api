@@ -1,64 +1,76 @@
 package com.tqdev;
 
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.BufferedReader;
+import javax.servlet.ServletException;
+import org.eclipse.jetty.server.Request;
+import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.server.handler.AbstractHandler;
 import java.io.IOException;
 import java.io.PrintWriter;
-import org.json.simple.JSONValue;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.ParseException;
-import org.json.simple.parser.JSONParser;
+import com.google.gson.Gson;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
+import java.util.Map;
+import com.mchange.v2.c3p0.ComboPooledDataSource;
 
-@WebServlet(urlPatterns = {"/*"}, loadOnStartup = 1)
-public class CrudApiServlet extends HttpServlet 
+public class CrudApiHandler extends AbstractHandler 
 {
-  private static final long serialVersionUID = 1L;
+  protected ComboPooledDataSource dataSource;
 
-  private JSONObject readJsonFromReader(int length,BufferedReader reader) throws IOException
+  public static void main(String[] args) throws Exception
   {
-    if (length<=0) return null;
-    JSONParser parser = new JSONParser();
-    JSONObject obj;
-    try {
-      obj = (JSONObject)parser.parse(reader);
-    } catch (ParseException e) {
-      System.out.println("readJsonFromReader:"+e);
-      obj = new JSONObject();
-    }
-    return obj;
+    Server server = new Server(8080);
+    server.setHandler(new CrudApiHandler("jdbc:mysql://localhost/php-crud-api?user=php-crud-api&password=php-crud-api&characterEncoding=UTF-8"));
+    server.start();
+    server.join();
   }
 
-  private Connection mysqlConnect(String connectString)
+  public CrudApiHandler(String connectString)
+  {
+    this.dataSource = this.getDataSource(connectString);
+  }
+
+  protected ComboPooledDataSource getDataSource(String connectString)
+  {
+    ComboPooledDataSource dataSource;
+    try {
+      dataSource = new ComboPooledDataSource();
+      dataSource.setDriverClass("com.mysql.cj.jdbc.Driver");
+      dataSource.setJdbcUrl(connectString);
+    } catch (Exception e) {
+      System.out.println(e);
+      dataSource = null;
+    }
+    return dataSource;
+  }
+
+  protected Connection getConnection()
   {
     Connection link;
     try {
-      Class.forName("com.mysql.cj.jdbc.Driver").newInstance();
-      link = DriverManager.getConnection(connectString);
-    } catch (Exception e) {
-      System.out.println("mysqlConnect:"+e);
+      link = this.dataSource.getConnection();
+    } catch (SQLException e) {
+      System.out.println(e);
       link = null;
     }
     return link;
   }
 
-  @Override 
-  public void service(HttpServletRequest req, HttpServletResponse resp) throws IOException
+  public void handle(String target,Request baseReq,HttpServletRequest req,HttpServletResponse resp) 
+        throws IOException, ServletException
   {
+    Gson gson = new Gson();
     // get the HTTP method, path and body of the request
     String method = req.getMethod();
     String[] request = req.getPathInfo().replaceAll("/$|^/","").split("/");
-    JSONObject input = readJsonFromReader(req.getContentLength(),req.getReader());
+    @SuppressWarnings("unchecked")
+    Map<String, Object> input = gson.fromJson(req.getReader(), Map.class);
     // connect to the mysql database
-    Connection link = mysqlConnect("jdbc:mysql://localhost/php-crud-api?user=php-crud-api&password=php-crud-api&characterEncoding=UTF-8");
+    Connection link = this.getConnection();
     // retrieve the table and key from the path
     String table = request[0].replaceAll("[^a-zA-Z0-9_]+","");
     int key = (request.length>1?Integer.parseInt(request[1]):-1);
@@ -83,9 +95,10 @@ public class CrudApiServlet extends HttpServlet
     } else if (method=="DELETE") {
         sql = "delete `"+table+"` where id="+key;
     }
+    PreparedStatement statement=null;
     try {
       // execute SQL statement
-      PreparedStatement statement = link.prepareStatement(sql);
+      statement = link.prepareStatement(sql);
       for (int i=0;i<columns.length;i++) {
         statement.setObject(i, input.get(columns[i]));
       }
@@ -95,34 +108,38 @@ public class CrudApiServlet extends HttpServlet
         ResultSet result = statement.executeQuery();
         ResultSetMetaData meta = result.getMetaData();
         int colCount = meta.getColumnCount();
-        if (key<0) w.write('[');
+        if (key<0) w.print('[');
         int row=0;
         while (result.next()) {
-          if (row>0) w.write(',');
-          w.write('{');
+          if (row>0) w.print(',');
+          w.print('{');
           for (int col=1;col<=colCount;col++) {
-            if (col>1) w.write(',');
-            JSONValue.writeJSONString(meta.getColumnName(col),w);
-            w.write(':');
-            JSONValue.writeJSONString(result.getObject(col),w);
+            if (col>1) w.print(',');
+            w.print(gson.toJson(meta.getColumnName(col)));
+            w.print(':');
+            w.print(gson.toJson(result.getObject(col)));
           }
-          w.write('}');
+          w.print('}');
           row++;
         }
-        if (key<0) w.write(']');
+        if (key<0) w.print(']');
       } else if (method == "POST") {
         statement.executeUpdate(sql);
         ResultSet result = statement.getGeneratedKeys();
         result.next();
-        JSONValue.writeJSONString(result.getObject(1),w);
+        w.print(gson.toJson(result.getObject(1)));
       } else {
-        JSONValue.writeJSONString(statement.executeUpdate(sql),w);
+        w.print(gson.toJson(statement.executeUpdate(sql)));
       }
-      // close mysql connection
-      link.close();
     }
     catch (SQLException e) {
       System.out.println("SQLException:"+e);
     }
+    finally {
+      // close mysql connection
+      if (statement != null) try { statement.close(); } catch (SQLException ignore) {}
+      if (link != null) try { link.close(); } catch (SQLException ignore) {}
+    }
+    baseReq.setHandled(true);
   }
 }

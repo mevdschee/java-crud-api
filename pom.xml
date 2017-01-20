@@ -4,34 +4,65 @@
   <groupId>com.tqdev.java-crud-api</groupId>
   <artifactId>java-crud-api</artifactId>
   <version>1.0</version>
+  <properties>
+    <jetty.version>9.1.5.v20140505</jetty.version>
+    <c3p0.version>0.9.5.2</c3p0.version>
+    <gson.version>2.3.1</gson.version>
+    <mysql.version>6.0.5</mysql.version>
+  </properties>
   <dependencies>
     <dependency>
-      <groupId>javax.servlet</groupId>
-      <artifactId>javax.servlet-api</artifactId>
-      <version>3.1.0</version>
-      <scope>provided</scope>
+      <groupId>com.mchange</groupId>
+      <artifactId>c3p0</artifactId>
+      <version>${c3p0.version}</version>
     </dependency>
     <dependency>
-      <groupId>com.googlecode.json-simple</groupId>
-      <artifactId>json-simple</artifactId>
-      <version>1.1.1</version>
+      <groupId>com.google.code.gson</groupId>
+      <artifactId>gson</artifactId>
+      <version>${gson.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.eclipse.jetty</groupId>
+      <artifactId>jetty-server</artifactId>
+      <version>${jetty.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.eclipse.jetty</groupId>
+      <artifactId>jetty-servlet</artifactId>
+      <version>${jetty.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.eclipse.jetty</groupId>
+      <artifactId>jetty-servlets</artifactId>
+      <version>${jetty.version}</version>
     </dependency>
     <dependency>
       <groupId>mysql</groupId>
       <artifactId>mysql-connector-java</artifactId>
-      <version>6.0.5</version>
+      <version>${mysql.version}</version>
     </dependency>
   </dependencies>
-  <properties>
-    <failOnMissingWebXml>false</failOnMissingWebXml>
-  </properties>
+
   <build>
     <plugins>
-      <plugin>
-        <groupId>org.eclipse.jetty</groupId>
-        <artifactId>jetty-maven-plugin</artifactId>
-        <version>9.4.0.v20161208</version>
-      </plugin>
+        <plugin>
+            <artifactId>maven-assembly-plugin</artifactId>
+
+            <configuration>
+                <descriptorRefs>
+                    <descriptorRef>jar-with-dependencies</descriptorRef>
+                </descriptorRefs>
+                <outputDirectory>${basedir}</outputDirectory>
+                <finalName>server</finalName>
+                <appendAssemblyId>false</appendAssemblyId>
+                <archive>
+                    <manifest>
+                        <mainClass>com.tqdev.CrudApiHandler</mainClass>
+                    </manifest>
+                </archive>
+            </configuration>
+        </plugin>
     </plugins>
   </build>
+
 </project>
