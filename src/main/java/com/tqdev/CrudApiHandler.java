@@ -3,10 +3,6 @@ package com.tqdev;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.ServletException;
-import org.eclipse.jetty.util.thread.QueuedThreadPool;
-import org.eclipse.jetty.server.HttpConfiguration;
-import org.eclipse.jetty.server.ServerConnector;
-import org.eclipse.jetty.server.HttpConnectionFactory;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.AbstractHandler;
@@ -20,49 +16,39 @@ import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.Map;
 import com.mchange.v2.c3p0.ComboPooledDataSource;
+import java.util.Properties;
 
 public class CrudApiHandler extends AbstractHandler 
 {
   protected ComboPooledDataSource dataSource;
-
+  
   public static void main(String[] args) throws Exception
   {
-    // Threads
-    int cores = Runtime.getRuntime().availableProcessors()*2;
-    Server server = new Server(new QueuedThreadPool(cores,cores));
-    
-    // Configuration
-    HttpConfiguration config = new HttpConfiguration();
-    config.setOutputBufferSize(32768);
-    config.setRequestHeaderSize(8192);
-    config.setResponseHeaderSize(8192);
-    config.setSendServerVersion(false);
-    config.setSendDateHeader(false);
-    config.setSendXPoweredBy(false);
-
-    // Port
-    ServerConnector connector = new ServerConnector(server, new HttpConnectionFactory(config));
-    connector.setPort(8080);
-    server.addConnector(connector);
-
-    // Handler
-    server.setHandler(new CrudApiHandler());
+    // load config
+    Properties properties = new Properties();
+    properties.load(CrudApiHandler.class.getClassLoader().getResourceAsStream("config.properties"));
+    String port = properties.getProperty("port");
+    String jdbcDriver = properties.getProperty("jdbcDriver");
+    String jdbcUrl = properties.getProperty("jdbcUrl");
+    // start server
+    Server server = new Server(Integer.parseInt(port));
+    server.setHandler(new CrudApiHandler(jdbcDriver,jdbcUrl));
     server.start();
     server.join();    
   }
 
-  public CrudApiHandler()
+  public CrudApiHandler(String jdbcDriver,String jdbcUrl) throws IOException
   {
-    this.dataSource = this.getDataSource("jdbc:mysql://localhost/php-crud-api?user=php-crud-api&password=php-crud-api&useUnicode=true&characterEncoding=utf8");
+    this.dataSource = this.getDataSource(jdbcDriver,jdbcUrl);
   }
 
-  protected ComboPooledDataSource getDataSource(String connectString)
+  protected ComboPooledDataSource getDataSource(String jdbcDriver,String jdbcUrl)
   {
     ComboPooledDataSource dataSource;
     try {
       dataSource = new ComboPooledDataSource();
-      dataSource.setDriverClass("com.mysql.jdbc.Driver");
-      dataSource.setJdbcUrl(connectString);
+      dataSource.setDriverClass(jdbcDriver);
+      dataSource.setJdbcUrl(jdbcUrl);
     } catch (Exception e) {
       System.out.println(e);
       dataSource = null;
