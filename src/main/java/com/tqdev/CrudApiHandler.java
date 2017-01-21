@@ -15,12 +15,13 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.Map;
-import com.mchange.v2.c3p0.ComboPooledDataSource;
+import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
 import java.util.Properties;
 
 public class CrudApiHandler extends AbstractHandler 
 {
-  protected ComboPooledDataSource dataSource;
+  protected HikariDataSource dataSource;
   
   public static void main(String[] args) throws Exception
   {
@@ -28,27 +29,25 @@ public class CrudApiHandler extends AbstractHandler
     Properties properties = new Properties();
     properties.load(CrudApiHandler.class.getClassLoader().getResourceAsStream("config.properties"));
     String port = properties.getProperty("port");
-    String jdbcDriver = properties.getProperty("jdbcDriver");
-    String jdbcUrl = properties.getProperty("jdbcUrl");
     // start server
     Server server = new Server(Integer.parseInt(port));
-    server.setHandler(new CrudApiHandler(jdbcDriver,jdbcUrl));
+    server.setHandler(new CrudApiHandler());
     server.start();
     server.join();    
   }
 
-  public CrudApiHandler(String jdbcDriver,String jdbcUrl) throws IOException
+  public CrudApiHandler() throws IOException
   {
-    this.dataSource = this.getDataSource(jdbcDriver,jdbcUrl);
+    this.dataSource = this.getDataSource();
   }
 
-  protected ComboPooledDataSource getDataSource(String jdbcDriver,String jdbcUrl)
+  protected HikariDataSource getDataSource()
   {
-    ComboPooledDataSource dataSource;
+    HikariDataSource dataSource;
     try {
-      dataSource = new ComboPooledDataSource();
-      dataSource.setDriverClass(jdbcDriver);
-      dataSource.setJdbcUrl(jdbcUrl);
+      Properties properties = new Properties();
+      properties.load(CrudApiHandler.class.getClassLoader().getResourceAsStream("hikari.properties"));
+      dataSource = new HikariDataSource(new HikariConfig(properties));
     } catch (Exception e) {
       System.out.println(e);
       dataSource = null;
