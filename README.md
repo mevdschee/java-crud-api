@@ -12,7 +12,7 @@ Then build the server.
 
 ###Configuring
 
-In the file "src/main/resources/config.properties" you can configure the listening port and MySQL connection.
+In the file "src/main/resources/config.properties" you can configure the listening port and in "src/main/resources/hikari.properties" you can configure the MySQL connection.
 
 ###Running
 
