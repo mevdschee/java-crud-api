@@ -3,9 +3,13 @@ package com.tqdev;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.ServletException;
+import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.server.handler.AbstractHandler;
+import org.eclipse.jetty.server.HttpConfiguration;
+import org.eclipse.jetty.server.HttpConnectionFactory;
 import java.io.IOException;
 import java.io.PrintWriter;
 import com.google.gson.Gson;
@@ -25,15 +29,21 @@ public class CrudApiHandler extends AbstractHandler
   
   public static void main(String[] args) throws Exception
   {
-    // load config
+    // jetty config
     Properties properties = new Properties();
-    properties.load(CrudApiHandler.class.getClassLoader().getResourceAsStream("config.properties"));
-    String port = properties.getProperty("port");
-    // start server
-    Server server = new Server(Integer.parseInt(port));
+    properties.load(CrudApiHandler.class.getClassLoader().getResourceAsStream("jetty.properties"));
+    HttpConfiguration config = new HttpConfiguration();
+    config.setSendServerVersion( false );
+    HttpConnectionFactory factory = new HttpConnectionFactory( config );
+    Server server = new Server();
+    ServerConnector connector = new ServerConnector(server,factory);
+    server.setConnectors( new Connector[] { connector } );
+    connector.setHost(properties.getProperty("host"));
+    connector.setPort(Integer.parseInt(properties.getProperty("port")));
+    server.addConnector(connector);
     server.setHandler(new CrudApiHandler());
     server.start();
-    server.join();    
+    server.join();
   }
 
   public CrudApiHandler() throws IOException
