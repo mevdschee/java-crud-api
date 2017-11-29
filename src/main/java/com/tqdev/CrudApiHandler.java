@@ -123,7 +123,7 @@ public class CrudApiHandler extends AbstractHandler
       resp.setContentType("application/json; charset=utf-8");
       resp.setStatus(HttpServletResponse.SC_OK);
       PrintWriter w = resp.getWriter();
-      if (method == "GET") {
+      if (method.equals("GET")) {
         ResultSet result = statement.executeQuery();
         ResultSetMetaData meta = result.getMetaData();
         int colCount = meta.getColumnCount();
@@ -142,7 +142,7 @@ public class CrudApiHandler extends AbstractHandler
           row++;
         }
         if (key<0) w.print(']');
-      } else if (method == "POST") {
+      } else if (method.equals("POST")) {
         statement.executeUpdate(sql);
         ResultSet result = statement.getGeneratedKeys();
         result.next();
