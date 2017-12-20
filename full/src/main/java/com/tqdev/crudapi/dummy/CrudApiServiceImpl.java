@@ -48,50 +48,50 @@ public class CrudApiServiceImpl implements CrudApiService {
 	}
 
 	@Override
-	public String create(String entity, Record record) {
+	public String create(String table, Record record) {
 		String id = String.valueOf(counter.incrementAndGet());
-		if (database.containsKey(entity)) {
+		if (database.containsKey(table)) {
 			record.put("id", id);
-			database.get(entity).put(id, record);
+			database.get(table).put(id, record);
 			return id;
 		}
 		return null;
 	}
 
 	@Override
-	public Record read(String entity, String id) {
-		if (database.containsKey(entity)) {
-			if (database.get(entity).containsKey(id)) {
-				return Record.valueOf(database.get(entity).get(id));
+	public Record read(String table, String id) {
+		if (database.containsKey(table)) {
+			if (database.get(table).containsKey(id)) {
+				return Record.valueOf(database.get(table).get(id));
 			}
 		}
 		return null;
 	}
 
 	@Override
-	public Integer update(String entity, String id, Record record) {
-		if (database.containsKey(entity)) {
+	public Integer update(String table, String id, Record record) {
+		if (database.containsKey(table)) {
 			record.put("id", id);
-			database.get(entity).put(id, record);
+			database.get(table).put(id, record);
 			return 1;
 		}
 		return 0;
 	}
 
 	@Override
-	public Integer delete(String entity, String id) {
-		if (database.containsKey(entity) && database.get(entity).containsKey(id)) {
-			database.get(entity).remove(id);
+	public Integer delete(String table, String id) {
+		if (database.containsKey(table) && database.get(table).containsKey(id)) {
+			database.get(table).remove(id);
 			return 1;
 		}
 		return 0;
 	}
 
 	@Override
-	public ListResponse list(String entity) {
-		if (database.containsKey(entity)) {
+	public ListResponse list(String table) {
+		if (database.containsKey(table)) {
 			ListResponse result = new ListResponse();
-			result.records = database.get(entity).values().toArray(new Record[] {});
+			result.records = database.get(table).values().toArray(new Record[] {});
 			return result;
 		}
 		return null;

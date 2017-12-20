@@ -26,27 +26,27 @@ public class CrudApiController {
 	@Autowired
 	CrudApiService service;
 
-	@RequestMapping(value = "/{entity}", method = RequestMethod.GET)
-	public ResponseEntity<?> list(@PathVariable("entity") String entity) {
-		logger.info("Listing entity with name {}", entity);
-		ListResponse response = service.list(entity);
+	@RequestMapping(value = "/{table}", method = RequestMethod.GET)
+	public ResponseEntity<?> list(@PathVariable("table") String table) {
+		logger.info("Listing table with name {}", table);
+		ListResponse response = service.list(table);
 		if (response == null) {
-			return new ResponseEntity<>("entity", HttpStatus.NOT_FOUND);
+			return new ResponseEntity<>("table", HttpStatus.NOT_FOUND);
 		}
 		return new ResponseEntity<>(response, HttpStatus.OK);
 	}
 
-	@RequestMapping(value = "/{entity}/{id}", method = RequestMethod.GET)
-	public ResponseEntity<?> read(@PathVariable("entity") String entity, @PathVariable("id") String id) {
-		logger.info("Reading record from {} with id {}", entity, id);
+	@RequestMapping(value = "/{table}/{id}", method = RequestMethod.GET)
+	public ResponseEntity<?> read(@PathVariable("table") String table, @PathVariable("id") String id) {
+		logger.info("Reading record from {} with id {}", table, id);
 		if (id.indexOf(',') >= 0) {
 			ArrayList<Object> result = new ArrayList<>();
 			for (String s : id.split(",")) {
-				result.add(service.read(entity, s));
+				result.add(service.read(table, s));
 			}
 			return new ResponseEntity<>(result, HttpStatus.OK);
 		} else {
-			Object response = service.read(entity, id);
+			Object response = service.read(table, id);
 			if (response == null) {
 				return new ResponseEntity<>("object", HttpStatus.NOT_FOUND);
 			}
@@ -54,17 +54,17 @@ public class CrudApiController {
 		}
 	}
 
-	@RequestMapping(value = "/{entity}", method = RequestMethod.POST)
-	public ResponseEntity<?> create(@PathVariable("entity") String entity, @RequestBody Object record) {
-		logger.info("Creating record in {} with properties {}", entity, record);
+	@RequestMapping(value = "/{table}", method = RequestMethod.POST)
+	public ResponseEntity<?> create(@PathVariable("table") String table, @RequestBody Object record) {
+		logger.info("Creating record in {} with properties {}", table, record);
 		if (record instanceof ArrayList<?>) {
 			ArrayList<Object> result = new ArrayList<>();
 			for (Object o : (ArrayList<?>) record) {
-				result.add(service.create(entity, Record.valueOf(o)));
+				result.add(service.create(table, Record.valueOf(o)));
 			}
 			return new ResponseEntity<>(result, HttpStatus.OK);
 		} else {
-			String response = service.create(entity, Record.valueOf(record));
+			String response = service.create(table, Record.valueOf(record));
 			if (response == null) {
 				return new ResponseEntity<>("input", HttpStatus.NOT_FOUND);
 			}
@@ -72,10 +72,10 @@ public class CrudApiController {
 		}
 	}
 
-	@RequestMapping(value = "/{entity}/{id}", method = RequestMethod.PUT)
-	public ResponseEntity<?> update(@PathVariable("entity") String entity, @PathVariable("id") String id,
+	@RequestMapping(value = "/{table}/{id}", method = RequestMethod.PUT)
+	public ResponseEntity<?> update(@PathVariable("table") String table, @PathVariable("id") String id,
 			@RequestBody Object record) {
-		logger.info("Updating record in {} with id {} and properties {}", entity, id, record);
+		logger.info("Updating record in {} with id {} and properties {}", table, id, record);
 		if (id.indexOf(',') >= 0 && record instanceof ArrayList<?>) {
 			ArrayList<Object> result = new ArrayList<>();
 			String[] ids = id.split(",");
@@ -84,11 +84,11 @@ public class CrudApiController {
 				return new ResponseEntity<>("subject", HttpStatus.NOT_FOUND);
 			}
 			for (int i = 0; i < ids.length; i++) {
-				result.add(service.update(entity, ids[i], Record.valueOf(records.get(i))));
+				result.add(service.update(table, ids[i], Record.valueOf(records.get(i))));
 			}
 			return new ResponseEntity<>(result, HttpStatus.OK);
 		} else {
-			Integer response = service.update(entity, id, Record.valueOf(record));
+			Integer response = service.update(table, id, Record.valueOf(record));
 			if (response == null) {
 				return new ResponseEntity<>("subject", HttpStatus.NOT_FOUND);
 			}
@@ -96,17 +96,17 @@ public class CrudApiController {
 		}
 	}
 
-	@RequestMapping(value = "/{entity}/{id}", method = RequestMethod.DELETE)
-	public ResponseEntity<?> delete(@PathVariable("entity") String entity, @PathVariable("id") String id) {
-		logger.info("Deleting record from {} with id {}", entity, id);
+	@RequestMapping(value = "/{table}/{id}", method = RequestMethod.DELETE)
+	public ResponseEntity<?> delete(@PathVariable("table") String table, @PathVariable("id") String id) {
+		logger.info("Deleting record from {} with id {}", table, id);
 		if (id.indexOf(',') >= 0) {
 			ArrayList<Object> result = new ArrayList<>();
 			for (String s : id.split(",")) {
-				result.add(service.delete(entity, s));
+				result.add(service.delete(table, s));
 			}
 			return new ResponseEntity<>(result, HttpStatus.OK);
 		} else {
-			Integer response = service.delete(entity, id);
+			Integer response = service.delete(table, id);
 			if (response == null) {
 				return new ResponseEntity<>("object", HttpStatus.NOT_FOUND);
 			}
