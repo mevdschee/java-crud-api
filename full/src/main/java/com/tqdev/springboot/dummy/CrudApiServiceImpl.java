@@ -1,4 +1,4 @@
-package com.tqdev.springboot.service.dummy;
+package com.tqdev.springboot.dummy;
 
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
@@ -6,11 +6,11 @@ import java.util.concurrent.atomic.AtomicLong;
 import org.springframework.stereotype.Service;
 
 import com.tqdev.springboot.model.User;
-import com.tqdev.springboot.service.DataApiService;
+import com.tqdev.springboot.service.CrudApiService;
 import com.tqdev.springboot.service.ListResponse;
 
-@Service("dummyService")
-public class DataApiServiceImpl implements DataApiService {
+@Service
+public class CrudApiServiceImpl implements CrudApiService {
 
 	private static final AtomicLong counter = new AtomicLong();
 
@@ -59,7 +59,7 @@ public class DataApiServiceImpl implements DataApiService {
 	}
 
 	@Override
-	public int update(String entity, String id, Object record) {
+	public Integer update(String entity, String id, Object record) {
 		if (database.containsKey(entity)) {
 			database.get(entity).put(id, record);
 			return 1;
@@ -68,7 +68,7 @@ public class DataApiServiceImpl implements DataApiService {
 	}
 
 	@Override
-	public int delete(String entity, String id) {
+	public Integer delete(String entity, String id) {
 		if (database.containsKey(entity) && database.get(entity).containsKey(id)) {
 			database.get(entity).remove(id);
 			return 1;
