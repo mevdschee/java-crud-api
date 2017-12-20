@@ -70,6 +70,19 @@ public class CrudApiTestClient {
 		System.out.println(result);
 	}
 
+	/* POST */
+	private static void createUsers() {
+		System.out.println("Testing createUsers API----------");
+		RestTemplate restTemplate = new RestTemplate();
+		User user1 = new User("0", "Sarah2", 51, 134);
+		User user2 = new User("0", "Sarah3", 51, 134);
+		HttpEntity<User[]> request = new HttpEntity<>(new User[] { user1, user2 });
+		ResponseEntity<Object> response = restTemplate.exchange(REST_SERVICE_URI + "/users", HttpMethod.POST, request,
+				Object.class);
+		Object result = response.getBody();
+		System.out.println(result);
+	}
+
 	/* PUT */
 	private static void updateUser() {
 		System.out.println("Testing updateUser API----------");
@@ -98,6 +111,7 @@ public class CrudApiTestClient {
 		getUsers();
 		getNonExistingUser();
 		createUser();
+		createUsers();
 		listAllUsers();
 		updateUser();
 		listAllUsers();
