@@ -2,11 +2,11 @@ package com.tqdev.crudapi.service;
 
 public interface CrudApiService {
 
-	String create(String entity, Object user);
+	String create(String entity, Record record);
 
-	Object read(String entity, String id);
+	Record read(String entity, String id);
 
-	Integer update(String entity, String id, Object user);
+	Integer update(String entity, String id, Record record);
 
 	Integer delete(String entity, String id);
 

@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.tqdev.crudapi.service.CrudApiService;
+import com.tqdev.crudapi.service.Record;
 import com.tqdev.crudapi.service.ListResponse;
 
 @RestController
@@ -59,11 +60,11 @@ public class CrudApiController {
 		if (record instanceof ArrayList<?>) {
 			ArrayList<Object> result = new ArrayList<>();
 			for (Object o : (ArrayList<?>) record) {
-				result.add(service.create(entity, o));
+				result.add(service.create(entity, Record.valueOf(o)));
 			}
 			return new ResponseEntity<>(result, HttpStatus.OK);
 		} else {
-			String response = service.create(entity, record);
+			String response = service.create(entity, Record.valueOf(record));
 			if (response == null) {
 				return new ResponseEntity<>("input", HttpStatus.NOT_FOUND);
 			}
@@ -83,11 +84,11 @@ public class CrudApiController {
 				return new ResponseEntity<>("subject", HttpStatus.NOT_FOUND);
 			}
 			for (int i = 0; i < ids.length; i++) {
-				result.add(service.update(entity, ids[i], records.get(i)));
+				result.add(service.update(entity, ids[i], Record.valueOf(records.get(i))));
 			}
 			return new ResponseEntity<>(result, HttpStatus.OK);
 		} else {
-			Integer response = service.update(entity, id, record);
+			Integer response = service.update(entity, id, Record.valueOf(record));
 			if (response == null) {
 				return new ResponseEntity<>("subject", HttpStatus.NOT_FOUND);
 			}

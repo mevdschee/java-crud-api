@@ -1,17 +1,29 @@
 package com.tqdev.crudapi;
 
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
-import com.tqdev.crudapi.model.User;
+import com.tqdev.crudapi.service.Record;
 import com.tqdev.crudapi.service.ListResponse;
 
 public class CrudApiTestClient {
 
 	public static final String REST_SERVICE_URI = "http://localhost:8080/data";
+
+	private static LinkedHashMap<String, Object> createUser(String id, String name, int age, double salary) {
+		LinkedHashMap<String, Object> user = new LinkedHashMap<>();
+		user.put("id", id);
+		user.put("name", name);
+		user.put("age", age);
+		user.put("salary", salary);
+		return user;
+	}
 
 	/* GET */
 	private static void listAllUsers() {
@@ -21,7 +33,7 @@ public class CrudApiTestClient {
 		ListResponse users = restTemplate.getForObject(REST_SERVICE_URI + "/users", ListResponse.class);
 
 		if (users != null) {
-			for (Object user : users.records) {
+			for (Record user : users.records) {
 				System.out.println(user);
 			}
 		} else {
@@ -62,8 +74,8 @@ public class CrudApiTestClient {
 	private static void createUser() {
 		System.out.println("Testing createUser API----------");
 		RestTemplate restTemplate = new RestTemplate();
-		User user = new User("0", "Sarah", 51, 134);
-		HttpEntity<User> request = new HttpEntity<>(user);
+		LinkedHashMap<String, Object> user = createUser(null, "Sarah", 51, 34000);
+		HttpEntity<LinkedHashMap<String, Object>> request = new HttpEntity<>(user);
 		ResponseEntity<Object> response = restTemplate.exchange(REST_SERVICE_URI + "/users", HttpMethod.POST, request,
 				Object.class);
 		Object result = response.getBody();
@@ -74,9 +86,12 @@ public class CrudApiTestClient {
 	private static void createUsers() {
 		System.out.println("Testing createUsers API----------");
 		RestTemplate restTemplate = new RestTemplate();
-		User user1 = new User("0", "Sarah2", 51, 134);
-		User user2 = new User("0", "Sarah3", 51, 134);
-		HttpEntity<User[]> request = new HttpEntity<>(new User[] { user1, user2 });
+		LinkedHashMap<String, Object> user1 = createUser(null, "Sarah2", 51, 34000);
+		LinkedHashMap<String, Object> user2 = createUser(null, "Sarah3", 51, 34000);
+		ArrayList<LinkedHashMap<String, Object>> users = new ArrayList<>();
+		users.add(user1);
+		users.add(user2);
+		HttpEntity<ArrayList<LinkedHashMap<String, Object>>> request = new HttpEntity<>(users);
 		ResponseEntity<Object> response = restTemplate.exchange(REST_SERVICE_URI + "/users", HttpMethod.POST, request,
 				Object.class);
 		Object result = response.getBody();
@@ -87,8 +102,8 @@ public class CrudApiTestClient {
 	private static void updateUser() {
 		System.out.println("Testing updateUser API----------");
 		RestTemplate restTemplate = new RestTemplate();
-		User user = new User("1", "Tomy", 33, 70000);
-		HttpEntity<User> request = new HttpEntity<>(user);
+		LinkedHashMap<String, Object> user = createUser("1", "Tomy", 33, 70000);
+		HttpEntity<LinkedHashMap<String, Object>> request = new HttpEntity<>(user);
 		ResponseEntity<Object> response = restTemplate.exchange(REST_SERVICE_URI + "/users/1", HttpMethod.PUT, request,
 				Object.class);
 		Object result = response.getBody();
