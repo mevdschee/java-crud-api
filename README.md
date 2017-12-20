@@ -1,5 +1,4 @@
 
-
 This is a Java port of the [php-crud-api](https://github.com/mevdschee/php-crud-api) project (single file REST API). It currently only implements the core functionality.
 
 ### Dependencies
@@ -12,14 +11,9 @@ Then build the server.
 
 ### Configuring
 
-In the file "src/main/resources/jetty.properties" you can configure the listening host and port.
+In the file "core/src/main/resources/jetty.properties" you can configure the listening host and port.
 
-<<<<<<< HEAD
-=======
-In the file "src/main/resources/jetty.properties" you can configure the listening host and port.
-
->>>>>>> 40e77f8... typo
-In "src/main/resources/hikari.properties" you can configure the MySQL connection.
+In "core/src/main/resources/hikari.properties" you can configure the MySQL connection.
 
 ### Running
 
