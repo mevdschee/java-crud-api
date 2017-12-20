@@ -14,6 +14,11 @@ Then build the server.
 
 In the file "src/main/resources/jetty.properties" you can configure the listening host and port.
 
+<<<<<<< HEAD
+=======
+In the file "src/main/resources/jetty.properties" you can configure the listening host and port.
+
+>>>>>>> 40e77f8... typo
 In "src/main/resources/hikari.properties" you can configure the MySQL connection.
 
 ### Running
