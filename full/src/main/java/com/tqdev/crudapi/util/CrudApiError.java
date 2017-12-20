@@ -1,4 +1,4 @@
-package com.tqdev.springboot.util;
+package com.tqdev.crudapi.util;
 
 public class CrudApiError {
 

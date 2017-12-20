@@ -1,4 +1,4 @@
-package com.tqdev.springboot.service;
+package com.tqdev.crudapi.service;
 
 public interface CrudApiService {
 

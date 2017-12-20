@@ -1,4 +1,4 @@
-package com.tqdev.springboot;
+package com.tqdev.crudapi;
 
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
@@ -6,8 +6,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
-import com.tqdev.springboot.model.User;
-import com.tqdev.springboot.service.ListResponse;
+import com.tqdev.crudapi.model.User;
+import com.tqdev.crudapi.service.ListResponse;
 
 public class CrudApiTestClient {
 

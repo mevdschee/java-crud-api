@@ -1,4 +1,4 @@
-package com.tqdev.springboot.model;
+package com.tqdev.crudapi.model;
 
 public class User {
 

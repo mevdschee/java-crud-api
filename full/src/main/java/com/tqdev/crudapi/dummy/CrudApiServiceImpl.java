@@ -1,13 +1,13 @@
-package com.tqdev.springboot.dummy;
+package com.tqdev.crudapi.dummy;
 
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
 
 import org.springframework.stereotype.Service;
 
-import com.tqdev.springboot.model.User;
-import com.tqdev.springboot.service.CrudApiService;
-import com.tqdev.springboot.service.ListResponse;
+import com.tqdev.crudapi.model.User;
+import com.tqdev.crudapi.service.CrudApiService;
+import com.tqdev.crudapi.service.ListResponse;
 
 @Service
 public class CrudApiServiceImpl implements CrudApiService {

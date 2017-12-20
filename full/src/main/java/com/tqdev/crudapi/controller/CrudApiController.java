@@ -1,4 +1,4 @@
-package com.tqdev.springboot.controller;
+package com.tqdev.crudapi.controller;
 
 import java.util.ArrayList;
 
@@ -13,8 +13,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.tqdev.springboot.service.CrudApiService;
-import com.tqdev.springboot.service.ListResponse;
+import com.tqdev.crudapi.service.CrudApiService;
+import com.tqdev.crudapi.service.ListResponse;
 
 @RestController
 @RequestMapping("/data")
