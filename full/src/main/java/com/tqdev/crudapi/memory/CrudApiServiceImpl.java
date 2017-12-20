@@ -6,8 +6,8 @@ import java.util.concurrent.atomic.AtomicLong;
 import org.springframework.stereotype.Service;
 
 import com.tqdev.crudapi.service.CrudApiService;
-import com.tqdev.crudapi.service.Record;
 import com.tqdev.crudapi.service.ListResponse;
+import com.tqdev.crudapi.service.Record;
 
 @Service
 public class CrudApiServiceImpl implements CrudApiService {
@@ -17,7 +17,7 @@ public class CrudApiServiceImpl implements CrudApiService {
 	private static ConcurrentHashMap<String, ConcurrentHashMap<String, Record>> database;
 
 	static {
-		database = populateUsers();
+		database = populateUsers();// new ConcurrentHashMap<>();
 	}
 
 	private static Record createUser(String id, String name, int age, double salary) {
