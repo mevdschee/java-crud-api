@@ -1,4 +1,4 @@
-package com.tqdev.crudapi.dummy;
+package com.tqdev.crudapi.memory;
 
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
