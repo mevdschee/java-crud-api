@@ -3,11 +3,11 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>com.tqdev.crudapi</groupId>
-	<artifactId>SpringBootRestApiExample</artifactId>
+	<artifactId>JavaCrudApi</artifactId>
 	<version>1.0.0</version>
 	<packaging>jar</packaging>
 
-	<name>SpringBootRestApiExample</name>
+	<name>JavaCrudApi</name>
 
 	<parent>
 		<groupId>org.springframework.boot</groupId>
