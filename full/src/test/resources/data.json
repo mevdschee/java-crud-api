@@ -1,23 +1,47 @@
 {
-	"tables":{
+	"columns":{
 		"barcodes":{
-			"pk":"id",
-			"fk":{}
+			"id":{"type":"int","pk":true},
+			"product_id":{"type":"int","fk":"products.id"},
+			"hex":{"type":"string"},
+			"bin":{"type":"binary"}
 		},
-		"users":{
-			"pk":"id",
-			"fk":{}
+		"products":{
+			"id":{"type":"int","pk":true},
+			"name":{"type":"string","length":"255"},
+			"price":{"type":"decimal","length":"10,2"},
+			"properties":{"type":"json"},
+			"created_at":{"type":"datetime"},
+			"deleted_at":{"type":"datetime","nullable":true}
+		},
+		"events":{
+			"id":{"type":"int","pk":true},
+			"name":{"type":"string","length":"255"},
+			"datetime":{"type":"datetime"},
+			"visitors":{"type":"int"}
 		}
 	},
 	"records":{
 		"barcodes":[
 			{"id":1, "product_id":1, "hex":"00ff01", "bin":"\u0000\u00ff\u0001"}
 		],
-		"users":[
-			{"id":1, "name":"Sam", "age":25, "salary":35000},
-			{"id":2, "name":"Max", "age":35, "salary":45000},
-			{"id":3, "name":"Eve", "age":55, "salary":55000},
-			{"id":4, "name":"Tina", "age":65, "salary":65000}
+		"products":[
+			{"id":1, "name":"Calculator", "price":"23.01", "properties":"{\"depth\":false,\"model\":\"TRX-120\",\"width\":100,\"height\":null}", "created_at":"1970-01-01 01:01:01"}
+		],
+		"events":[
+			{"id":1, "name":"Launch", "datetime":"2016-01-01 13:01:01", "visitors":0}
 		]
 	}
 }
+
+DROP TABLE IF EXISTS `countries`;
+CREATE TABLE `countries` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) NOT NULL,
+  `shape` polygon NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+INSERT INTO `countries` (`id`, `name`, `shape`) VALUES
+(1,	'Left',	ST_GeomFromText('POLYGON ((30 10, 40 40, 20 40, 10 20, 30 10))')),
+(2, 'Right', ST_GeomFromText('POLYGON ((70 10, 80 40, 60 40, 50 20, 70 10))'));
