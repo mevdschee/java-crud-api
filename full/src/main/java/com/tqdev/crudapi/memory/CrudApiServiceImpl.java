@@ -12,44 +12,13 @@ import com.tqdev.crudapi.service.Record;
 @Service
 public class CrudApiServiceImpl implements CrudApiService {
 
-	private static final AtomicLong counter = new AtomicLong();
+	private static ConcurrentHashMap<String, AtomicLong> counters = new ConcurrentHashMap<>();
 
-	private static ConcurrentHashMap<String, ConcurrentHashMap<String, Record>> database;
-
-	static {
-		database = populateUsers();// new ConcurrentHashMap<>();
-	}
-
-	private static Record createUser(String id, String name, int age, double salary) {
-		Record user = new Record();
-		user.put("id", id);
-		user.put("name", name);
-		user.put("age", age);
-		user.put("salary", salary);
-		return user;
-	}
-
-	private static ConcurrentHashMap<String, ConcurrentHashMap<String, Record>> populateUsers() {
-		ConcurrentHashMap<String, Record> table;
-		String id;
-		table = new ConcurrentHashMap<>();
-		id = String.valueOf(counter.incrementAndGet());
-		table.put(id, createUser(id, "Sam", 20, 70000));
-		id = String.valueOf(counter.incrementAndGet());
-		table.put(id, createUser(id, "Max", 60, 50000));
-		id = String.valueOf(counter.incrementAndGet());
-		table.put(id, createUser(id, "Abby", 33, 40000));
-		id = String.valueOf(counter.incrementAndGet());
-		table.put(id, createUser(id, "Jack", 60, 30000));
-
-		ConcurrentHashMap<String, ConcurrentHashMap<String, Record>> database = new ConcurrentHashMap<>();
-		database.put("users", table);
-		return database;
-	}
+	private static ConcurrentHashMap<String, ConcurrentHashMap<String, Record>> database = new ConcurrentHashMap<>();
 
 	@Override
 	public String create(String table, Record record) {
-		String id = String.valueOf(counter.incrementAndGet());
+		String id = String.valueOf(counters.get(table).incrementAndGet());
 		if (database.containsKey(table)) {
 			record.put("id", id);
 			database.get(table).put(id, record);
@@ -95,6 +64,27 @@ public class CrudApiServiceImpl implements CrudApiService {
 			return result;
 		}
 		return null;
+	}
+
+	@Override
+	public boolean dropTable(String table) {
+		if (database.containsKey(table)) {
+			counters.remove(table);
+			database.remove(table);
+			return true;
+		}
+		return false;
+	}
+
+	@Override
+	public boolean createTable(String table, String definition) {
+		ConcurrentHashMap<String, Record> records = new ConcurrentHashMap<>();
+		if (!database.containsKey(table)) {
+			counters.put(table, new AtomicLong());
+			database.put(table, records);
+			return true;
+		}
+		return false;
 	}
 
 }

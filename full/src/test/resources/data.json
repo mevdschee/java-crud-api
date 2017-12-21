@@ -1,0 +1,23 @@
+{
+	"tables":{
+		"barcodes":{
+			"pk":"id",
+			"fk":{}
+		},
+		"users":{
+			"pk":"id",
+			"fk":{}
+		}
+	},
+	"records":{
+		"barcodes":[
+			{"id":1, "product_id":1, "hex":"00ff01", "bin":"\u0000\u00ff\u0001"}
+		],
+		"users":[
+			{"id":1, "name":"Sam", "age":25, "salary":35000},
+			{"id":2, "name":"Max", "age":35, "salary":45000},
+			{"id":3, "name":"Eve", "age":55, "salary":55000},
+			{"id":4, "name":"Tina", "age":65, "salary":65000}
+		]
+	}
+}
