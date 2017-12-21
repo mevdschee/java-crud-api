@@ -46,23 +46,16 @@ public class SampleTests {
 	}
 
 	@Test
-	public void testAddUserList() throws Exception {
-		this.mockMvc.perform(get("/data/users").accept("application/json")).andExpect(status().isOk())
-				.andExpect(content().contentTypeCompatibleWith("application/json"))
-				.andExpect(jsonPath("$.records[0].name").value("Sam"));
-	}
-
-	@Test
 	public void testUserList() throws Exception {
 		this.mockMvc.perform(get("/data/users").accept("application/json")).andExpect(status().isOk())
 				.andExpect(content().contentTypeCompatibleWith("application/json"))
-				.andExpect(jsonPath("$.records[0].name").value("Sam"));
+				.andExpect(jsonPath("$.records[0].username").value("user1"));
 	}
 
 	@Test
 	public void testUserRead() throws Exception {
 		this.mockMvc.perform(get("/data/users/1").accept("application/json")).andExpect(status().isOk())
 				.andExpect(content().contentTypeCompatibleWith("application/json"))
-				.andExpect(jsonPath("$.name").value("Sam"));
+				.andExpect(jsonPath("$.username").value("user1"));
 	}
 }

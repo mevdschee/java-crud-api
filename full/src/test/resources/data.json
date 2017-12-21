@@ -1,69 +1,26 @@
-DROP TABLE IF EXISTS `categories`;
-CREATE TABLE `categories` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `name` varchar(255) NOT NULL,
-  `icon` blob NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
-INSERT INTO `categories` (`id`, `name`, `icon`) VALUES
-(1,	'announcement',	NULL),
-(2,	'article',	NULL);
-
-DROP TABLE IF EXISTS `comments`;
-CREATE TABLE `comments` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `post_id` int(11) NOT NULL,
-  `message` varchar(255) NOT NULL,
-  PRIMARY KEY (`id`),
-  KEY `post_id` (`post_id`),
-  CONSTRAINT `comments_ibfk_1` FOREIGN KEY (`post_id`) REFERENCES `posts` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
-INSERT INTO `comments` (`id`, `post_id`, `message`) VALUES
-(1,	1,	'great'),
-(2,	1,	'fantastic'),
-(3,	2,	'thank you'),
-(4,	2,	'awesome');
-
-DROP TABLE IF EXISTS `posts`;
-CREATE TABLE `posts` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `user_id` int(11) NOT NULL,
-  `category_id` int(11) NOT NULL,
-  `content` varchar(255) NOT NULL,
-  PRIMARY KEY (`id`),
-  KEY `category_id` (`category_id`),
-  KEY `user_id` (`user_id`),
-  CONSTRAINT `posts_ibfk_3` FOREIGN KEY (`category_id`) REFERENCES `categories` (`id`),
-  CONSTRAINT `posts_ibfk_4` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
-INSERT INTO `posts` (`id`, `user_id`, `category_id`, `content`) VALUES
-(1,	1,	1,	'blog started'),
-(2,	1,	2,	'It works!');
-
-DROP TABLE IF EXISTS `post_tags`;
-CREATE TABLE `post_tags` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `post_id` int(11) NOT NULL,
-  `tag_id` int(11) NOT NULL,
-  PRIMARY KEY (`id`),
-  KEY `post_id` (`post_id`),
-  KEY `tag_id` (`tag_id`),
-  CONSTRAINT `post_tags_ibfk_1` FOREIGN KEY (`post_id`) REFERENCES `posts` (`id`),
-  CONSTRAINT `post_tags_ibfk_2` FOREIGN KEY (`tag_id`) REFERENCES `tags` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
-INSERT INTO `post_tags` (`id`, `post_id`, `tag_id`) VALUES
-(1,	1,	1),
-(2,	1,	2),
-(3,	2,	1),
-(4,	2,	2);
-
-
 {
 	"columns":{
+		"categories":{
+			"id":{"type":"integer","pk":true},
+			"name":{"type":"string","length":"255"},
+			"icon":{"type":"binary","nullable":true}
+		},
+		"comments":{
+			"id":{"type":"integer","pk":true},
+			"post_id":{"type":"integer","fk":"posts.id"},
+			"message":{"type":"string","length":"255"}
+		},
+		"posts":{
+			"id":{"type":"integer","pk":true},
+			"user_id":{"type":"integer","fk":"users.id"},
+			"category_id":{"type":"integer","fk":"categories.id"},
+			"content":{"type":"string","length":"255"}
+		},
+		"post_tags":{
+			"id":{"type":"integer","pk":true},
+			"post_id":{"type":"integer","fk":"posts.id"},
+			"tag_id":{"type":"integer","fk":"tags.id"}
+		},
 		"tags":{
 			"id":{"type":"integer","pk":true},
 			"name":{"type":"string","length":"255"}
@@ -101,6 +58,26 @@ INSERT INTO `post_tags` (`id`, `post_id`, `tag_id`) VALUES
 		}
 	},
 	"records":{
+		"categories":[
+			{"id":1, "name":"announcement", "icon":null},
+			{"id":2, "name":"article", "icon":null}
+		],
+		"comments":[
+			{"id":1, "post_id":1, "name":"great"},
+			{"id":2, "post_id":1, "name":"fantastic"},
+			{"id":3, "post_id":2, "name":"thank you"},
+			{"id":4, "post_id":2, "name":"awesome"}
+		],
+		"posts":[
+			{"id":1, "user_id":1, "category_id": 1, "content":"blog started"},
+			{"id":2, "user_id":1, "category_id": 2, "content":"It works!"}
+		],
+		"post_tags":[
+			{"id":1, "post_id":1, "tag_id": 1},
+			{"id":2, "post_id":1, "tag_id": 2},
+			{"id":3, "post_id":2, "tag_id": 1},
+			{"id":4, "post_id":2, "tag_id": 2}
+		],
 		"tags":[
 			{"id":1, "name":"funny"},
 			{"id":2, "name":"important"}
