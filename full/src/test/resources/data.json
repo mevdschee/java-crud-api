@@ -3,7 +3,7 @@
 		"categories":{
 			"id":{"type":"integer","pk":true},
 			"name":{"type":"string","length":"255"},
-			"icon":{"type":"binary","nullable":true}
+			"icon":{"type":"binary","length":"large","nullable":true}
 		},
 		"comments":{
 			"id":{"type":"integer","pk":true},

@@ -1,5 +1,7 @@
 package com.tqdev.crudapi;
 
+import static org.hamcrest.CoreMatchers.hasItems;
+import static org.hamcrest.Matchers.hasSize;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -36,7 +38,7 @@ public class SampleTests {
 
 	@Before
 	public void setup() {
-		this.mockMvc = webAppContextSetup(this.wac).build();
+		mockMvc = webAppContextSetup(this.wac).build();
 		try {
 			(new Fixture()).create(service);
 		} catch (IOException e) {
@@ -46,16 +48,25 @@ public class SampleTests {
 	}
 
 	@Test
-	public void testUserList() throws Exception {
-		this.mockMvc.perform(get("/data/users").accept("application/json")).andExpect(status().isOk())
+	public void testListPosts() throws Exception {
+		mockMvc.perform(get("/data/posts").accept("application/json")).andExpect(status().isOk())
 				.andExpect(content().contentTypeCompatibleWith("application/json"))
-				.andExpect(jsonPath("$.records[0].username").value("user1"));
+				.andExpect(jsonPath("$.records[*].id", hasItems("1", "2")))
+				.andExpect(jsonPath("$.records[*].content", hasItems("blog started", "It works!")));
+	}
+
+	@Test
+	public void testListPostColumns() throws Exception {
+		mockMvc.perform(get("/data/posts?columns=id,content").accept("application/json")).andExpect(status().isOk())
+				.andExpect(content().contentTypeCompatibleWith("application/json"))
+				.andExpect(jsonPath("$.records[*].id", hasSize(2))).andExpect(jsonPath("$.records[0].*", hasSize(2)));
 	}
 
 	@Test
 	public void testUserRead() throws Exception {
-		this.mockMvc.perform(get("/data/users/1").accept("application/json")).andExpect(status().isOk())
+		mockMvc.perform(get("/data/users/1").accept("application/json")).andExpect(status().isOk())
 				.andExpect(content().contentTypeCompatibleWith("application/json"))
 				.andExpect(jsonPath("$.username").value("user1"));
 	}
+
 }
