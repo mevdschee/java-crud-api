@@ -14,8 +14,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.tqdev.crudapi.service.CrudApiService;
-import com.tqdev.crudapi.service.Record;
+import com.tqdev.crudapi.service.Error;
 import com.tqdev.crudapi.service.ListResponse;
+import com.tqdev.crudapi.service.Record;
 
 @RestController
 @RequestMapping("/data")
@@ -31,7 +32,7 @@ public class CrudApiController {
 		logger.info("Listing table with name {}", table);
 		ListResponse response = service.list(table);
 		if (response == null) {
-			return new ResponseEntity<>("table", HttpStatus.NOT_FOUND);
+			return new ResponseEntity<>(new Error("table"), HttpStatus.NOT_FOUND);
 		}
 		return new ResponseEntity<>(response, HttpStatus.OK);
 	}
@@ -48,7 +49,7 @@ public class CrudApiController {
 		} else {
 			Object response = service.read(table, id);
 			if (response == null) {
-				return new ResponseEntity<>("object", HttpStatus.NOT_FOUND);
+				return new ResponseEntity<>(new Error("object"), HttpStatus.NOT_FOUND);
 			}
 			return new ResponseEntity<>(response, HttpStatus.OK);
 		}
@@ -66,7 +67,7 @@ public class CrudApiController {
 		} else {
 			String response = service.create(table, Record.valueOf(record));
 			if (response == null) {
-				return new ResponseEntity<>("input", HttpStatus.NOT_FOUND);
+				return new ResponseEntity<>(new Error("input"), HttpStatus.NOT_FOUND);
 			}
 			return new ResponseEntity<>(response, HttpStatus.OK);
 		}
@@ -81,7 +82,7 @@ public class CrudApiController {
 			String[] ids = id.split(",");
 			ArrayList<?> records = new ArrayList<>();
 			if (ids.length != records.size()) {
-				return new ResponseEntity<>("subject", HttpStatus.NOT_FOUND);
+				return new ResponseEntity<>(new Error("subject"), HttpStatus.NOT_FOUND);
 			}
 			for (int i = 0; i < ids.length; i++) {
 				result.add(service.update(table, ids[i], Record.valueOf(records.get(i))));
@@ -90,7 +91,7 @@ public class CrudApiController {
 		} else {
 			Integer response = service.update(table, id, Record.valueOf(record));
 			if (response == null) {
-				return new ResponseEntity<>("subject", HttpStatus.NOT_FOUND);
+				return new ResponseEntity<>(new Error("subject"), HttpStatus.NOT_FOUND);
 			}
 			return new ResponseEntity<>(response, HttpStatus.OK);
 		}
@@ -108,7 +109,7 @@ public class CrudApiController {
 		} else {
 			Integer response = service.delete(table, id);
 			if (response == null) {
-				return new ResponseEntity<>("object", HttpStatus.NOT_FOUND);
+				return new ResponseEntity<>(new Error("object"), HttpStatus.NOT_FOUND);
 			}
 			return new ResponseEntity<>(response, HttpStatus.OK);
 		}

@@ -3,13 +3,10 @@ package com.tqdev.crudapi.memory;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
 
-import org.springframework.stereotype.Service;
-
 import com.tqdev.crudapi.service.CrudApiService;
 import com.tqdev.crudapi.service.ListResponse;
 import com.tqdev.crudapi.service.Record;
 
-@Service
 public class CrudApiServiceImpl implements CrudApiService {
 
 	private static ConcurrentHashMap<String, AtomicLong> counters = new ConcurrentHashMap<>();
@@ -18,13 +15,13 @@ public class CrudApiServiceImpl implements CrudApiService {
 
 	@Override
 	public String create(String table, Record record) {
-		String id = String.valueOf(counters.get(table).incrementAndGet());
-		if (database.containsKey(table)) {
-			record.put("id", id);
-			database.get(table).put(id, record);
-			return id;
+		if (!database.containsKey(table)) {
+			createTable(table, "");
 		}
-		return null;
+		String id = String.valueOf(counters.get(table).incrementAndGet());
+		record.put("id", id);
+		database.get(table).put(id, record);
+		return id;
 	}
 
 	@Override
@@ -78,8 +75,8 @@ public class CrudApiServiceImpl implements CrudApiService {
 
 	@Override
 	public boolean createTable(String table, String definition) {
-		ConcurrentHashMap<String, Record> records = new ConcurrentHashMap<>();
 		if (!database.containsKey(table)) {
+			ConcurrentHashMap<String, Record> records = new ConcurrentHashMap<>();
 			counters.put(table, new AtomicLong());
 			database.put(table, records);
 			return true;
