@@ -1,0 +1,43 @@
+{
+	"categories":[
+		{"id":1, "name":"announcement", "icon":null},
+		{"id":2, "name":"article", "icon":null}
+	],
+	"comments":[
+		{"id":1, "post_id":1, "name":"great"},
+		{"id":2, "post_id":1, "name":"fantastic"},
+		{"id":3, "post_id":2, "name":"thank you"},
+		{"id":4, "post_id":2, "name":"awesome"}
+	],
+	"posts":[
+		{"id":1, "user_id":1, "category_id": 1, "content":"blog started"},
+		{"id":2, "user_id":1, "category_id": 2, "content":"It works!"}
+	],
+	"post_tags":[
+		{"id":1, "post_id":1, "tag_id": 1},
+		{"id":2, "post_id":1, "tag_id": 2},
+		{"id":3, "post_id":2, "tag_id": 1},
+		{"id":4, "post_id":2, "tag_id": 2}
+	],
+	"tags":[
+		{"id":1, "name":"funny"},
+		{"id":2, "name":"important"}
+	],
+	"users":[
+		{"id":1, "username":"user1", "password":"pass1", "location":null},
+		{"id":2, "username":"user2", "password":"pass2", "location":null}
+	],
+	"countries":[
+		{"id":1, "name":"Left", "shape":"POLYGON ((30 10, 40 40, 20 40, 10 20, 30 10))"},
+		{"id":2, "name":"Right", "shape":"POLYGON ((70 10, 80 40, 60 40, 50 20, 70 10))"}
+	],
+	"events":[
+		{"id":1, "name":"Launch", "datetime":"2016-01-01 13:01:01", "visitors":0}
+	],
+	"products":[
+		{"id":1, "name":"Calculator", "price":"23.01", "properties":"{\"depth\":false,\"model\":\"TRX-120\",\"width\":100,\"height\":null}", "created_at":"1970-01-01 01:01:01"}
+	],
+	"barcodes":[
+		{"id":1, "product_id":1, "hex":"00ff01", "bin":"\u0000\u00ff\u0001"}
+	]
+}

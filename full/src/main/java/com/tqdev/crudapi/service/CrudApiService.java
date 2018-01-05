@@ -4,7 +4,7 @@ public interface CrudApiService {
 
 	boolean dropTable(String table);
 
-	boolean createTable(String table, String definition);
+	boolean createTable(String table, TableDefinition tableDefinition);
 
 	String create(String table, Record record);
 

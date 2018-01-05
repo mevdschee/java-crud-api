@@ -2,4 +2,6 @@ server:
   port: 8080
   contextPath: /
 
-crud.driver.name: memory
+driver:
+  name: memory
+  url: columns.json
