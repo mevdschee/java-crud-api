@@ -65,7 +65,10 @@ public class JooqCrudApiService implements CrudApiService {
 				values.add(record.get(key));
 			}
 			Field<?> pk = DSL.field(definition.get(table).getPk());
-			return String.valueOf(dsl.insertInto(t).columns(columns).values(values).returning(pk).fetchOne());
+			Object result = dsl.insertInto(t).columns(columns).values(values).returning(pk).fetchOne();
+			if (result != null) {
+				return String.valueOf(result);
+			}
 		}
 		return null;
 	}
