@@ -37,7 +37,7 @@ public class JooqCrudApiService implements CrudApiService {
 		return value;
 	}
 
-	private void sanitizeRecord(String table, String id, Record record) {
+	private void sanitizeRecord(String table, Record record) {
 		for (String key : record.keySet()) {
 			if (!definition.get(table).containsKey(key)) {
 				record.remove(key);
@@ -56,7 +56,7 @@ public class JooqCrudApiService implements CrudApiService {
 	@Override
 	public String create(String table, Record record) {
 		if (definition.containsKey(table)) {
-			sanitizeRecord(table, null, record);
+			sanitizeRecord(table, record);
 			Table<?> t = DSL.table(DSL.name(table));
 			ArrayList<Field<?>> columns = new ArrayList<>();
 			ArrayList<Object> values = new ArrayList<>();
