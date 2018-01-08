@@ -2,9 +2,7 @@ package com.tqdev.crudapi.service;
 
 public interface CrudApiService {
 
-	boolean dropTable(String table);
-
-	boolean createTable(String table, TableDefinition tableDefinition);
+	void updateDefinition(DatabaseDefinition definition);
 
 	String create(String table, Record record);
 

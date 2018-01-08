@@ -14,7 +14,6 @@ import com.tqdev.crudapi.service.CrudApiService;
 import com.tqdev.crudapi.service.DatabaseDefinition;
 import com.tqdev.crudapi.service.ListResponse;
 import com.tqdev.crudapi.service.Record;
-import com.tqdev.crudapi.service.TableDefinition;
 
 public class CrudApiServiceImpl implements CrudApiService {
 
@@ -27,10 +26,7 @@ public class CrudApiServiceImpl implements CrudApiService {
 	public CrudApiServiceImpl(String filename) throws JsonParseException, JsonMappingException, IOException {
 		ObjectMapper mapper = new ObjectMapper();
 		ClassPathResource resource = new ClassPathResource(filename);
-		DatabaseDefinition info = mapper.readValue(resource.getInputStream(), DatabaseDefinition.class);
-		for (String table : info.keySet()) {
-			createTable(table, info.get(table));
-		}
+		updateDefinition(mapper.readValue(resource.getInputStream(), DatabaseDefinition.class));
 	}
 
 	private Object getDefaultValue(ColumnDefinition column) {
@@ -145,25 +141,21 @@ public class CrudApiServiceImpl implements CrudApiService {
 	}
 
 	@Override
-	public boolean dropTable(String table) {
-		if (database.containsKey(table)) {
-			counters.remove(table);
-			database.remove(table);
-			return true;
+	public void updateDefinition(DatabaseDefinition definition) {
+		for (String table : definition.keySet()) {
+			if (!database.containsKey(table)) {
+				ConcurrentHashMap<String, Record> records = new ConcurrentHashMap<>();
+				counters.put(table, new AtomicLong());
+				database.put(table, records);
+			}
 		}
-		return false;
-	}
-
-	@Override
-	public boolean createTable(String table, TableDefinition tableDefinition) {
-		if (!database.containsKey(table)) {
-			ConcurrentHashMap<String, Record> records = new ConcurrentHashMap<>();
-			counters.put(table, new AtomicLong());
-			database.put(table, records);
-			definition.put(table, tableDefinition);
-			return true;
+		this.definition = definition;
+		for (String table : database.keySet()) {
+			if (!definition.containsKey(table)) {
+				database.remove(table);
+				counters.remove(table);
+			}
 		}
-		return false;
 	}
 
 }
