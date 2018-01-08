@@ -2,7 +2,7 @@ package com.tqdev.crudapi.service;
 
 public interface CrudApiService {
 
-	void updateDefinition(DatabaseDefinition definition);
+	boolean updateDefinition();
 
 	String create(String table, Record record);
 

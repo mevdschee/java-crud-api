@@ -6,8 +6,6 @@ import java.util.concurrent.atomic.AtomicLong;
 
 import org.springframework.core.io.ClassPathResource;
 
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tqdev.crudapi.service.ColumnDefinition;
 import com.tqdev.crudapi.service.CrudApiService;
@@ -23,10 +21,11 @@ public class CrudApiServiceImpl implements CrudApiService {
 
 	private DatabaseDefinition definition = new DatabaseDefinition();
 
-	public CrudApiServiceImpl(String filename) throws JsonParseException, JsonMappingException, IOException {
-		ObjectMapper mapper = new ObjectMapper();
-		ClassPathResource resource = new ClassPathResource(filename);
-		updateDefinition(mapper.readValue(resource.getInputStream(), DatabaseDefinition.class));
+	private String filename;
+
+	public CrudApiServiceImpl(String filename) {
+		this.filename = filename;
+		updateDefinition();
 	}
 
 	private Object getDefaultValue(ColumnDefinition column) {
@@ -141,7 +140,19 @@ public class CrudApiServiceImpl implements CrudApiService {
 	}
 
 	@Override
-	public void updateDefinition(DatabaseDefinition definition) {
+	public boolean updateDefinition() {
+		ObjectMapper mapper = new ObjectMapper();
+		ClassPathResource resource = new ClassPathResource(filename);
+		boolean result = true;
+		try {
+			applyDefinition(mapper.readValue(resource.getInputStream(), DatabaseDefinition.class));
+		} catch (IOException e) {
+			result = false;
+		}
+		return result;
+	}
+
+	private void applyDefinition(DatabaseDefinition definition) {
 		for (String table : definition.keySet()) {
 			if (!database.containsKey(table)) {
 				ConcurrentHashMap<String, Record> records = new ConcurrentHashMap<>();

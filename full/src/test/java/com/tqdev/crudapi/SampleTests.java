@@ -8,8 +8,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
 
-import java.io.IOException;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -37,14 +35,9 @@ public class SampleTests {
 	private MockMvc mockMvc;
 
 	@Before
-	public void setup() {
+	public void setup() throws Exception {
 		mockMvc = webAppContextSetup(this.wac).build();
-		try {
-			(new Fixture()).create(service);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		DatabaseRecords.fromFile("records.json").create(service);
 	}
 
 	@Test
