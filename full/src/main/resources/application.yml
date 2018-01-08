@@ -4,4 +4,3 @@ server:
 
 driver:
   name: memory
-  url: columns.json

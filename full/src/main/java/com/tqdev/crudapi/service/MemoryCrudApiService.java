@@ -1,4 +1,4 @@
-package com.tqdev.crudapi.memory;
+package com.tqdev.crudapi.service;
 
 import java.io.IOException;
 import java.util.concurrent.ConcurrentHashMap;
@@ -7,13 +7,8 @@ import java.util.concurrent.atomic.AtomicLong;
 import org.springframework.core.io.ClassPathResource;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.tqdev.crudapi.service.ColumnDefinition;
-import com.tqdev.crudapi.service.CrudApiService;
-import com.tqdev.crudapi.service.DatabaseDefinition;
-import com.tqdev.crudapi.service.ListResponse;
-import com.tqdev.crudapi.service.Record;
 
-public class CrudApiServiceImpl implements CrudApiService {
+public class MemoryCrudApiService implements CrudApiService {
 
 	private ConcurrentHashMap<String, AtomicLong> counters = new ConcurrentHashMap<>();
 
@@ -23,7 +18,7 @@ public class CrudApiServiceImpl implements CrudApiService {
 
 	private String filename;
 
-	public CrudApiServiceImpl(String filename) {
+	public MemoryCrudApiService(String filename) {
 		this.filename = filename;
 		updateDefinition();
 	}

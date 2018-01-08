@@ -1,17 +1,16 @@
 package com.tqdev.crudapi;
 
-import java.io.IOException;
-
+import org.jooq.DSLContext;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.PropertySource;
 
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.tqdev.crudapi.memory.CrudApiServiceImpl;
 import com.tqdev.crudapi.service.CrudApiService;
+import com.tqdev.crudapi.service.JooqCrudApiService;
+import com.tqdev.crudapi.service.MemoryCrudApiService;
 
 @SpringBootApplication(scanBasePackages = { "com.tqdev.crudapi" })
 @PropertySource("classpath:application.yml")
@@ -24,15 +23,16 @@ public class CrudApiApp {
 	@Value("${driver.name}")
 	String crudDriverName;
 
-	@Value("${driver.url}")
-	String crudDriverUrl;
-
 	@Bean
-	public CrudApiService crudApiService() throws JsonParseException, JsonMappingException, IOException {
+	@Autowired
+	public CrudApiService crudApiService(DSLContext dsl) {
 		CrudApiService result;
 		switch (crudDriverName) {
 		case "memory":
-			result = new CrudApiServiceImpl(crudDriverUrl);
+			result = new MemoryCrudApiService("columns.json");
+			break;
+		case "jooq":
+			result = new JooqCrudApiService(dsl);
 			break;
 		default:
 			result = null;
