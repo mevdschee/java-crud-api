@@ -127,9 +127,7 @@ public class MemoryCrudApiService implements CrudApiService {
 	@Override
 	public ListResponse list(String table) {
 		if (database.containsKey(table)) {
-			ListResponse result = new ListResponse();
-			result.records = database.get(table).values().toArray(new Record[] {});
-			return result;
+			return new ListResponse(database.get(table).values().toArray(new Record[] {}));
 		}
 		return null;
 	}

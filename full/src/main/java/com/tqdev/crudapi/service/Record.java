@@ -13,11 +13,21 @@ public class Record extends LinkedHashMap<String, Object> {
 	}
 
 	public static Record valueOf(Map<?, ?> map) {
-		Record result = new Record();
-		for (Object key : map.keySet()) {
-			result.put(key.toString(), map.get(key));
+		if (map != null) {
+			Record result = new Record();
+			for (Object key : map.keySet()) {
+				result.put(key.toString(), map.get(key));
+			}
+			return result;
 		}
-		return result;
+		return null;
+	}
+
+	public static Record valueOf(org.jooq.Record record) {
+		if (record != null) {
+			return Record.valueOf(record.intoMap());
+		}
+		return null;
 	}
 
 	/**

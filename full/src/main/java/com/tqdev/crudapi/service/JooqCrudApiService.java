@@ -1,11 +1,16 @@
 package com.tqdev.crudapi.service;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 
 import org.jooq.DSLContext;
 import org.jooq.Field;
 import org.jooq.Table;
 import org.jooq.impl.DSL;
+import org.springframework.core.io.ClassPathResource;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class JooqCrudApiService implements CrudApiService {
 
@@ -76,27 +81,67 @@ public class JooqCrudApiService implements CrudApiService {
 
 	@Override
 	public Record read(String table, String id) {
+		if (definition.containsKey(table)) {
+			Table<?> t = DSL.table(DSL.name(table));
+			ArrayList<Field<?>> columns = new ArrayList<>();
+			for (String key : definition.get(table).keySet()) {
+				columns.add(DSL.field(key));
+			}
+			Field<Object> pk = DSL.field(definition.get(table).getPk());
+			return Record.valueOf(dsl.select(columns).from(t).where(pk.eq(id)).fetchOne());
+		}
 		return null;
 	}
 
 	@Override
 	public Integer update(String table, String id, Record record) {
-		return 0;
+		if (definition.containsKey(table)) {
+			sanitizeRecord(table, record);
+			Table<?> t = DSL.table(DSL.name(table));
+			LinkedHashMap<Field<?>, Object> columns = new LinkedHashMap<>();
+			for (String key : record.keySet()) {
+				columns.put(DSL.field(key), record.get(key));
+			}
+			Field<Object> pk = DSL.field(definition.get(table).getPk());
+			return dsl.update(t).set(columns).where(pk.eq(id)).execute();
+		}
+		return null;
 	}
 
 	@Override
 	public Integer delete(String table, String id) {
-		return 0;
+		if (definition.containsKey(table)) {
+			Table<?> t = DSL.table(DSL.name(table));
+			Field<Object> pk = DSL.field(definition.get(table).getPk());
+			return dsl.deleteFrom(t).where(pk.eq(id)).execute();
+		}
+		return null;
 	}
 
 	@Override
 	public ListResponse list(String table) {
+		if (definition.containsKey(table)) {
+			Table<?> t = DSL.table(DSL.name(table));
+			ArrayList<Record> records = new ArrayList<>();
+			for (org.jooq.Record record : dsl.selectFrom(t).fetch()) {
+				records.add(Record.valueOf(record));
+			}
+			return new ListResponse(records.toArray(new Record[records.size()]));
+		}
 		return null;
 	}
 
 	@Override
 	public boolean updateDefinition() {
-		return false;
+		ObjectMapper mapper = new ObjectMapper();
+		ClassPathResource resource = new ClassPathResource("columns.json");
+		boolean result = true;
+		try {
+			definition = mapper.readValue(resource.getInputStream(), DatabaseDefinition.class);
+		} catch (IOException e) {
+			result = false;
+		}
+		return result;
 	}
 
 }

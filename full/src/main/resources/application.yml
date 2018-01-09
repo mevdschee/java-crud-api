@@ -3,4 +3,12 @@ server:
   contextPath: /
 
 driver:
-  name: memory
+  name: jooq
+
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/php-crud-api
+    username: php-crud-api
+    password: php-crud-api
+
+spring.jooq.sql-dialect: MYSQL

@@ -32,7 +32,7 @@ public class CrudApiTestClient {
 		ListResponse users = restTemplate.getForObject(REST_SERVICE_URI + "/users", ListResponse.class);
 
 		if (users != null) {
-			for (Record user : users.records) {
+			for (Record user : users.getRecords()) {
 				System.out.println(user);
 			}
 		} else {
