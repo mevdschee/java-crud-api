@@ -25,51 +25,32 @@ public class TableDefinition extends LinkedHashMap<String, ColumnDefinition> {
 
 	private static Field<?> findPrimaryKey(Table<?> table) {
 		UniqueKey<?> pk = table.getPrimaryKey();
-		if (pk == null) {
-			// pk not found
-			return null;
+		if (pk != null) {
+			Field<?>[] pks = pk.getFieldsArray();
+			if (pks.length == 1) {
+				return pks[0];
+			}
 		}
-		Field<?>[] pks = pk.getFieldsArray();
-		if (pks.length > 1) {
-			// multiple primary key error
-			return null;
-		}
-		if (pks.length == 0) {
-			// pk not found
-			return null;
-		}
-		return pks[0];
+		return null;
 	}
 
 	private static Field<?> findForeignKeyField(ForeignKey<?, ?> fk) {
 		Field<?>[] fks = fk.getFieldsArray();
-		if (fks.length > 1) {
-			// multiple foreign key error
-			return null;
+		if (fks.length == 1) {
+			return fks[0];
 		}
-		if (fks.length == 0) {
-			// fk not found
-			return null;
-		}
-		return fks[0];
+		return null;
 	}
 
 	private static String findForeignKeyReference(ForeignKey<?, ?> fk) {
 		UniqueKey<?> pk = fk.getKey();
-		if (pk == null) {
-			// pk not found
-			return null;
+		if (pk != null) {
+			Field<?>[] pks = pk.getFieldsArray();
+			if (pks.length == 1) {
+				return pk.getTable().getName() + "." + pks[0].getName();
+			}
 		}
-		Field<?>[] pks = pk.getFieldsArray();
-		if (pks.length > 1) {
-			// multiple primary key error
-			return null;
-		}
-		if (pks.length == 0) {
-			// pk not found
-			return null;
-		}
-		return pk.getTable().getName() + "." + pks[0].getName();
+		return null;
 	}
 
 	public static TableDefinition fromValue(Table<?> table) {
