@@ -2,7 +2,6 @@ package com.tqdev.crudapi.service;
 
 import java.util.LinkedHashMap;
 
-import org.jooq.DSLContext;
 import org.jooq.Field;
 import org.jooq.Table;
 import org.jooq.UniqueKey;
@@ -41,7 +40,7 @@ public class TableDefinition extends LinkedHashMap<String, ColumnDefinition> {
 		return pks[0];
 	}
 
-	public static TableDefinition fromValue(DSLContext dsl, Table<?> table) {
+	public static TableDefinition fromValue(Table<?> table) {
 		TableDefinition definition = new TableDefinition();
 		for (Field<?> field : table.fields()) {
 			definition.put(field.getName(), ColumnDefinition.fromValue(field));
@@ -50,6 +49,7 @@ public class TableDefinition extends LinkedHashMap<String, ColumnDefinition> {
 		if (pk != null) {
 			definition.get(pk.getName()).setPk(true);
 		}
+		// add fk values
 		return definition;
 	}
 }

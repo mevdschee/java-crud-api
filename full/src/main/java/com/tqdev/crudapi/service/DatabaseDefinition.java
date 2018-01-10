@@ -53,7 +53,7 @@ public class DatabaseDefinition extends HashMap<String, TableDefinition> {
 				// table not in current catalog or schema
 				continue;
 			}
-			definition.put(table.getName(), TableDefinition.fromValue(dsl, table));
+			definition.put(table.getName(), TableDefinition.fromValue(table));
 		}
 		return definition;
 	}
