@@ -1,6 +1,5 @@
 package com.tqdev.crudapi.service;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 
@@ -8,9 +7,6 @@ import org.jooq.DSLContext;
 import org.jooq.Field;
 import org.jooq.Table;
 import org.jooq.impl.DSL;
-import org.springframework.core.io.ClassPathResource;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class JooqCrudApiService implements CrudApiService {
 
@@ -133,15 +129,12 @@ public class JooqCrudApiService implements CrudApiService {
 
 	@Override
 	public boolean updateDefinition() {
-		ObjectMapper mapper = new ObjectMapper();
-		ClassPathResource resource = new ClassPathResource("columns.json");
-		boolean result = true;
-		try {
-			definition = mapper.readValue(resource.getInputStream(), DatabaseDefinition.class);
-		} catch (IOException e) {
-			result = false;
+		DatabaseDefinition definition = DatabaseDefinition.fromValue(dsl);
+		if (definition != null) {
+			this.definition = definition;
+			return true;
 		}
-		return result;
+		return false;
 	}
 
 }

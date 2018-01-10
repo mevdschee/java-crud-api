@@ -1,5 +1,7 @@
 package com.tqdev.crudapi.service;
 
+import org.jooq.Field;
+
 public class ColumnDefinition {
 	private boolean pk;
 	private String type;
@@ -45,5 +47,14 @@ public class ColumnDefinition {
 
 	public void setFk(String fk) {
 		this.fk = fk;
+	}
+
+	public static ColumnDefinition fromValue(Field<?> field) {
+		ColumnDefinition definition = new ColumnDefinition();
+		definition.setPk(field.getDataType().identity());
+		definition.setType(field.getDataType().getSQLDataType().getTypeName());
+		definition.setLength(field.length().toString());
+		definition.setNullable(field.getDataType().nullable());
+		return definition;
 	}
 }

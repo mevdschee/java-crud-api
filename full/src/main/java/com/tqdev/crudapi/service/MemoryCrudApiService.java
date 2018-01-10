@@ -1,12 +1,7 @@
 package com.tqdev.crudapi.service;
 
-import java.io.IOException;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
-
-import org.springframework.core.io.ClassPathResource;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class MemoryCrudApiService implements CrudApiService {
 
@@ -134,15 +129,12 @@ public class MemoryCrudApiService implements CrudApiService {
 
 	@Override
 	public boolean updateDefinition() {
-		ObjectMapper mapper = new ObjectMapper();
-		ClassPathResource resource = new ClassPathResource(filename);
-		boolean result = true;
-		try {
-			applyDefinition(mapper.readValue(resource.getInputStream(), DatabaseDefinition.class));
-		} catch (IOException e) {
-			result = false;
+		DatabaseDefinition definition = DatabaseDefinition.fromValue(filename);
+		if (definition != null) {
+			applyDefinition(definition);
+			return true;
 		}
-		return result;
+		return false;
 	}
 
 	private void applyDefinition(DatabaseDefinition definition) {

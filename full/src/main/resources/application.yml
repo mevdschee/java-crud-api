@@ -6,9 +6,9 @@ driver:
   name: jooq
 
 spring:
+  jooq:
+    sql-dialect: MYSQL
   datasource:
     url: jdbc:mysql://localhost:3306/php-crud-api
     username: php-crud-api
     password: php-crud-api
-
-spring.jooq.sql-dialect: MYSQL
