@@ -32,6 +32,7 @@ public class CrudApiApp {
 			result = new MemoryCrudApiService("columns.json");
 			break;
 		case "jooq":
+			System.getProperties().setProperty("org.jooq.no-logo", "true");
 			result = new JooqCrudApiService(dsl);
 			break;
 		default:

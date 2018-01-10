@@ -3,13 +3,15 @@ package com.tqdev.crudapi.service;
 import org.jooq.Field;
 
 public class ColumnDefinition {
-	private boolean pk;
+	private boolean pk = false;
 	private String type;
-	private String length;
-	private boolean nullable;
-	private String fk;
+	private int length = -1;
+	private int precision = -1;
+	private int scale = -1;
+	private boolean nullable = false;
+	private String fk = null;
 
-	public Boolean getPk() {
+	public boolean getPk() {
 		return pk;
 	}
 
@@ -25,15 +27,31 @@ public class ColumnDefinition {
 		this.type = type;
 	}
 
-	public String getLength() {
+	public int getLength() {
 		return length;
 	}
 
-	public void setLength(String length) {
+	public void setLength(int length) {
 		this.length = length;
 	}
 
-	public Boolean getNullable() {
+	public int getPrecision() {
+		return precision;
+	}
+
+	public void setPrecision(int precision) {
+		this.precision = precision;
+	}
+
+	public int getScale() {
+		return scale;
+	}
+
+	public void setScale(int scale) {
+		this.scale = scale;
+	}
+
+	public boolean getNullable() {
 		return nullable;
 	}
 
@@ -53,8 +71,17 @@ public class ColumnDefinition {
 		ColumnDefinition definition = new ColumnDefinition();
 		definition.setPk(field.getDataType().identity());
 		definition.setType(field.getDataType().getSQLDataType().getTypeName());
-		definition.setLength(String.valueOf(field.getDataType().length()));
+		if (field.getDataType().hasLength()) {
+			definition.setLength(field.getDataType().length());
+		}
+		if (field.getDataType().hasPrecision()) {
+			definition.setPrecision(field.getDataType().precision());
+		}
+		if (field.getDataType().hasScale()) {
+			definition.setScale(field.getDataType().scale());
+		}
 		definition.setNullable(field.getDataType().nullable());
 		return definition;
 	}
+
 }

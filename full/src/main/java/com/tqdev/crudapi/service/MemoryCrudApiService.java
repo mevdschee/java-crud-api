@@ -1,10 +1,14 @@
 package com.tqdev.crudapi.service;
 
+import java.math.MathContext;
+import java.math.RoundingMode;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
+
+import org.apache.tomcat.util.codec.binary.Base64;
 
 public class MemoryCrudApiService implements CrudApiService {
 
@@ -30,18 +34,32 @@ public class MemoryCrudApiService implements CrudApiService {
 		case "VARCHAR":
 		case "CHAR":
 		case "LONGVARCHAR":
-		case "VARBINARY":
-		case "BINARY":
-		case "CLOB":
-		case "BLOB":
 		case "STRING": /* non-JDBC type, for compatibility */
+		case "TINYTEXT": /* non-JDBC type, for compatibility */
 		case "TEXT": /* non-JDBC type, for compatibility */
+		case "MEDIUMTEXT": /* non-JDBC type, for compatibility */
+		case "LONGTEXT": /* non-JDBC type, for compatibility */
 			if (value == null) {
 				return new String("");
 			} else {
 				return String.valueOf(value);
 			}
+		case "VARBINARY":
+		case "BIN": /* non-JDBC type, for compatibility */
+		case "BINARY":
+		case "CLOB":
+		case "TINYBLOB": /* non-JDBC type, for compatibility */
+		case "BLOB":
+		case "MEDIUMBLOB": /* non-JDBC type, for compatibility */
+		case "LONGBLOB": /* non-JDBC type, for compatibility */
+			if (value == null) {
+				return new String("");
+			} else {
+				return Base64.encodeBase64String(Base64.decodeBase64(String.valueOf(value)));
+			}
 		case "BIT":
+		case "BOOL": /* non-JDBC type, for compatibility */
+		case "BOOLEAN": /* non-JDBC type, for compatibility */
 			if (value == null) {
 				return new Boolean(false);
 			} else if (value instanceof Boolean) {
@@ -57,7 +75,16 @@ public class MemoryCrudApiService implements CrudApiService {
 			if (value == null) {
 				return new String("0");
 			} else {
-				return new java.math.BigDecimal(value.toString()).toPlainString();
+				java.math.BigDecimal n;
+				if (column.getPrecision() < 0) {
+					n = new java.math.BigDecimal(value.toString());
+				} else {
+					n = new java.math.BigDecimal(value.toString(),
+							new MathContext(column.getPrecision(), RoundingMode.HALF_UP));
+				}
+				if (column.getPrecision() >= 0) {
+					n = n.setScale(column.getScale(), RoundingMode.HALF_UP);
+				}
 			}
 		case "BYTE": /* non-JDBC type, for compatibility */
 		case "TINYINT":
@@ -74,6 +101,7 @@ public class MemoryCrudApiService implements CrudApiService {
 		case "REAL":
 		case "FLOAT":
 		case "DOUBLE":
+		case "NUMBER": /* non-JDBC type, for compatibility */
 			if (value == null) {
 				return new Double(0);
 			} else {
@@ -114,6 +142,8 @@ public class MemoryCrudApiService implements CrudApiService {
 		case "ARRAY":
 		case "REF":
 		case "STRUCT":
+		case "XML": /* non-JDBC type, for compatibility */
+		case "OBJECT": /* non-JDBC type, for compatibility */
 		case "JSON": /* non-JDBC type, for compatibility */
 		case "GEOMETRY": /* non-JDBC type, for compatibility */
 		default:

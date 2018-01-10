@@ -1,19 +1,19 @@
 {
 	"categories":{
 		"id":{"type":"integer","pk":true},
-		"name":{"type":"string","length":"255"},
-		"icon":{"type":"binary","length":"large","nullable":true}
+		"name":{"type":"string","length":255},
+		"icon":{"type":"binary","nullable":true}
 	},
 	"comments":{
 		"id":{"type":"integer","pk":true},
 		"post_id":{"type":"integer","fk":"posts.id"},
-		"message":{"type":"string","length":"255"}
+		"message":{"type":"string","length":255}
 	},
 	"posts":{
 		"id":{"type":"integer","pk":true},
 		"user_id":{"type":"integer","fk":"users.id"},
 		"category_id":{"type":"integer","fk":"categories.id"},
-		"content":{"type":"string","length":"255"}
+		"content":{"type":"string","length":255}
 	},
 	"post_tags":{
 		"id":{"type":"integer","pk":true},
@@ -22,29 +22,29 @@
 	},
 	"tags":{
 		"id":{"type":"integer","pk":true},
-		"name":{"type":"string","length":"255"}
+		"name":{"type":"string","length":255}
 	},
 	"users":{
 		"id":{"type":"integer","pk":true},
-		"username":{"type":"string","length":"255"},
-		"password":{"type":"string","length":"255"},
+		"username":{"type":"string","length":255},
+		"password":{"type":"string","length":255},
 		"location":{"type":"geometry","nullable":true}
 	},
 	"countries":{
 		"id":{"type":"integer","pk":true},
-		"name":{"type":"string","length":"255"},
+		"name":{"type":"string","length":255},
 		"shape":{"type":"geometry"}
 	},
 	"events":{
 		"id":{"type":"integer","pk":true},
-		"name":{"type":"string","length":"255"},
+		"name":{"type":"string","length":255},
 		"datetime":{"type":"datetime"},
 		"visitors":{"type":"integer"}
 	},
 	"products":{
 		"id":{"type":"integer","pk":true},
-		"name":{"type":"string","length":"255"},
-		"price":{"type":"decimal","length":"10,2"},
+		"name":{"type":"string","length":255},
+		"price":{"type":"decimal","precision":10,"scale":2},
 		"properties":{"type":"json"},
 		"created_at":{"type":"datetime"},
 		"deleted_at":{"type":"datetime","nullable":true}
