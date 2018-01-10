@@ -54,7 +54,7 @@ public class JooqCrudApiService implements CrudApiService {
 	}
 
 	@Override
-	public Record read(String table, String id) {
+	public Record read(String table, String id, Params params) {
 		if (definition.containsKey(table)) {
 			Table<?> t = DSL.table(DSL.name(table));
 			ArrayList<Field<?>> columns = new ArrayList<>();
@@ -93,11 +93,15 @@ public class JooqCrudApiService implements CrudApiService {
 	}
 
 	@Override
-	public ListResponse list(String table) {
+	public ListResponse list(String table, Params params) {
 		if (definition.containsKey(table)) {
 			Table<?> t = DSL.table(DSL.name(table));
+			ArrayList<Field<?>> columns = new ArrayList<>();
+			for (String key : definition.get(table).keySet()) {
+				columns.add(DSL.field(key));
+			}
 			ArrayList<Record> records = new ArrayList<>();
-			for (org.jooq.Record record : dsl.selectFrom(t).fetch()) {
+			for (org.jooq.Record record : dsl.select(columns).from(t).fetch()) {
 				records.add(Record.valueOf(record));
 			}
 			return new ListResponse(records.toArray(new Record[records.size()]));
