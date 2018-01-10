@@ -53,7 +53,7 @@ public class ColumnDefinition {
 		ColumnDefinition definition = new ColumnDefinition();
 		definition.setPk(field.getDataType().identity());
 		definition.setType(field.getDataType().getSQLDataType().getTypeName());
-		definition.setLength(field.length().toString());
+		definition.setLength(String.valueOf(field.getDataType().length()));
 		definition.setNullable(field.getDataType().nullable());
 		return definition;
 	}
