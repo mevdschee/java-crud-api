@@ -19,32 +19,10 @@ public class JooqCrudApiService implements CrudApiService {
 		updateDefinition();
 	}
 
-	private Object convertType(ColumnDefinition column, Object value) {
-		if (value == null) {
-			return null;
-		}
-		switch (column.getType()) {
-		case "string":
-			if (!(value instanceof String)) {
-				return String.valueOf(value);
-			}
-			break;
-		case "integer":
-			if (value instanceof String) {
-				return Integer.parseInt((String) value);
-			}
-			break;
-		}
-		return value;
-	}
-
 	private void sanitizeRecord(String table, Record record) {
 		for (String key : record.keySet()) {
 			if (!definition.get(table).containsKey(key)) {
 				record.remove(key);
-			} else {
-				ColumnDefinition column = definition.get(table).get(key);
-				record.put(key, convertType(column, record.get(key)));
 			}
 		}
 		for (String key : definition.get(table).keySet()) {

@@ -1,5 +1,8 @@
 package com.tqdev.crudapi.service;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -18,45 +21,104 @@ public class MemoryCrudApiService implements CrudApiService {
 		updateDefinition();
 	}
 
-	private Object getDefaultValue(ColumnDefinition column) {
-		if (column.getNullable() == true) {
+	// see: https://www.tutorialspoint.com/jdbc/jdbc-data-types.htm
+	private Object convertType(ColumnDefinition column, Object value) {
+		if (value == null && column.getNullable() == true) {
 			return null;
 		}
-		switch (column.getType()) {
-		case "string":
-			return new String("");
-		case "integer":
-			return new Integer(0);
-		case "datetime":
-			return new String("1970-01-01T00:00:00Z");
-		case "boolean":
-			return new Boolean(false);
-		case "decimal":
-			return new String("0");
-		}
-		return new String("");
-	}
-
-	private Object convertType(ColumnDefinition column, Object value) {
-		if (value == null) {
-			if (column.getNullable() == true) {
-				return null;
-			}
-			return getDefaultValue(column);
-		}
-		switch (column.getType()) {
-		case "string":
-			if (!(value instanceof String)) {
+		switch (column.getType().toUpperCase()) {
+		case "VARCHAR":
+		case "CHAR":
+		case "LONGVARCHAR":
+		case "VARBINARY":
+		case "BINARY":
+		case "CLOB":
+		case "BLOB":
+		case "STRING": /* non-JDBC type, for compatibility */
+		case "TEXT": /* non-JDBC type, for compatibility */
+			if (value == null) {
+				return new String("");
+			} else {
 				return String.valueOf(value);
 			}
-			break;
-		case "integer":
-			if (value instanceof String) {
-				return Integer.parseInt((String) value);
+		case "BIT":
+			if (value == null) {
+				return new Boolean(false);
+			} else if (value instanceof Boolean) {
+				return value;
+			} else if (value instanceof Number) {
+				return (Integer) value > 0;
+			} else if (value instanceof String) {
+				char c = value.toString().toLowerCase().charAt(0);
+				return c == '1' || c == 't';
 			}
-			break;
+		case "NUMERIC":
+		case "DECIMAL": /* non-JDBC type, for compatibility */
+			if (value == null) {
+				return new String("0");
+			} else {
+				return new java.math.BigDecimal(value.toString()).toPlainString();
+			}
+		case "BYTE": /* non-JDBC type, for compatibility */
+		case "TINYINT":
+		case "SMALLINT":
+		case "INTEGER":
+		case "INT": /* non-JDBC type, for compatibility */
+		case "BIGINT":
+		case "LONG": /* non-JDBC type, for compatibility */
+			if (value == null) {
+				return new Long(0);
+			} else {
+				return Long.parseLong(value.toString());
+			}
+		case "REAL":
+		case "FLOAT":
+		case "DOUBLE":
+			if (value == null) {
+				return new Double(0);
+			} else {
+				return Double.parseDouble(value.toString());
+			}
+		case "DATE":
+			SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+			if (value == null) {
+				return dateFormat.format(new Date(0));
+			}
+			if (value instanceof Number) {
+				return dateFormat.format(new Date((Long) value));
+			} else {
+				try {
+					Date date = dateFormat.parse(value.toString());
+					return dateFormat.format(date);
+				} catch (ParseException e) {
+					return dateFormat.format(new Date(0));
+				}
+			}
+		case "TIME":
+		case "TIMESTAMP":
+		case "DATETIME": /* non-JDBC type, for compatibility */
+			SimpleDateFormat timeFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+			if (value == null) {
+				return timeFormat.format(new Date(0));
+			}
+			if (value instanceof Number) {
+				return timeFormat.format(new Date((Long) value));
+			} else {
+				try {
+					Date date = timeFormat.parse(value.toString());
+					return timeFormat.format(date);
+				} catch (ParseException e) {
+					return timeFormat.format(new Date(0));
+				}
+			}
+		case "ARRAY":
+		case "REF":
+		case "STRUCT":
+		case "JSON": /* non-JDBC type, for compatibility */
+		case "GEOMETRY": /* non-JDBC type, for compatibility */
+		default:
+			throw new UnsupportedOperationException("Type \"" + column.getType() + "\" is not supported.");
 		}
-		return value;
 	}
 
 	private void sanitizeRecord(String table, String id, Record record) {
@@ -71,7 +133,7 @@ public class MemoryCrudApiService implements CrudApiService {
 		for (String key : definition.get(table).keySet()) {
 			ColumnDefinition column = definition.get(table).get(key);
 			if (!record.containsKey(key)) {
-				record.put(key, getDefaultValue(column));
+				record.put(key, convertType(column, null));
 			}
 			if (definition.get(table).get(key).getPk() == true) {
 				record.put(key, convertType(column, id));
