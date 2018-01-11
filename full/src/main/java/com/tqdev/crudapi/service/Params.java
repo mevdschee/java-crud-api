@@ -6,6 +6,10 @@ import org.springframework.util.LinkedMultiValueMap;
 
 public class Params extends LinkedMultiValueMap<String, List<String>> {
 
+	public Params(LinkedMultiValueMap<String, List<String>> params) {
+		super(params);
+	}
+
 	/**
 	 * 
 	 */

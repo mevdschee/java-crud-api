@@ -1,12 +1,14 @@
 package com.tqdev.crudapi.controller;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -30,9 +32,10 @@ public class CrudApiController {
 	CrudApiService service;
 
 	@RequestMapping(value = "/{table}", method = RequestMethod.GET)
-	public ResponseEntity<?> list(@PathVariable("table") String table, @RequestParam Params params) {
+	public ResponseEntity<?> list(@PathVariable("table") String table,
+			@RequestParam LinkedMultiValueMap<String, List<String>> params) {
 		logger.info("Listing table with name {} and parameters {}", table, params);
-		ListResponse response = service.list(table, params);
+		ListResponse response = service.list(table, new Params(params));
 		if (response == null) {
 			return new ResponseEntity<>(new Error("table"), HttpStatus.NOT_FOUND);
 		}
@@ -41,16 +44,16 @@ public class CrudApiController {
 
 	@RequestMapping(value = "/{table}/{id}", method = RequestMethod.GET)
 	public ResponseEntity<?> read(@PathVariable("table") String table, @PathVariable("id") String id,
-			@RequestParam Params params) {
+			@RequestParam LinkedMultiValueMap<String, List<String>> params) {
 		logger.info("Reading record from {} with id {} and parameters {}", table, id, params);
 		if (id.indexOf(',') >= 0) {
 			ArrayList<Object> result = new ArrayList<>();
 			for (String s : id.split(",")) {
-				result.add(service.read(table, s, params));
+				result.add(service.read(table, s, new Params(params)));
 			}
 			return new ResponseEntity<>(result, HttpStatus.OK);
 		} else {
-			Object response = service.read(table, id, params);
+			Object response = service.read(table, id, new Params(params));
 			if (response == null) {
 				return new ResponseEntity<>(new Error("object"), HttpStatus.NOT_FOUND);
 			}
