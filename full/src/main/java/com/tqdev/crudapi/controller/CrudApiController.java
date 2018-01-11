@@ -62,16 +62,17 @@ public class CrudApiController {
 	}
 
 	@RequestMapping(value = "/{table}", method = RequestMethod.POST)
-	public ResponseEntity<?> create(@PathVariable("table") String table, @RequestBody Object record) {
+	public ResponseEntity<?> create(@PathVariable("table") String table, @RequestBody Object record,
+			@RequestParam LinkedMultiValueMap<String, List<String>> params) {
 		logger.info("Creating record in {} with properties {}", table, record);
 		if (record instanceof ArrayList<?>) {
 			ArrayList<Object> result = new ArrayList<>();
 			for (Object o : (ArrayList<?>) record) {
-				result.add(service.create(table, Record.valueOf(o)));
+				result.add(service.create(table, Record.valueOf(o), new Params(params)));
 			}
 			return new ResponseEntity<>(result, HttpStatus.OK);
 		} else {
-			String response = service.create(table, Record.valueOf(record));
+			String response = service.create(table, Record.valueOf(record), new Params(params));
 			if (response == null) {
 				return new ResponseEntity<>(new Error("input"), HttpStatus.NOT_FOUND);
 			}
@@ -81,7 +82,7 @@ public class CrudApiController {
 
 	@RequestMapping(value = "/{table}/{id}", method = RequestMethod.PUT)
 	public ResponseEntity<?> update(@PathVariable("table") String table, @PathVariable("id") String id,
-			@RequestBody Object record) {
+			@RequestBody Object record, @RequestParam LinkedMultiValueMap<String, List<String>> params) {
 		logger.info("Updating record in {} with id {} and properties {}", table, id, record);
 		if (id.indexOf(',') >= 0 && record instanceof ArrayList<?>) {
 			ArrayList<Object> result = new ArrayList<>();
@@ -91,11 +92,11 @@ public class CrudApiController {
 				return new ResponseEntity<>(new Error("subject"), HttpStatus.NOT_FOUND);
 			}
 			for (int i = 0; i < ids.length; i++) {
-				result.add(service.update(table, ids[i], Record.valueOf(records.get(i))));
+				result.add(service.update(table, ids[i], Record.valueOf(records.get(i)), new Params(params)));
 			}
 			return new ResponseEntity<>(result, HttpStatus.OK);
 		} else {
-			Integer response = service.update(table, id, Record.valueOf(record));
+			Integer response = service.update(table, id, Record.valueOf(record), new Params(params));
 			if (response == null) {
 				return new ResponseEntity<>(new Error("subject"), HttpStatus.NOT_FOUND);
 			}
@@ -104,16 +105,17 @@ public class CrudApiController {
 	}
 
 	@RequestMapping(value = "/{table}/{id}", method = RequestMethod.DELETE)
-	public ResponseEntity<?> delete(@PathVariable("table") String table, @PathVariable("id") String id) {
+	public ResponseEntity<?> delete(@PathVariable("table") String table, @PathVariable("id") String id,
+			@RequestParam LinkedMultiValueMap<String, List<String>> params) {
 		logger.info("Deleting record from {} with id {}", table, id);
 		if (id.indexOf(',') >= 0) {
 			ArrayList<Object> result = new ArrayList<>();
 			for (String s : id.split(",")) {
-				result.add(service.delete(table, s));
+				result.add(service.delete(table, s, new Params(params)));
 			}
 			return new ResponseEntity<>(result, HttpStatus.OK);
 		} else {
-			Integer response = service.delete(table, id);
+			Integer response = service.delete(table, id, new Params(params));
 			if (response == null) {
 				return new ResponseEntity<>(new Error("object"), HttpStatus.NOT_FOUND);
 			}

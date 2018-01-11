@@ -10,6 +10,7 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tqdev.crudapi.service.CrudApiService;
+import com.tqdev.crudapi.service.Params;
 import com.tqdev.crudapi.service.Record;
 
 public class DatabaseRecords extends HashMap<String, ArrayList<Record>> {
@@ -29,7 +30,7 @@ public class DatabaseRecords extends HashMap<String, ArrayList<Record>> {
 	public void create(CrudApiService service) {
 		for (String table : keySet()) {
 			for (Record record : get(table)) {
-				service.create(table, record);
+				service.create(table, record, new Params());
 			}
 		}
 	}

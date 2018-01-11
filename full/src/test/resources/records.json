@@ -4,10 +4,10 @@
 		{"id":2, "name":"article", "icon":null}
 	],
 	"comments":[
-		{"id":1, "post_id":1, "name":"great"},
-		{"id":2, "post_id":1, "name":"fantastic"},
-		{"id":3, "post_id":2, "name":"thank you"},
-		{"id":4, "post_id":2, "name":"awesome"}
+		{"id":1, "post_id":1, "message":"great"},
+		{"id":2, "post_id":1, "message":"fantastic"},
+		{"id":3, "post_id":2, "message":"thank you"},
+		{"id":4, "post_id":2, "message":"awesome"}
 	],
 	"posts":[
 		{"id":1, "user_id":1, "category_id": 1, "content":"blog started"},

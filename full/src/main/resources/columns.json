@@ -28,12 +28,12 @@
 		"id":{"type":"integer","pk":true},
 		"username":{"type":"string","length":255},
 		"password":{"type":"string","length":255},
-		"location":{"type":"geometry","nullable":true}
+		"location":{"type":"string","nullable":true}
 	},
 	"countries":{
 		"id":{"type":"integer","pk":true},
 		"name":{"type":"string","length":255},
-		"shape":{"type":"geometry"}
+		"shape":{"type":"string"}
 	},
 	"events":{
 		"id":{"type":"integer","pk":true},
@@ -45,7 +45,7 @@
 		"id":{"type":"integer","pk":true},
 		"name":{"type":"string","length":255},
 		"price":{"type":"decimal","precision":10,"scale":2},
-		"properties":{"type":"json"},
+		"properties":{"type":"string"},
 		"created_at":{"type":"datetime"},
 		"deleted_at":{"type":"datetime","nullable":true}
 	},

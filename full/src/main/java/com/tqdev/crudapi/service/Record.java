@@ -97,6 +97,7 @@ public class Record extends LinkedHashMap<String, Object> {
 				if (column.getPrecision() >= 0) {
 					n = n.setScale(column.getScale(), RoundingMode.HALF_UP);
 				}
+				return n;
 			}
 		case "BYTE": /* non-JDBC type, for compatibility */
 		case "TINYINT":

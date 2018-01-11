@@ -33,7 +33,7 @@ public class JooqCrudApiService implements CrudApiService {
 	}
 
 	@Override
-	public String create(String table, Record record) {
+	public String create(String table, Record record, Params params) {
 		if (definition.containsKey(table)) {
 			sanitizeRecord(table, record);
 			Table<?> t = DSL.table(DSL.name(table));
@@ -68,7 +68,7 @@ public class JooqCrudApiService implements CrudApiService {
 	}
 
 	@Override
-	public Integer update(String table, String id, Record record) {
+	public Integer update(String table, String id, Record record, Params params) {
 		if (definition.containsKey(table)) {
 			sanitizeRecord(table, record);
 			Table<?> t = DSL.table(DSL.name(table));
@@ -83,7 +83,7 @@ public class JooqCrudApiService implements CrudApiService {
 	}
 
 	@Override
-	public Integer delete(String table, String id) {
+	public Integer delete(String table, String id, Params params) {
 		if (definition.containsKey(table)) {
 			Table<?> t = DSL.table(DSL.name(table));
 			Field<Object> pk = DSL.field(definition.get(table).getPk());

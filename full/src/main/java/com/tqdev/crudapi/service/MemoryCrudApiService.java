@@ -39,7 +39,7 @@ public class MemoryCrudApiService implements CrudApiService {
 	}
 
 	@Override
-	public String create(String table, Record record) {
+	public String create(String table, Record record, Params params) {
 		if (database.containsKey(table)) {
 			String id = String.valueOf(counters.get(table).incrementAndGet());
 			sanitizeRecord(table, id, record);
@@ -60,7 +60,7 @@ public class MemoryCrudApiService implements CrudApiService {
 	}
 
 	@Override
-	public Integer update(String table, String id, Record record) {
+	public Integer update(String table, String id, Record record, Params params) {
 		if (database.containsKey(table)) {
 			sanitizeRecord(table, id, record);
 			database.get(table).put(id, record);
@@ -70,7 +70,7 @@ public class MemoryCrudApiService implements CrudApiService {
 	}
 
 	@Override
-	public Integer delete(String table, String id) {
+	public Integer delete(String table, String id, Params params) {
 		if (database.containsKey(table) && database.get(table).containsKey(id)) {
 			database.get(table).remove(id);
 			return 1;
