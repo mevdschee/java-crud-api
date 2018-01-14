@@ -7,6 +7,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.tomcat.util.codec.binary.Base64;
 
@@ -24,6 +25,17 @@ public class Record extends LinkedHashMap<String, Object> {
 			Record result = new Record();
 			for (Object key : map.keySet()) {
 				result.put(key.toString(), map.get(key));
+			}
+			return result;
+		}
+		return null;
+	}
+
+	public Record copyColumns(Set<String> columns) {
+		if (columns != null) {
+			Record result = new Record();
+			for (String key : columns) {
+				result.put(key, get(key));
 			}
 			return result;
 		}

@@ -1,5 +1,6 @@
 package com.tqdev.crudapi.service;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.concurrent.ConcurrentHashMap;
@@ -11,12 +12,12 @@ public class MemoryCrudApiService extends BaseCrudApiService implements CrudApiS
 
 	private ConcurrentHashMap<String, ConcurrentHashMap<String, Record>> database = new ConcurrentHashMap<>();
 
-	private DatabaseDefinition definition = new DatabaseDefinition();
+	private String columnsFilename;
+	private String recordsFilename;
 
-	private String filename;
-
-	public MemoryCrudApiService(String filename) {
-		this.filename = filename;
+	public MemoryCrudApiService(String columnsFilename, String recordsFilename) {
+		this.columnsFilename = columnsFilename;
+		this.recordsFilename = recordsFilename;
 		updateDefinition();
 	}
 
@@ -55,7 +56,12 @@ public class MemoryCrudApiService extends BaseCrudApiService implements CrudApiS
 	public Record read(String table, String id, Params params) {
 		if (database.containsKey(table)) {
 			if (database.get(table).containsKey(id)) {
-				return Record.valueOf(database.get(table).get(id));
+				Record record = database.get(table).get(id);
+				LinkedHashSet<String> columns = new LinkedHashSet<>();
+				for (String key : columns(table, params)) {
+					columns.add(key);
+				}
+				return record.copyColumns(columns);
 			}
 		}
 		return null;
@@ -84,16 +90,12 @@ public class MemoryCrudApiService extends BaseCrudApiService implements CrudApiS
 	public ListResponse list(String table, Params params) {
 		if (database.containsKey(table)) {
 			LinkedHashSet<String> columns = new LinkedHashSet<>();
-			for (String key : columns(table, definition.get(table).keySet(), params)) {
+			for (String key : columns(table, params)) {
 				columns.add(key);
 			}
 			ArrayList<Record> records = new ArrayList<>();
 			for (Record record : database.get(table).values()) {
-				Record r = new Record();
-				for (String key : columns) {
-					r.put(key, record.get(key));
-				}
-				records.add(r);
+				records.add(record.copyColumns(columns));
 			}
 			return new ListResponse(records.toArray(new Record[] {}));
 		}
@@ -102,29 +104,27 @@ public class MemoryCrudApiService extends BaseCrudApiService implements CrudApiS
 
 	@Override
 	public boolean updateDefinition() {
-		DatabaseDefinition definition = DatabaseDefinition.fromValue(filename);
+		DatabaseDefinition definition = DatabaseDefinition.fromValue(columnsFilename);
 		if (definition != null) {
 			this.definition = definition;
-			applyDefinition();
-			return true;
+			counters = new ConcurrentHashMap<>();
+			database = new ConcurrentHashMap<>();
+			return applyDefinition();
 		}
 		return false;
 	}
 
-	private void applyDefinition() {
+	private boolean applyDefinition() {
 		for (String table : definition.keySet()) {
-			if (!database.containsKey(table)) {
-				ConcurrentHashMap<String, Record> records = new ConcurrentHashMap<>();
-				counters.put(table, new AtomicLong());
-				database.put(table, records);
-			}
+			counters.put(table, new AtomicLong());
+			database.put(table, new ConcurrentHashMap<String, Record>());
 		}
-		for (String table : database.keySet()) {
-			if (!definition.containsKey(table)) {
-				database.remove(table);
-				counters.remove(table);
-			}
+		try {
+			DatabaseRecords.fromFile(recordsFilename).create(this);
+		} catch (IOException e) {
+			return false;
 		}
+		return true;
 	}
 
 }

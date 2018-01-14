@@ -10,8 +10,6 @@ import org.jooq.impl.DSL;
 
 public class JooqCrudApiService extends BaseCrudApiService implements CrudApiService {
 
-	private DatabaseDefinition definition = new DatabaseDefinition();
-
 	private DSLContext dsl;
 
 	public JooqCrudApiService(DSLContext dsl) {
@@ -58,7 +56,7 @@ public class JooqCrudApiService extends BaseCrudApiService implements CrudApiSer
 		if (definition.containsKey(table)) {
 			Table<?> t = DSL.table(DSL.name(table));
 			ArrayList<Field<?>> columns = new ArrayList<>();
-			for (String key : columns(table, definition.get(table).keySet(), params)) {
+			for (String key : columns(table, params)) {
 				columns.add(DSL.field(key));
 			}
 			Field<Object> pk = DSL.field(definition.get(table).getPk());
@@ -97,7 +95,7 @@ public class JooqCrudApiService extends BaseCrudApiService implements CrudApiSer
 		if (definition.containsKey(table)) {
 			Table<?> t = DSL.table(DSL.name(table));
 			ArrayList<Field<?>> columns = new ArrayList<>();
-			for (String key : columns(table, definition.get(table).keySet(), params)) {
+			for (String key : columns(table, params)) {
 				columns.add(DSL.field(key));
 			}
 			ArrayList<Record> records = new ArrayList<>();

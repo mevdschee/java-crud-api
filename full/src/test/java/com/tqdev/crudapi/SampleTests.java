@@ -37,7 +37,6 @@ public class SampleTests {
 	@Before
 	public void setup() throws Exception {
 		mockMvc = webAppContextSetup(this.wac).build();
-		DatabaseRecords.fromFile("records.json").create(service);
 	}
 
 	@Test

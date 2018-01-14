@@ -29,7 +29,7 @@ public class CrudApiApp {
 		CrudApiService result;
 		switch (crudDriverName) {
 		case "memory":
-			result = new MemoryCrudApiService("columns.json");
+			result = new MemoryCrudApiService("columns.json", "records.json");
 			break;
 		case "jooq":
 			System.getProperties().setProperty("org.jooq.no-logo", "true");
