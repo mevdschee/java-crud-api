@@ -1,9 +1,11 @@
 package com.tqdev.crudapi.service;
 
+import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
 
-public class MemoryCrudApiService implements CrudApiService {
+public class MemoryCrudApiService extends BaseCrudApiService implements CrudApiService {
 
 	private ConcurrentHashMap<String, AtomicLong> counters = new ConcurrentHashMap<>();
 
@@ -81,7 +83,19 @@ public class MemoryCrudApiService implements CrudApiService {
 	@Override
 	public ListResponse list(String table, Params params) {
 		if (database.containsKey(table)) {
-			return new ListResponse(database.get(table).values().toArray(new Record[] {}));
+			LinkedHashSet<String> columns = new LinkedHashSet<>();
+			for (String key : columns(table, definition.get(table).keySet(), params)) {
+				columns.add(key);
+			}
+			ArrayList<Record> records = new ArrayList<>();
+			for (Record record : database.get(table).values()) {
+				Record r = new Record();
+				for (String key : columns) {
+					r.put(key, record.get(key));
+				}
+				records.add(r);
+			}
+			return new ListResponse(records.toArray(new Record[] {}));
 		}
 		return null;
 	}
@@ -90,13 +104,14 @@ public class MemoryCrudApiService implements CrudApiService {
 	public boolean updateDefinition() {
 		DatabaseDefinition definition = DatabaseDefinition.fromValue(filename);
 		if (definition != null) {
-			applyDefinition(definition);
+			this.definition = definition;
+			applyDefinition();
 			return true;
 		}
 		return false;
 	}
 
-	private void applyDefinition(DatabaseDefinition definition) {
+	private void applyDefinition() {
 		for (String table : definition.keySet()) {
 			if (!database.containsKey(table)) {
 				ConcurrentHashMap<String, Record> records = new ConcurrentHashMap<>();
@@ -104,7 +119,6 @@ public class MemoryCrudApiService implements CrudApiService {
 				database.put(table, records);
 			}
 		}
-		this.definition = definition;
 		for (String table : database.keySet()) {
 			if (!definition.containsKey(table)) {
 				database.remove(table);

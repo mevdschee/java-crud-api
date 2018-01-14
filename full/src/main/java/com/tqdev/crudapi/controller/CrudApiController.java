@@ -1,7 +1,6 @@
 package com.tqdev.crudapi.controller;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,7 +32,7 @@ public class CrudApiController {
 
 	@RequestMapping(value = "/{table}", method = RequestMethod.GET)
 	public ResponseEntity<?> list(@PathVariable("table") String table,
-			@RequestParam LinkedMultiValueMap<String, List<String>> params) {
+			@RequestParam LinkedMultiValueMap<String, String> params) {
 		logger.info("Listing table with name {} and parameters {}", table, params);
 		ListResponse response = service.list(table, new Params(params));
 		if (response == null) {
@@ -44,7 +43,7 @@ public class CrudApiController {
 
 	@RequestMapping(value = "/{table}/{id}", method = RequestMethod.GET)
 	public ResponseEntity<?> read(@PathVariable("table") String table, @PathVariable("id") String id,
-			@RequestParam LinkedMultiValueMap<String, List<String>> params) {
+			@RequestParam LinkedMultiValueMap<String, String> params) {
 		logger.info("Reading record from {} with id {} and parameters {}", table, id, params);
 		if (id.indexOf(',') >= 0) {
 			ArrayList<Object> result = new ArrayList<>();
@@ -63,7 +62,7 @@ public class CrudApiController {
 
 	@RequestMapping(value = "/{table}", method = RequestMethod.POST)
 	public ResponseEntity<?> create(@PathVariable("table") String table, @RequestBody Object record,
-			@RequestParam LinkedMultiValueMap<String, List<String>> params) {
+			@RequestParam LinkedMultiValueMap<String, String> params) {
 		logger.info("Creating record in {} with properties {}", table, record);
 		if (record instanceof ArrayList<?>) {
 			ArrayList<Object> result = new ArrayList<>();
@@ -82,7 +81,7 @@ public class CrudApiController {
 
 	@RequestMapping(value = "/{table}/{id}", method = RequestMethod.PUT)
 	public ResponseEntity<?> update(@PathVariable("table") String table, @PathVariable("id") String id,
-			@RequestBody Object record, @RequestParam LinkedMultiValueMap<String, List<String>> params) {
+			@RequestBody Object record, @RequestParam LinkedMultiValueMap<String, String> params) {
 		logger.info("Updating record in {} with id {} and properties {}", table, id, record);
 		if (id.indexOf(',') >= 0 && record instanceof ArrayList<?>) {
 			ArrayList<Object> result = new ArrayList<>();
@@ -106,7 +105,7 @@ public class CrudApiController {
 
 	@RequestMapping(value = "/{table}/{id}", method = RequestMethod.DELETE)
 	public ResponseEntity<?> delete(@PathVariable("table") String table, @PathVariable("id") String id,
-			@RequestParam LinkedMultiValueMap<String, List<String>> params) {
+			@RequestParam LinkedMultiValueMap<String, String> params) {
 		logger.info("Deleting record from {} with id {}", table, id);
 		if (id.indexOf(',') >= 0) {
 			ArrayList<Object> result = new ArrayList<>();

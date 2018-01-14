@@ -29,6 +29,9 @@ public class DatabaseRecords extends HashMap<String, ArrayList<Record>> {
 
 	public void create(CrudApiService service) {
 		for (String table : keySet()) {
+			if (service.list(table, new Params()).getRecords().length > 0) {
+				continue;
+			}
 			for (Record record : get(table)) {
 				service.create(table, record, new Params());
 			}

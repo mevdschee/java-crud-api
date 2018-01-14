@@ -8,7 +8,7 @@ import org.jooq.Field;
 import org.jooq.Table;
 import org.jooq.impl.DSL;
 
-public class JooqCrudApiService implements CrudApiService {
+public class JooqCrudApiService extends BaseCrudApiService implements CrudApiService {
 
 	private DatabaseDefinition definition = new DatabaseDefinition();
 
@@ -58,7 +58,7 @@ public class JooqCrudApiService implements CrudApiService {
 		if (definition.containsKey(table)) {
 			Table<?> t = DSL.table(DSL.name(table));
 			ArrayList<Field<?>> columns = new ArrayList<>();
-			for (String key : definition.get(table).keySet()) {
+			for (String key : columns(table, definition.get(table).keySet(), params)) {
 				columns.add(DSL.field(key));
 			}
 			Field<Object> pk = DSL.field(definition.get(table).getPk());
@@ -97,7 +97,7 @@ public class JooqCrudApiService implements CrudApiService {
 		if (definition.containsKey(table)) {
 			Table<?> t = DSL.table(DSL.name(table));
 			ArrayList<Field<?>> columns = new ArrayList<>();
-			for (String key : definition.get(table).keySet()) {
+			for (String key : columns(table, definition.get(table).keySet(), params)) {
 				columns.add(DSL.field(key));
 			}
 			ArrayList<Record> records = new ArrayList<>();

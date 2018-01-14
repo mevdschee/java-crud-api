@@ -3,7 +3,7 @@ server:
   contextPath: /
 
 driver:
-  name: jooq
+  name: memory
 
 spring:
   jooq:

@@ -44,7 +44,7 @@ public class SampleTests {
 	public void testListPosts() throws Exception {
 		mockMvc.perform(get("/data/posts").accept("application/json")).andExpect(status().isOk())
 				.andExpect(content().contentTypeCompatibleWith("application/json"))
-				.andExpect(jsonPath("$.records[*].id", hasItems("1", "2")))
+				.andExpect(jsonPath("$.records[*].id", hasItems(1, 2)))
 				.andExpect(jsonPath("$.records[*].content", hasItems("blog started", "It works!")));
 	}
 

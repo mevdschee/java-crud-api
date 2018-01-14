@@ -1,16 +1,14 @@
 package com.tqdev.crudapi.service;
 
-import java.util.List;
-
 import org.springframework.util.LinkedMultiValueMap;
 
-public class Params extends LinkedMultiValueMap<String, List<String>> {
+public class Params extends LinkedMultiValueMap<String, String> {
 
 	public Params() {
 		super();
 	}
 
-	public Params(LinkedMultiValueMap<String, List<String>> params) {
+	public Params(LinkedMultiValueMap<String, String> params) {
 		super(params);
 	}
 
