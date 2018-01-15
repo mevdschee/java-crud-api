@@ -1,5 +1,7 @@
 package com.tqdev.crudapi;
 
+import java.io.IOException;
+
 import org.jooq.DSLContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -8,6 +10,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.PropertySource;
 
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.tqdev.crudapi.service.CrudApiService;
 import com.tqdev.crudapi.service.JooqCrudApiService;
 import com.tqdev.crudapi.service.MemoryCrudApiService;
@@ -25,7 +29,7 @@ public class CrudApiApp {
 
 	@Bean
 	@Autowired
-	public CrudApiService crudApiService(DSLContext dsl) {
+	public CrudApiService crudApiService(DSLContext dsl) throws JsonParseException, JsonMappingException, IOException {
 		CrudApiService result;
 		switch (crudDriverName) {
 		case "memory":

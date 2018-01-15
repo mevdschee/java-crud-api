@@ -27,7 +27,11 @@ abstract class BaseCrudApiService implements CrudApiService {
 		return result;
 	}
 
-	public DatabaseRecords toDatabaseRecords() {
+	public DatabaseDefinition getDatabaseDefinition() {
+		return definition;
+	}
+
+	public DatabaseRecords getDatabaseRecords() {
 		DatabaseRecords db = new DatabaseRecords();
 		for (String table : definition.keySet()) {
 			ArrayList<Record> records = new ArrayList<>();

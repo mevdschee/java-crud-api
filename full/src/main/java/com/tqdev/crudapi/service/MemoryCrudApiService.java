@@ -6,6 +6,9 @@ import java.util.LinkedHashSet;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
 
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+
 public class MemoryCrudApiService extends BaseCrudApiService implements CrudApiService {
 
 	private ConcurrentHashMap<String, AtomicLong> counters = new ConcurrentHashMap<>();
@@ -15,7 +18,8 @@ public class MemoryCrudApiService extends BaseCrudApiService implements CrudApiS
 	private String columnsFilename;
 	private String recordsFilename;
 
-	public MemoryCrudApiService(String columnsFilename, String recordsFilename) {
+	public MemoryCrudApiService(String columnsFilename, String recordsFilename)
+			throws JsonParseException, JsonMappingException, IOException {
 		this.columnsFilename = columnsFilename;
 		this.recordsFilename = recordsFilename;
 		updateDefinition();
@@ -104,27 +108,24 @@ public class MemoryCrudApiService extends BaseCrudApiService implements CrudApiS
 
 	@Override
 	public boolean updateDefinition() {
-		DatabaseDefinition definition = DatabaseDefinition.fromValue(columnsFilename);
-		if (definition != null) {
-			this.definition = definition;
+		try {
+			this.definition = DatabaseDefinition.fromValue(columnsFilename);
 			counters = new ConcurrentHashMap<>();
 			database = new ConcurrentHashMap<>();
-			return applyDefinition();
+			applyDefinition();
+			return true;
+		} catch (IOException e) {
+			e.printStackTrace();
+			return false;
 		}
-		return false;
 	}
 
-	private boolean applyDefinition() {
+	private void applyDefinition() throws JsonParseException, JsonMappingException, IOException {
 		for (String table : definition.keySet()) {
 			counters.put(table, new AtomicLong());
 			database.put(table, new ConcurrentHashMap<String, Record>());
 		}
-		try {
-			DatabaseRecords.fromFile(recordsFilename).create(this);
-		} catch (IOException e) {
-			return false;
-		}
-		return true;
+		DatabaseRecords.fromFile(recordsFilename).create(this);
 	}
 
 }

@@ -2,6 +2,9 @@ package com.tqdev.crudapi.service;
 
 import org.jooq.Field;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+
+@JsonInclude(JsonInclude.Include.NON_DEFAULT)
 public class ColumnDefinition {
 	private boolean pk = false;
 	private String type;

@@ -4,6 +4,8 @@ public interface CrudApiService {
 
 	boolean updateDefinition();
 
+	// crud
+
 	String create(String table, Record record, Params params);
 
 	Record read(String table, String id, Params params);
@@ -13,4 +15,10 @@ public interface CrudApiService {
 	Integer delete(String table, String id, Params params);
 
 	ListResponse list(String table, Params params);
+
+	// meta
+
+	DatabaseDefinition getDatabaseDefinition();
+
+	DatabaseRecords getDatabaseRecords();
 }

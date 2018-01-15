@@ -9,6 +9,8 @@ import org.jooq.DSLContext;
 import org.jooq.Table;
 import org.springframework.core.io.ClassPathResource;
 
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class DatabaseDefinition extends HashMap<String, TableDefinition> {
@@ -58,15 +60,10 @@ public class DatabaseDefinition extends HashMap<String, TableDefinition> {
 		return definition;
 	}
 
-	public static DatabaseDefinition fromValue(String filename) {
-		DatabaseDefinition definition = null;
+	public static DatabaseDefinition fromValue(String filename)
+			throws JsonParseException, JsonMappingException, IOException {
 		ObjectMapper mapper = new ObjectMapper();
 		ClassPathResource resource = new ClassPathResource(filename);
-		try {
-			definition = mapper.readValue(resource.getInputStream(), DatabaseDefinition.class);
-		} catch (IOException e) {
-			definition = null;
-		}
-		return definition;
+		return mapper.readValue(resource.getInputStream(), DatabaseDefinition.class);
 	}
 }
