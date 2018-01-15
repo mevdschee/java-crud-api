@@ -66,7 +66,7 @@ public class MemoryCrudApiService extends BaseCrudApiService implements CrudApiS
 				for (String key : columns(table, params)) {
 					columns.add(key);
 				}
-				return record.copyColumns(columns);
+				return record.selectColumns(columns);
 			}
 		}
 		return null;
@@ -100,7 +100,7 @@ public class MemoryCrudApiService extends BaseCrudApiService implements CrudApiS
 			}
 			ArrayList<Record> records = new ArrayList<>();
 			for (MemoryRecord record : database.get(table).values()) {
-				records.add(record.copyColumns(columns));
+				records.add(record.selectColumns(columns));
 			}
 			return new ListResponse(records.toArray(new Record[] {}));
 		}
@@ -110,7 +110,7 @@ public class MemoryCrudApiService extends BaseCrudApiService implements CrudApiS
 	@Override
 	public boolean updateDefinition() {
 		try {
-			this.definition = DatabaseDefinition.fromValue(columnsFilename);
+			this.definition = DatabaseDefinition.fromFile(columnsFilename);
 			counters = new ConcurrentHashMap<>();
 			database = new ConcurrentHashMap<>();
 			applyDefinition();

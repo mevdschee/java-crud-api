@@ -51,7 +51,7 @@ public class JooqCrudApiService extends BaseCrudApiService implements CrudApiSer
 				columns.add(DSL.field(key));
 			}
 			Field<Object> pk = DSL.field(definition.get(table).getPk());
-			return Record.valueOf(dsl.select(columns).from(t).where(pk.eq(id)).fetchOne());
+			return Record.valueOf(dsl.select(columns).from(t).where(pk.eq(id)).fetchOne().intoMap());
 		}
 		return null;
 	}
@@ -91,7 +91,7 @@ public class JooqCrudApiService extends BaseCrudApiService implements CrudApiSer
 			}
 			ArrayList<Record> records = new ArrayList<>();
 			for (org.jooq.Record record : dsl.select(columns).from(t).fetch()) {
-				records.add(Record.valueOf(record));
+				records.add(Record.valueOf(record.intoMap()));
 			}
 			return new ListResponse(records.toArray(new Record[records.size()]));
 		}

@@ -13,7 +13,7 @@ import com.tqdev.crudapi.service.definition.ColumnDefinition;
 
 public class MemoryRecord extends Record {
 
-	public Record copyColumns(Set<String> columns) {
+	public Record selectColumns(Set<String> columns) {
 		if (columns != null) {
 			Record result = new Record();
 			for (String key : columns) {

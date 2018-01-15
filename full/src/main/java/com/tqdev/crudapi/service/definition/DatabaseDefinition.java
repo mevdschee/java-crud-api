@@ -60,7 +60,7 @@ public class DatabaseDefinition extends HashMap<String, TableDefinition> {
 		return definition;
 	}
 
-	public static DatabaseDefinition fromValue(String filename)
+	public static DatabaseDefinition fromFile(String filename)
 			throws JsonParseException, JsonMappingException, IOException {
 		ObjectMapper mapper = new ObjectMapper();
 		ClassPathResource resource = new ClassPathResource(filename);

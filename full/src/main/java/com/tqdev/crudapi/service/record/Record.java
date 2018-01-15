@@ -23,13 +23,6 @@ public class Record extends LinkedHashMap<String, Object> {
 		return null;
 	}
 
-	public static Record valueOf(org.jooq.Record record) {
-		if (record != null) {
-			return Record.valueOf(record.intoMap());
-		}
-		return null;
-	}
-
 	/**
 	 * 
 	 */
