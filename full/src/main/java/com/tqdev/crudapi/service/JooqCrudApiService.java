@@ -21,19 +21,6 @@ public class JooqCrudApiService extends BaseCrudApiService implements CrudApiSer
 		updateDefinition();
 	}
 
-	private void sanitizeRecord(String table, Record record) {
-		for (String key : record.keySet()) {
-			if (!definition.get(table).containsKey(key)) {
-				record.remove(key);
-			}
-		}
-		for (String key : definition.get(table).keySet()) {
-			if (definition.get(table).get(key).getPk() == true) {
-				record.remove(key);
-			}
-		}
-	}
-
 	@Override
 	public String create(String table, Record record, Params params) {
 		if (definition.containsKey(table)) {

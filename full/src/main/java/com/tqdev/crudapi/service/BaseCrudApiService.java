@@ -13,6 +13,19 @@ abstract class BaseCrudApiService implements CrudApiService {
 
 	protected DatabaseDefinition definition = new DatabaseDefinition();
 
+	protected void sanitizeRecord(String table, Record record) {
+		for (String key : record.keySet()) {
+			if (!definition.get(table).containsKey(key)) {
+				record.remove(key);
+			}
+		}
+		for (String key : definition.get(table).keySet()) {
+			if (definition.get(table).get(key).getPk() == true) {
+				record.remove(key);
+			}
+		}
+	}
+
 	protected Set<String> columns(String table, Params params) {
 		if (!params.containsKey("columns")) {
 			return definition.get(table).keySet();
@@ -31,10 +44,12 @@ abstract class BaseCrudApiService implements CrudApiService {
 		return result;
 	}
 
+	@Override
 	public DatabaseDefinition getDatabaseDefinition() {
 		return definition;
 	}
 
+	@Override
 	public DatabaseRecords getDatabaseRecords() {
 		DatabaseRecords db = new DatabaseRecords();
 		for (String table : definition.keySet()) {
