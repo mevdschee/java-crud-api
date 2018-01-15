@@ -50,10 +50,18 @@ public class SampleTests {
 	}
 
 	@Test
-	public void testUserRead() throws Exception {
+	public void testReadUser() throws Exception {
 		mockMvc.perform(get("/data/users/1").accept("application/json")).andExpect(status().isOk())
 				.andExpect(content().contentTypeCompatibleWith("application/json"))
 				.andExpect(jsonPath("$.username").value("user1"));
+	}
+
+	@Test
+	public void testListSingleUser() throws Exception {
+		mockMvc.perform(get("/data/users?filter=id,eq,1").accept("application/json")).andExpect(status().isOk())
+				.andExpect(content().contentTypeCompatibleWith("application/json"))
+				.andExpect(jsonPath("$.records[*].id", hasSize(1)))
+				.andExpect(jsonPath("$.records[0].username").value("user1"));
 	}
 
 }

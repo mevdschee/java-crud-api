@@ -3,6 +3,7 @@ package com.tqdev.crudapi.service;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 
+import org.jooq.Condition;
 import org.jooq.DSLContext;
 import org.jooq.Field;
 import org.jooq.Table;
@@ -90,7 +91,7 @@ public class JooqCrudApiService extends BaseCrudApiService implements CrudApiSer
 				columns.add(DSL.field(key));
 			}
 			ArrayList<Record> records = new ArrayList<>();
-			for (org.jooq.Record record : dsl.select(columns).from(t).fetch()) {
+			for (org.jooq.Record record : dsl.select(columns).from(t).where(conditions(params)).fetch()) {
 				records.add(Record.valueOf(record.intoMap()));
 			}
 			return new ListResponse(records.toArray(new Record[records.size()]));
@@ -106,6 +107,83 @@ public class JooqCrudApiService extends BaseCrudApiService implements CrudApiSer
 			return true;
 		}
 		return false;
+	}
+
+	public ArrayList<Condition> conditions(Params params) {
+		ArrayList<Condition> conditions = new ArrayList<>();
+		if (params.containsKey("filter")) {
+			for (String key : params.get("filter")) {
+				String[] parts2;
+				String[] parts = key.split(",", 3);
+				if (parts.length >= 2) {
+					Condition condition = null;
+					String command = parts[1];
+					Boolean negate = false;
+					Boolean spatial = false;
+					if (command.length() > 2) {
+						if (command.charAt(0) == 'n') {
+							negate = true;
+							command = command.substring(1);
+						}
+						if (command.charAt(0) == 's') {
+							spatial = true;
+							command = command.substring(1);
+						}
+					}
+					if (parts.length == 3 || (parts.length == 2
+							&& (command.equals("ic") || command.equals("is") || command.equals("iv")))) {
+						if (spatial) {
+							// TODO:Implement spatial
+						} else {
+							switch (command) {
+							case "cs":
+								condition = DSL.field(parts[0]).contains(parts[2]);
+								break;
+							case "sw":
+								condition = DSL.field(parts[0]).startsWith(parts[2]);
+								break;
+							case "ew":
+								condition = DSL.field(parts[0]).endsWith(parts[2]);
+								break;
+							case "eq":
+								condition = DSL.field(parts[0]).eq(parts[2]);
+								break;
+							case "lt":
+								condition = DSL.field(parts[0]).lt(parts[2]);
+								break;
+							case "le":
+								condition = DSL.field(parts[0]).le(parts[2]);
+								break;
+							case "ge":
+								condition = DSL.field(parts[0]).ge(parts[2]);
+								break;
+							case "gt":
+								condition = DSL.field(parts[0]).gt(parts[2]);
+								break;
+							case "bt":
+								parts2 = parts[2].split(",", 2);
+								condition = DSL.field(parts[0]).between(parts2[0], parts2[1]);
+								break;
+							case "in":
+								parts2 = parts[2].split(",");
+								condition = DSL.field(parts[0]).in((Object[]) parts2);
+								break;
+							case "is":
+								condition = DSL.field(parts[0]).isNull();
+								break;
+							}
+						}
+					}
+					if (condition != null) {
+						if (negate) {
+							condition = condition.not();
+						}
+						conditions.add(condition);
+					}
+				}
+			}
+		}
+		return conditions;
 	}
 
 }
