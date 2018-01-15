@@ -8,6 +8,10 @@ import org.jooq.Field;
 import org.jooq.Table;
 import org.jooq.impl.DSL;
 
+import com.tqdev.crudapi.service.definition.DatabaseDefinition;
+import com.tqdev.crudapi.service.record.ListResponse;
+import com.tqdev.crudapi.service.record.Record;
+
 public class JooqCrudApiService extends BaseCrudApiService implements CrudApiService {
 
 	private DSLContext dsl;

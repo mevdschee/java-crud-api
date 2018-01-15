@@ -8,8 +8,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
-import com.tqdev.crudapi.service.ListResponse;
-import com.tqdev.crudapi.service.Record;
+import com.tqdev.crudapi.service.record.ListResponse;
+import com.tqdev.crudapi.service.record.Record;
 
 public class CrudApiTestClient {
 

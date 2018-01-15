@@ -1,5 +1,10 @@
 package com.tqdev.crudapi.service;
 
+import com.tqdev.crudapi.service.definition.DatabaseDefinition;
+import com.tqdev.crudapi.service.record.DatabaseRecords;
+import com.tqdev.crudapi.service.record.ListResponse;
+import com.tqdev.crudapi.service.record.Record;
+
 public interface CrudApiService {
 
 	boolean updateDefinition();

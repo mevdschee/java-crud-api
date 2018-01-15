@@ -1,4 +1,4 @@
-package com.tqdev.crudapi.service;
+package com.tqdev.crudapi.service.record;
 
 import java.math.MathContext;
 import java.math.RoundingMode;
@@ -10,6 +10,8 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.tomcat.util.codec.binary.Base64;
+
+import com.tqdev.crudapi.service.definition.ColumnDefinition;
 
 public class Record extends LinkedHashMap<String, Object> {
 

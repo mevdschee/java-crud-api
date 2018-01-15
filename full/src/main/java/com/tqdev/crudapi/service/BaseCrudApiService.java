@@ -5,6 +5,10 @@ import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+import com.tqdev.crudapi.service.definition.DatabaseDefinition;
+import com.tqdev.crudapi.service.record.DatabaseRecords;
+import com.tqdev.crudapi.service.record.Record;
+
 abstract class BaseCrudApiService implements CrudApiService {
 
 	protected DatabaseDefinition definition = new DatabaseDefinition();

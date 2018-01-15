@@ -17,9 +17,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.tqdev.crudapi.service.CrudApiService;
 import com.tqdev.crudapi.service.Error;
-import com.tqdev.crudapi.service.ListResponse;
 import com.tqdev.crudapi.service.Params;
-import com.tqdev.crudapi.service.Record;
+import com.tqdev.crudapi.service.record.ListResponse;
+import com.tqdev.crudapi.service.record.Record;
 
 @RestController
 @RequestMapping("/data")

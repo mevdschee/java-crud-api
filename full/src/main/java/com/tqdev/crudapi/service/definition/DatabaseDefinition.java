@@ -1,4 +1,4 @@
-package com.tqdev.crudapi.service;
+package com.tqdev.crudapi.service.definition;
 
 import java.io.IOException;
 import java.sql.Connection;
