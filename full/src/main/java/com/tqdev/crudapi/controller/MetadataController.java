@@ -28,7 +28,7 @@ public class MetadataController {
 
 	@RequestMapping(value = "/records", method = RequestMethod.GET)
 	public ResponseEntity<?> records() {
-		logger.info("Requesting columns meta data");
+		logger.info("Requesting records meta data");
 		return new ResponseEntity<>(service.getDatabaseRecords(), HttpStatus.OK);
 	}
 
