@@ -19,8 +19,6 @@ import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.context.WebApplicationContext;
 
-import com.tqdev.crudapi.service.CrudApiService;
-
 @RunWith(SpringJUnit4ClassRunner.class)
 @WebAppConfiguration
 @ContextConfiguration(classes = CrudApiApp.class, loader = SpringBootContextLoader.class)
@@ -28,9 +26,6 @@ public class SampleTests {
 
 	@Autowired
 	private WebApplicationContext wac;
-
-	@Autowired
-	CrudApiService service;
 
 	private MockMvc mockMvc;
 
