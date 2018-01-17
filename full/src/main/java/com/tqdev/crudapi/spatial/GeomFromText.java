@@ -8,22 +8,18 @@ import org.jooq.impl.CustomField;
 import org.jooq.impl.DSL;
 import org.jooq.impl.SQLDataType;
 
-//Create a CustomField implementation taking two arguments in its constructor
-class ToChar extends CustomField<String> {
+class GeomFromText extends CustomField<byte[]> {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
 
-	final Field<?> arg0;
-	final Field<?> arg1;
+	final Field<?> field;
 
-	ToChar(Field<?> arg0, Field<?> arg1) {
-		super("to_char", SQLDataType.VARCHAR);
-
-		this.arg0 = arg0;
-		this.arg1 = arg1;
+	GeomFromText(Field<?> field) {
+		super("st_geomfromtext", SQLDataType.BLOB);
+		this.field = field;
 	}
 
 	@Override
@@ -33,12 +29,12 @@ class ToChar extends CustomField<String> {
 
 	private QueryPart delegate(Configuration configuration) {
 		switch (configuration.dialect().family().getName()) {
-		case "ORACLE":
-			return DSL.field("TO_CHAR({0}, {1})", String.class, arg0, arg1);
-
+		case "MYSQL":
+			return DSL.field("ST_GeomFromText({0})", byte[].class, field);
+		case "MARIADB":
+			return DSL.field("ST_GeomFromText({0})", byte[].class, field);
 		case "SQLSERVER":
-			return DSL.field("CONVERT(VARCHAR(8), {0}, {1})", String.class, arg0, arg1);
-
+			return DSL.field("STGeomFromText({0}, {1})", byte[].class, field, DSL.val(0));
 		default:
 			throw new UnsupportedOperationException("Dialect not supported");
 		}
