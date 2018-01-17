@@ -12,6 +12,7 @@ import org.jooq.impl.DSL;
 import com.tqdev.crudapi.service.definition.DatabaseDefinition;
 import com.tqdev.crudapi.service.record.ListResponse;
 import com.tqdev.crudapi.service.record.Record;
+import com.tqdev.crudapi.spatial.GeometryConverter;
 
 public class JooqCrudApiService extends BaseCrudApiService implements CrudApiService {
 
@@ -30,7 +31,11 @@ public class JooqCrudApiService extends BaseCrudApiService implements CrudApiSer
 			ArrayList<Field<?>> columns = new ArrayList<>();
 			ArrayList<Object> values = new ArrayList<>();
 			for (String key : record.keySet()) {
-				columns.add(DSL.field(key));
+				if (definition.get(table).get(key).getType() == "geometry") {
+					columns.add(DSL.field(key, new GeometryConverter()));
+				} else {
+					columns.add(DSL.field(key));
+				}
 				values.add(record.get(key));
 			}
 			Field<?> pk = DSL.field(definition.get(table).getPk());
@@ -109,7 +114,7 @@ public class JooqCrudApiService extends BaseCrudApiService implements CrudApiSer
 		return false;
 	}
 
-	public ArrayList<Condition> conditions(Params params) {
+	private ArrayList<Condition> conditions(Params params) {
 		ArrayList<Condition> conditions = new ArrayList<>();
 		if (params.containsKey("filter")) {
 			for (String key : params.get("filter")) {

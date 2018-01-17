@@ -34,7 +34,7 @@ class GeomFromText extends CustomField<byte[]> {
 		case "MARIADB":
 			return DSL.field("ST_GeomFromText({0})", byte[].class, field);
 		case "SQLSERVER":
-			return DSL.field("STGeomFromText({0}, {1})", byte[].class, field, DSL.val(0));
+			return DSL.field("{0}.STGeomFromText(0)", byte[].class, field);
 		default:
 			throw new UnsupportedOperationException("Dialect not supported");
 		}

@@ -21,27 +21,7 @@ public class GeometryBinding implements Binding<Object, Geometry> {
 	// The converter does all the work
 	@Override
 	public Converter<Object, Geometry> converter() {
-		return new Converter<Object, Geometry>() {
-			@Override
-			public Geometry from(Object t) {
-				return t == null ? null : new Geometry((byte[]) t);
-			}
-
-			@Override
-			public Object to(Geometry u) {
-				return u == null ? null : u.getBytes();
-			}
-
-			@Override
-			public Class<Object> fromType() {
-				return Object.class;
-			}
-
-			@Override
-			public Class<Geometry> toType() {
-				return Geometry.class;
-			}
-		};
+		return new GeometryConverter();
 	}
 
 	// Rending a bind variable for the binding context's value and casting it to

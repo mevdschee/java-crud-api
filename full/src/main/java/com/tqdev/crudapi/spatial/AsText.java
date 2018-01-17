@@ -34,7 +34,7 @@ class AsText extends CustomField<String> {
 		case "MARIADB":
 			return DSL.field("ST_AsText({0})", String.class, field);
 		case "SQLSERVER":
-			return DSL.field("STAsText({0}, {1})", String.class, field, 0);
+			return DSL.field("{0}.STAsText(0)", String.class, field);
 		default:
 			throw new UnsupportedOperationException("Dialect not supported");
 		}
