@@ -73,7 +73,7 @@ public class ColumnDefinition {
 	public static ColumnDefinition fromValue(Field<?> field) {
 		ColumnDefinition definition = new ColumnDefinition();
 		definition.setPk(field.getDataType().identity());
-		definition.setType(field.getDataType().getSQLDataType().getTypeName());
+		definition.setType(field.getDataType().getTypeName());
 		if (field.getDataType().hasLength()) {
 			definition.setLength(field.getDataType().length());
 		}

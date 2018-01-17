@@ -4,11 +4,10 @@ import org.jooq.Configuration;
 import org.jooq.Context;
 import org.jooq.Field;
 import org.jooq.QueryPart;
-import org.jooq.impl.CustomField;
+import org.jooq.impl.CustomCondition;
 import org.jooq.impl.DSL;
-import org.jooq.impl.SQLDataType;
 
-class AsText extends CustomField<String> {
+public class IsValid extends CustomCondition {
 
 	/**
 	 * 
@@ -17,8 +16,8 @@ class AsText extends CustomField<String> {
 
 	final Field<?> field;
 
-	AsText(Field<?> field) {
-		super("st_astext", SQLDataType.VARCHAR);
+	IsValid(Field<?> field) {
+		super();
 		this.field = field;
 	}
 
@@ -30,12 +29,11 @@ class AsText extends CustomField<String> {
 	private QueryPart delegate(Configuration configuration) {
 		switch (configuration.dialect().family().toString()) {
 		case "MYSQL":
-			return DSL.field("ST_AsText({0})", String.class, field);
+			return DSL.field("ST_IsValid({0})", Boolean.class, field);
 		case "SQLSERVER":
-			return DSL.field("{0}.STAsText(0)", String.class, field);
+			return DSL.field("{0}.STIsValid()", Boolean.class, field);
 		default:
 			throw new UnsupportedOperationException("Dialect not supported");
 		}
 	}
-
 }

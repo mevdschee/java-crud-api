@@ -12,7 +12,7 @@ import org.jooq.impl.DSL;
 import com.tqdev.crudapi.service.definition.DatabaseDefinition;
 import com.tqdev.crudapi.service.record.ListResponse;
 import com.tqdev.crudapi.service.record.Record;
-import com.tqdev.crudapi.spatial.GeometryConverter;
+import com.tqdev.crudapi.spatial.SpatialDSL;
 
 public class JooqCrudApiService extends BaseCrudApiService implements CrudApiService {
 
@@ -20,6 +20,7 @@ public class JooqCrudApiService extends BaseCrudApiService implements CrudApiSer
 
 	public JooqCrudApiService(DSLContext dsl) {
 		this.dsl = dsl;
+		SpatialDSL.registerDataTypes(dsl);
 		updateDefinition();
 	}
 
@@ -31,11 +32,7 @@ public class JooqCrudApiService extends BaseCrudApiService implements CrudApiSer
 			ArrayList<Field<?>> columns = new ArrayList<>();
 			ArrayList<Object> values = new ArrayList<>();
 			for (String key : record.keySet()) {
-				if (definition.get(table).get(key).getType() == "geometry") {
-					columns.add(DSL.field(key, new GeometryConverter()));
-				} else {
-					columns.add(DSL.field(key));
-				}
+				columns.add(DSL.field(key));
 				values.add(record.get(key));
 			}
 			Field<?> pk = DSL.field(definition.get(table).getPk());
@@ -54,7 +51,11 @@ public class JooqCrudApiService extends BaseCrudApiService implements CrudApiSer
 			Table<?> t = DSL.table(DSL.name(table));
 			ArrayList<Field<?>> columns = new ArrayList<>();
 			for (String key : columns(table, params)) {
-				columns.add(DSL.field(key));
+				if (definition.get(table).get(key).getType() == "geometry") {
+					columns.add(SpatialDSL.asText(DSL.field(key)).as(key));
+				} else {
+					columns.add(DSL.field(key));
+				}
 			}
 			Field<Object> pk = DSL.field(definition.get(table).getPk());
 			return Record.valueOf(dsl.select(columns).from(t).where(pk.eq(id)).fetchOne().intoMap());
@@ -138,7 +139,49 @@ public class JooqCrudApiService extends BaseCrudApiService implements CrudApiSer
 					if (parts.length == 3 || (parts.length == 2
 							&& (command.equals("ic") || command.equals("is") || command.equals("iv")))) {
 						if (spatial) {
-							// TODO:Implement spatial
+							switch (command) {
+							case "co":
+								condition = SpatialDSL.contains(DSL.field(parts[0]),
+										SpatialDSL.geomFromText(DSL.val(parts[2])));
+								break;
+							case "cr":
+								condition = SpatialDSL.crosses(DSL.field(parts[0]),
+										SpatialDSL.geomFromText(DSL.val(parts[2])));
+								break;
+							case "di":
+								condition = SpatialDSL.disjoint(DSL.field(parts[0]),
+										SpatialDSL.geomFromText(DSL.val(parts[2])));
+								break;
+							case "eq":
+								condition = SpatialDSL.equals(DSL.field(parts[0]),
+										SpatialDSL.geomFromText(DSL.val(parts[2])));
+								break;
+							case "in":
+								condition = SpatialDSL.intersects(DSL.field(parts[0]),
+										SpatialDSL.geomFromText(DSL.val(parts[2])));
+								break;
+							case "ov":
+								condition = SpatialDSL.overlaps(DSL.field(parts[0]),
+										SpatialDSL.geomFromText(DSL.val(parts[2])));
+								break;
+							case "to":
+								condition = SpatialDSL.touches(DSL.field(parts[0]),
+										SpatialDSL.geomFromText(DSL.val(parts[2])));
+								break;
+							case "wi":
+								condition = SpatialDSL.within(DSL.field(parts[0]),
+										SpatialDSL.geomFromText(DSL.val(parts[2])));
+								break;
+							case "ic":
+								condition = SpatialDSL.isClosed(DSL.field(parts[0]));
+								break;
+							case "is":
+								condition = SpatialDSL.isSimple(DSL.field(parts[0]));
+								break;
+							case "iv":
+								condition = SpatialDSL.isValid(DSL.field(parts[0]));
+								break;
+							}
 						} else {
 							switch (command) {
 							case "cs":

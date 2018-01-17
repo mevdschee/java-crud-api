@@ -18,7 +18,7 @@ class GeomFromText extends CustomField<byte[]> {
 	final Field<?> field;
 
 	GeomFromText(Field<?> field) {
-		super("st_geomfromtext", SQLDataType.BLOB);
+		super("st_geomfromtext", SQLDataType.VARBINARY);
 		this.field = field;
 	}
 
@@ -28,10 +28,8 @@ class GeomFromText extends CustomField<byte[]> {
 	}
 
 	private QueryPart delegate(Configuration configuration) {
-		switch (configuration.dialect().family().getName()) {
+		switch (configuration.dialect().family().toString()) {
 		case "MYSQL":
-			return DSL.field("ST_GeomFromText({0})", byte[].class, field);
-		case "MARIADB":
 			return DSL.field("ST_GeomFromText({0})", byte[].class, field);
 		case "SQLSERVER":
 			return DSL.field("{0}.STGeomFromText(0)", byte[].class, field);
