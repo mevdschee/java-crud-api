@@ -14,7 +14,7 @@ import com.tqdev.crudapi.service.record.Record;
 import com.tqdev.crudapi.spatial.SpatialDSL;
 
 public class JooqCrudApiService extends BaseCrudApiService
-		implements CrudApiService, JooqConditions, JooqColumnSelector {
+		implements CrudApiService, JooqConditions, JooqColumnSelector, JooqOrdering {
 
 	private DSLContext dsl;
 
@@ -79,7 +79,8 @@ public class JooqCrudApiService extends BaseCrudApiService
 			Table<?> t = DSL.table(DSL.name(table));
 			ArrayList<Field<?>> columns = columnNames(table, params, definition);
 			ArrayList<Record> records = new ArrayList<>();
-			for (org.jooq.Record record : dsl.select(columns).from(t).where(conditions(params)).fetch()) {
+			for (org.jooq.Record record : dsl.select(columns).from(t).where(conditions(params))
+					.orderBy(ordering(params)).fetch()) {
 				records.add(Record.valueOf(record.intoMap()));
 			}
 			return new ListResponse(records.toArray(new Record[records.size()]));
