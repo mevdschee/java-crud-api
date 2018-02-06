@@ -15,7 +15,8 @@ import com.tqdev.crudapi.service.record.ListResponse;
 import com.tqdev.crudapi.service.record.MemoryRecord;
 import com.tqdev.crudapi.service.record.Record;
 
-public class MemoryCrudApiService extends BaseCrudApiService implements CrudApiService, ColumnSelector {
+public class MemoryCrudApiService extends BaseCrudApiService
+		implements CrudApiService, ColumnSelector, MemoryConditions {
 
 	private ConcurrentHashMap<String, AtomicLong> counters = new ConcurrentHashMap<>();
 
@@ -100,7 +101,9 @@ public class MemoryCrudApiService extends BaseCrudApiService implements CrudApiS
 			}
 			ArrayList<Record> records = new ArrayList<>();
 			for (MemoryRecord record : database.get(table).values()) {
-				records.add(record.selectColumns(columns));
+				if (matchesConditions(record, params)) {
+					records.add(record.selectColumns(columns));
+				}
 			}
 			return new ListResponse(records.toArray(new Record[] {}));
 		}
