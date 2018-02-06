@@ -7,9 +7,9 @@ import org.jooq.impl.DSL;
 
 import com.tqdev.crudapi.spatial.SpatialDSL;
 
-public class JooqCrudApiConditions {
+public interface JooqConditions {
 
-	static public ArrayList<Condition> conditions(Params params) {
+	default public ArrayList<Condition> conditions(Params params) {
 		ArrayList<Condition> conditions = new ArrayList<>();
 		if (params.containsKey("filter")) {
 			for (String key : params.get("filter")) {

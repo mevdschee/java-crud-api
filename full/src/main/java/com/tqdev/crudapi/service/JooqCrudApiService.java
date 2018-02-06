@@ -1,9 +1,5 @@
 package com.tqdev.crudapi.service;
 
-import static com.tqdev.crudapi.service.JooqCrudApiColumns.columnNames;
-import static com.tqdev.crudapi.service.JooqCrudApiColumns.columnValues;
-import static com.tqdev.crudapi.service.JooqCrudApiConditions.conditions;
-
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 
@@ -17,7 +13,8 @@ import com.tqdev.crudapi.service.record.ListResponse;
 import com.tqdev.crudapi.service.record.Record;
 import com.tqdev.crudapi.spatial.SpatialDSL;
 
-public class JooqCrudApiService extends BaseCrudApiService implements CrudApiService {
+public class JooqCrudApiService extends BaseCrudApiService
+		implements CrudApiService, JooqConditions, JooqColumnSelector {
 
 	private DSLContext dsl;
 
