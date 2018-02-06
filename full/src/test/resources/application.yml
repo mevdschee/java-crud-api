@@ -4,3 +4,12 @@ server:
 
 driver:
   name: memory
+
+spring:
+  jooq:
+    sql-dialect: MYSQL
+  datasource:
+    url: jdbc:mysql://localhost/php-crud-api
+    username: php-crud-api
+    password: php-crud-api
+  
