@@ -34,6 +34,9 @@ public class CrudApiController {
 	public ResponseEntity<?> list(@PathVariable("table") String table,
 			@RequestParam LinkedMultiValueMap<String, String> params) {
 		logger.info("Listing table with name {} and parameters {}", table, params);
+		if (!service.getDatabaseDefinition().containsKey(table)) {
+			return new ResponseEntity<>(new Error("table"), HttpStatus.NOT_FOUND);
+		}
 		ListResponse response = service.list(table, new Params(params));
 		if (response == null) {
 			return new ResponseEntity<>(new Error("table"), HttpStatus.NOT_FOUND);
@@ -45,6 +48,9 @@ public class CrudApiController {
 	public ResponseEntity<?> read(@PathVariable("table") String table, @PathVariable("id") String id,
 			@RequestParam LinkedMultiValueMap<String, String> params) {
 		logger.info("Reading record from {} with id {} and parameters {}", table, id, params);
+		if (!service.getDatabaseDefinition().containsKey(table)) {
+			return new ResponseEntity<>(new Error("table"), HttpStatus.NOT_FOUND);
+		}
 		if (id.indexOf(',') >= 0) {
 			ArrayList<Object> result = new ArrayList<>();
 			for (String s : id.split(",")) {
@@ -64,6 +70,9 @@ public class CrudApiController {
 	public ResponseEntity<?> create(@PathVariable("table") String table, @RequestBody Object record,
 			@RequestParam LinkedMultiValueMap<String, String> params) {
 		logger.info("Creating record in {} with properties {}", table, record);
+		if (!service.getDatabaseDefinition().containsKey(table)) {
+			return new ResponseEntity<>(new Error("table"), HttpStatus.NOT_FOUND);
+		}
 		if (record instanceof ArrayList<?>) {
 			ArrayList<Object> result = new ArrayList<>();
 			for (Object o : (ArrayList<?>) record) {
@@ -83,6 +92,9 @@ public class CrudApiController {
 	public ResponseEntity<?> update(@PathVariable("table") String table, @PathVariable("id") String id,
 			@RequestBody Object record, @RequestParam LinkedMultiValueMap<String, String> params) {
 		logger.info("Updating record in {} with id {} and properties {}", table, id, record);
+		if (!service.getDatabaseDefinition().containsKey(table)) {
+			return new ResponseEntity<>(new Error("table"), HttpStatus.NOT_FOUND);
+		}
 		if (id.indexOf(',') >= 0 && record instanceof ArrayList<?>) {
 			ArrayList<Object> result = new ArrayList<>();
 			String[] ids = id.split(",");
@@ -107,6 +119,9 @@ public class CrudApiController {
 	public ResponseEntity<?> delete(@PathVariable("table") String table, @PathVariable("id") String id,
 			@RequestParam LinkedMultiValueMap<String, String> params) {
 		logger.info("Deleting record from {} with id {}", table, id);
+		if (!service.getDatabaseDefinition().containsKey(table)) {
+			return new ResponseEntity<>(new Error("table"), HttpStatus.NOT_FOUND);
+		}
 		if (id.indexOf(',') >= 0) {
 			ArrayList<Object> result = new ArrayList<>();
 			for (String s : id.split(",")) {
