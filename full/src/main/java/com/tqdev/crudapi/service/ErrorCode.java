@@ -4,7 +4,19 @@ import org.springframework.http.HttpStatus;
 
 public enum ErrorCode {
 
-	TABLE_NOT_FOUND(1, "Table '%s' not found", HttpStatus.NOT_FOUND);
+	TABLE_NOT_FOUND(1001, "Table '%s' not found", HttpStatus.NOT_FOUND),
+
+	ARGUMENT_COUNT_MISMATCH(1002, "Argument count mismatch in '%s'", HttpStatus.NOT_ACCEPTABLE),
+
+	RECORD_NOT_FOUND(1003, "Record '%s' not found", HttpStatus.NOT_FOUND),
+
+	CANNOT_LIST_TABLE(1004, "Cannot list table '%s'", HttpStatus.NOT_ACCEPTABLE),
+
+	CANNOT_CREATE_RECORD(1005, "Cannot create record '%s'", HttpStatus.NOT_ACCEPTABLE),
+
+	CANNOT_UPDATE_RECORD(1006, "Cannot update record '%s'", HttpStatus.NOT_ACCEPTABLE),
+
+	CANNOT_DELETE_RECORD(1007, "Cannot delete record '%s'", HttpStatus.NOT_ACCEPTABLE);
 
 	private final int code;
 

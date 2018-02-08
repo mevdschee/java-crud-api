@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -39,9 +38,9 @@ public class CrudApiController extends BaseController {
 		}
 		ListResponse response = service.list(table, new Params(params));
 		if (response == null) {
-			return new ResponseEntity<>(new Error("table"), HttpStatus.NOT_FOUND);
+			return error(ErrorCode.CANNOT_LIST_TABLE, table);
 		}
-		return new ResponseEntity<>(response, HttpStatus.OK);
+		return success(response);
 	}
 
 	@RequestMapping(value = "/{table}/{id}", method = RequestMethod.GET)
@@ -49,20 +48,20 @@ public class CrudApiController extends BaseController {
 			@RequestParam LinkedMultiValueMap<String, String> params) {
 		logger.info("Reading record from {} with id {} and parameters {}", table, id, params);
 		if (!service.getDatabaseDefinition().containsKey(table)) {
-			return Error.createResponse(ErrorCode.TABLE_NOT_FOUND, table);
+			return error(ErrorCode.TABLE_NOT_FOUND, table);
 		}
 		if (id.indexOf(',') >= 0) {
 			ArrayList<Object> result = new ArrayList<>();
 			for (String s : id.split(",")) {
 				result.add(service.read(table, s, new Params(params)));
 			}
-			return new ResponseEntity<>(result, HttpStatus.OK);
+			return success(result);
 		} else {
 			Object response = service.read(table, id, new Params(params));
 			if (response == null) {
-				return new ResponseEntity<>(new Error("object"), HttpStatus.NOT_FOUND);
+				return error(ErrorCode.RECORD_NOT_FOUND, id);
 			}
-			return new ResponseEntity<>(response, HttpStatus.OK);
+			return success(response);
 		}
 	}
 
@@ -71,20 +70,20 @@ public class CrudApiController extends BaseController {
 			@RequestParam LinkedMultiValueMap<String, String> params) {
 		logger.info("Creating record in {} with properties {}", table, record);
 		if (!service.getDatabaseDefinition().containsKey(table)) {
-			return new ResponseEntity<>(new Error("table"), HttpStatus.NOT_FOUND);
+			return error(ErrorCode.TABLE_NOT_FOUND, table);
 		}
 		if (record instanceof ArrayList<?>) {
 			ArrayList<Object> result = new ArrayList<>();
 			for (Object o : (ArrayList<?>) record) {
 				result.add(service.create(table, Record.valueOf(o), new Params(params)));
 			}
-			return new ResponseEntity<>(result, HttpStatus.OK);
+			return success(result);
 		} else {
 			String response = service.create(table, Record.valueOf(record), new Params(params));
 			if (response == null) {
-				return new ResponseEntity<>(new Error("input"), HttpStatus.NOT_FOUND);
+				return error(ErrorCode.CANNOT_CREATE_RECORD, record.toString());
 			}
-			return new ResponseEntity<>(response, HttpStatus.OK);
+			return success(response);
 		}
 	}
 
@@ -93,25 +92,25 @@ public class CrudApiController extends BaseController {
 			@RequestBody Object record, @RequestParam LinkedMultiValueMap<String, String> params) {
 		logger.info("Updating record in {} with id {} and properties {}", table, id, record);
 		if (!service.getDatabaseDefinition().containsKey(table)) {
-			return new ResponseEntity<>(new Error("table"), HttpStatus.NOT_FOUND);
+			return error(ErrorCode.TABLE_NOT_FOUND, table);
 		}
 		if (id.indexOf(',') >= 0 && record instanceof ArrayList<?>) {
 			ArrayList<Object> result = new ArrayList<>();
 			String[] ids = id.split(",");
 			ArrayList<?> records = new ArrayList<>();
 			if (ids.length != records.size()) {
-				return new ResponseEntity<>(new Error("subject"), HttpStatus.NOT_FOUND);
+				return error(ErrorCode.ARGUMENT_COUNT_MISMATCH, id);
 			}
 			for (int i = 0; i < ids.length; i++) {
 				result.add(service.update(table, ids[i], Record.valueOf(records.get(i)), new Params(params)));
 			}
-			return new ResponseEntity<>(result, HttpStatus.OK);
+			return success(result);
 		} else {
 			Integer response = service.update(table, id, Record.valueOf(record), new Params(params));
 			if (response == null) {
-				return new ResponseEntity<>(new Error("subject"), HttpStatus.NOT_FOUND);
+				return error(ErrorCode.CANNOT_UPDATE_RECORD, record.toString());
 			}
-			return new ResponseEntity<>(response, HttpStatus.OK);
+			return success(response);
 		}
 	}
 
@@ -120,20 +119,20 @@ public class CrudApiController extends BaseController {
 			@RequestParam LinkedMultiValueMap<String, String> params) {
 		logger.info("Deleting record from {} with id {}", table, id);
 		if (!service.getDatabaseDefinition().containsKey(table)) {
-			return new ResponseEntity<>(new Error("table"), HttpStatus.NOT_FOUND);
+			return error(ErrorCode.TABLE_NOT_FOUND, table);
 		}
 		if (id.indexOf(',') >= 0) {
 			ArrayList<Object> result = new ArrayList<>();
 			for (String s : id.split(",")) {
 				result.add(service.delete(table, s, new Params(params)));
 			}
-			return new ResponseEntity<>(result, HttpStatus.OK);
+			return success(result);
 		} else {
 			Integer response = service.delete(table, id, new Params(params));
 			if (response == null) {
-				return new ResponseEntity<>(new Error("object"), HttpStatus.NOT_FOUND);
+				return error(ErrorCode.CANNOT_DELETE_RECORD, id);
 			}
-			return new ResponseEntity<>(response, HttpStatus.OK);
+			return success(response);
 		}
 	}
 
