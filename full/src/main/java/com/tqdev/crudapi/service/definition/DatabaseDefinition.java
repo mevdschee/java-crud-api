@@ -3,10 +3,16 @@ package com.tqdev.crudapi.service.definition;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.HashMap;
 
+import org.jooq.AlterTableUsingIndexStep;
+import org.jooq.Constraint;
+import org.jooq.CreateTableConstraintStep;
 import org.jooq.DSLContext;
+import org.jooq.Field;
 import org.jooq.Table;
+import org.jooq.impl.DSL;
 import org.springframework.core.io.ClassPathResource;
 
 import com.fasterxml.jackson.core.JsonParseException;
@@ -45,6 +51,24 @@ public class DatabaseDefinition extends HashMap<String, TableDefinition> {
 			prefix += "\"" + schema + "\".";
 		}
 		return prefix;
+	}
+
+	public void create(DSLContext dsl) throws DatabaseDefinitionException {
+		for (String tableName : keySet()) {
+			TableDefinition table = get(tableName);
+			ArrayList<Field<?>> fields = table.getFields(dsl);
+			CreateTableConstraintStep query = dsl.createTable(DSL.table(tableName)).columns(fields);
+			System.out.println(query.getSQL());
+			query.execute();
+		}
+		for (String tableName : keySet()) {
+			TableDefinition table = get(tableName);
+			for (Constraint constraint : table.getConstraints(dsl, tableName, this)) {
+				AlterTableUsingIndexStep query = dsl.alterTable(DSL.table(tableName)).add(constraint);
+				System.out.println(query.getSQL());
+				query.execute();
+			}
+		}
 	}
 
 	public static DatabaseDefinition fromValue(DSLContext dsl) {

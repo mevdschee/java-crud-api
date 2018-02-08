@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import org.jooq.DSLContext;
 import org.springframework.core.io.ClassPathResource;
 
 import com.fasterxml.jackson.core.JsonParseException;
@@ -32,5 +33,9 @@ public class DatabaseRecords extends HashMap<String, ArrayList<Record>> {
 				service.create(table, record, new Params());
 			}
 		}
+	}
+
+	public void create(DSLContext dsl) throws DatabaseRecordsException {
+
 	}
 }

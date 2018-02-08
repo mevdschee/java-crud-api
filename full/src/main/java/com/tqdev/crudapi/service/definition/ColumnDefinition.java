@@ -1,6 +1,9 @@
 package com.tqdev.crudapi.service.definition;
 
+import org.jooq.DSLContext;
+import org.jooq.DataType;
 import org.jooq.Field;
+import org.jooq.impl.DefaultDataType;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 
@@ -70,10 +73,28 @@ public class ColumnDefinition {
 		this.fk = fk;
 	}
 
+	public DataType<?> getDataType(DSLContext dsl) {
+		DataType<?> result = DefaultDataType.getDefaultDataType(type);
+		result = result.getDataType(dsl.configuration());
+		if (length >= 0) {
+			result = result.length(length);
+		}
+		if (precision >= 0) {
+			result = result.precision(precision);
+		}
+		if (scale >= 0) {
+			result = result.scale(scale);
+		}
+		result = result.nullable(nullable);
+		return result;
+	}
+
 	public static ColumnDefinition fromValue(Field<?> field) {
 		ColumnDefinition definition = new ColumnDefinition();
 		definition.setPk(field.getDataType().identity());
-		definition.setType(field.getDataType().getTypeName());
+		String typeName = field.getDataType().getTypeName();
+		DataType<?> defaultType = DefaultDataType.getDefaultDataType(typeName);
+		definition.setType(defaultType.getTypeName());
 		if (field.getDataType().hasLength()) {
 			definition.setLength(field.getDataType().length());
 		}

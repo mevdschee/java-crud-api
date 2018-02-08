@@ -1,11 +1,15 @@
 package com.tqdev.crudapi.service.definition;
 
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 
+import org.jooq.Constraint;
+import org.jooq.DSLContext;
 import org.jooq.Field;
 import org.jooq.ForeignKey;
 import org.jooq.Table;
 import org.jooq.UniqueKey;
+import org.jooq.impl.DSL;
 
 public class TableDefinition extends LinkedHashMap<String, ColumnDefinition> {
 
@@ -21,6 +25,34 @@ public class TableDefinition extends LinkedHashMap<String, ColumnDefinition> {
 			}
 		}
 		return null;
+	}
+
+	public ArrayList<Field<?>> getFields(DSLContext dsl) {
+		ArrayList<Field<?>> fields = new ArrayList<>();
+		for (String columnName : keySet()) {
+			ColumnDefinition column = get(columnName);
+			fields.add(DSL.field(columnName, column.getDataType(dsl)));
+		}
+		return fields;
+	}
+
+	public ArrayList<Constraint> getConstraints(DSLContext dsl, String tableName, DatabaseDefinition definition)
+			throws DatabaseDefinitionException {
+		ArrayList<Constraint> constraints = new ArrayList<>();
+		String pk = getPk();
+		if (pk != null) {
+			constraints.add(DSL.constraint(DSL.name("pk_" + tableName)).primaryKey(DSL.field(pk)));
+		}
+		for (String columnName : keySet()) {
+			ColumnDefinition column = get(columnName);
+			String fk = column.getFk();
+			if (fk != null) {
+				String fkpk = definition.get(fk).getPk();
+				constraints.add(DSL.constraint(DSL.name("fk_" + tableName + "_" + columnName))
+						.foreignKey(DSL.field(columnName)).references(DSL.table(fk), DSL.field(fkpk)));
+			}
+		}
+		return constraints;
 	}
 
 	private static Field<?> findPrimaryKey(Table<?> table) {
@@ -47,7 +79,7 @@ public class TableDefinition extends LinkedHashMap<String, ColumnDefinition> {
 		if (pk != null) {
 			Field<?>[] pks = pk.getFieldsArray();
 			if (pks.length == 1) {
-				return pk.getTable().getName() + "." + pks[0].getName();
+				return pk.getTable().getName();
 			}
 		}
 		return null;
@@ -71,4 +103,5 @@ public class TableDefinition extends LinkedHashMap<String, ColumnDefinition> {
 		}
 		return definition;
 	}
+
 }

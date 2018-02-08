@@ -15,6 +15,8 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.tqdev.crudapi.service.CrudApiService;
 import com.tqdev.crudapi.service.JooqCrudApiService;
 import com.tqdev.crudapi.service.MemoryCrudApiService;
+import com.tqdev.crudapi.service.definition.DatabaseDefinitionException;
+import com.tqdev.crudapi.service.record.DatabaseRecordsException;
 
 @SpringBootApplication(scanBasePackages = { "com.tqdev.crudapi" })
 @PropertySource("classpath:application.yml")
@@ -29,7 +31,8 @@ public class CrudApiApp {
 
 	@Bean
 	@Autowired
-	public CrudApiService crudApiService(DSLContext dsl) throws JsonParseException, JsonMappingException, IOException {
+	public CrudApiService crudApiService(DSLContext dsl) throws JsonParseException, JsonMappingException, IOException,
+			DatabaseDefinitionException, DatabaseRecordsException {
 		CrudApiService result;
 		switch (crudDriverName) {
 		case "memory":

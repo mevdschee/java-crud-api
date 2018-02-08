@@ -25,14 +25,6 @@ public class MemoryCrudApiService extends BaseCrudApiService
 	private String columnsFilename;
 	private String recordsFilename;
 
-	@Override
-	public void initialize(String columnsFilename, String recordsFilename)
-			throws JsonParseException, JsonMappingException, IOException {
-		this.columnsFilename = columnsFilename;
-		this.recordsFilename = recordsFilename;
-		updateDefinition();
-	}
-
 	private MemoryRecord typeRecord(String table, String id, Record record) {
 		MemoryRecord r = new MemoryRecord();
 		for (String key : definition.get(table).keySet()) {
@@ -123,6 +115,14 @@ public class MemoryCrudApiService extends BaseCrudApiService
 			e.printStackTrace();
 			return false;
 		}
+	}
+
+	@Override
+	public void initialize(String columnsFilename, String recordsFilename)
+			throws JsonParseException, JsonMappingException, IOException {
+		this.columnsFilename = columnsFilename;
+		this.recordsFilename = recordsFilename;
+		updateDefinition();
 	}
 
 	private void applyDefinition() throws JsonParseException, JsonMappingException, IOException {
