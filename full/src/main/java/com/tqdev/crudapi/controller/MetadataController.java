@@ -13,7 +13,7 @@ import com.tqdev.crudapi.service.CrudApiService;
 
 @RestController
 @RequestMapping("/meta")
-public class MetadataController {
+public class MetadataController extends BaseController {
 
 	public static final Logger logger = LoggerFactory.getLogger(MetadataController.class);
 

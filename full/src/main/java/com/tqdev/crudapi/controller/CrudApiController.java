@@ -16,14 +16,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.tqdev.crudapi.service.CrudApiService;
-import com.tqdev.crudapi.service.Error;
+import com.tqdev.crudapi.service.ErrorCode;
 import com.tqdev.crudapi.service.Params;
 import com.tqdev.crudapi.service.record.ListResponse;
 import com.tqdev.crudapi.service.record.Record;
 
 @RestController
 @RequestMapping("/data")
-public class CrudApiController {
+public class CrudApiController extends BaseController {
 
 	public static final Logger logger = LoggerFactory.getLogger(CrudApiController.class);
 
@@ -35,7 +35,7 @@ public class CrudApiController {
 			@RequestParam LinkedMultiValueMap<String, String> params) {
 		logger.info("Listing table with name {} and parameters {}", table, params);
 		if (!service.getDatabaseDefinition().containsKey(table)) {
-			return new ResponseEntity<>(new Error("table"), HttpStatus.NOT_FOUND);
+			return error(ErrorCode.TABLE_NOT_FOUND, table);
 		}
 		ListResponse response = service.list(table, new Params(params));
 		if (response == null) {
@@ -49,7 +49,7 @@ public class CrudApiController {
 			@RequestParam LinkedMultiValueMap<String, String> params) {
 		logger.info("Reading record from {} with id {} and parameters {}", table, id, params);
 		if (!service.getDatabaseDefinition().containsKey(table)) {
-			return new ResponseEntity<>(new Error("table"), HttpStatus.NOT_FOUND);
+			return Error.createResponse(ErrorCode.TABLE_NOT_FOUND, table);
 		}
 		if (id.indexOf(',') >= 0) {
 			ArrayList<Object> result = new ArrayList<>();

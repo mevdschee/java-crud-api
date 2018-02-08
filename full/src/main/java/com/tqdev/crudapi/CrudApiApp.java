@@ -33,6 +33,8 @@ public class CrudApiApp {
 		CrudApiService result;
 		switch (crudDriverName) {
 		case "memory":
+			// see:
+			// https://docs.spring.io/spring-boot/docs/current/reference/html/howto-database-initialization.html
 			result = new MemoryCrudApiService("columns.json", "records.json");
 			break;
 		case "jooq":
