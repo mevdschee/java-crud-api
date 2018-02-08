@@ -6,7 +6,7 @@ import org.jooq.DSLContext;
 import org.jooq.DataType;
 import org.jooq.Field;
 import org.jooq.impl.DSL;
-import org.jooq.impl.SQLDataType;
+import org.jooq.impl.DefaultDataType;
 
 public class JooqDefinitionLoader {
 
@@ -22,8 +22,22 @@ public class JooqDefinitionLoader {
 	}
 
 	static private DataType<?> getDataType(ColumnDefinition column) {
-		// TODO: read datastructure
-		return SQLDataType.VARCHAR(255).nullable(false);
+		DataType<?> type = DefaultDataType.getDefaultDataType(column.getType());
+		int length = column.getLength();
+		int precision = column.getPrecision();
+		int scale = column.getScale();
+		boolean nullable = column.getNullable();
+		if (length >= 0) {
+			type.length(length);
+		}
+		if (precision >= 0) {
+			type.precision(precision);
+		}
+		if (scale >= 0) {
+			type.scale(scale);
+		}
+		type.nullable(nullable);
+		return type;
 	}
 
 }
