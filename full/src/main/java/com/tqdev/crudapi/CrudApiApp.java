@@ -35,11 +35,13 @@ public class CrudApiApp {
 		case "memory":
 			// see:
 			// https://docs.spring.io/spring-boot/docs/current/reference/html/howto-database-initialization.html
-			result = new MemoryCrudApiService("columns.json", "records.json");
+			result = new MemoryCrudApiService();
+			result.initialize("columns.json", "records.json");
 			break;
 		case "jooq":
 			System.getProperties().setProperty("org.jooq.no-logo", "true");
 			result = new JooqCrudApiService(dsl);
+			result.initialize("columns.json", "records.json");
 			break;
 		default:
 			result = null;

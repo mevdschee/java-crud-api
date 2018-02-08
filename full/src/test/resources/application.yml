@@ -3,4 +3,10 @@ server:
   contextPath: /
 
 driver:
-  name: memory
+  name: jooq
+
+spring:
+  jooq:
+    sql-dialect: H2
+  datasource:
+    url: jdbc:h2:mem:test

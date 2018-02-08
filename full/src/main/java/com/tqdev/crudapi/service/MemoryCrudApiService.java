@@ -25,7 +25,8 @@ public class MemoryCrudApiService extends BaseCrudApiService
 	private String columnsFilename;
 	private String recordsFilename;
 
-	public MemoryCrudApiService(String columnsFilename, String recordsFilename)
+	@Override
+	public void initialize(String columnsFilename, String recordsFilename)
 			throws JsonParseException, JsonMappingException, IOException {
 		this.columnsFilename = columnsFilename;
 		this.recordsFilename = recordsFilename;

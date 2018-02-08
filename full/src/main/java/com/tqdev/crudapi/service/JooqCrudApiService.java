@@ -1,5 +1,6 @@
 package com.tqdev.crudapi.service;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 
@@ -8,7 +9,12 @@ import org.jooq.Field;
 import org.jooq.Table;
 import org.jooq.impl.DSL;
 
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.tqdev.crudapi.service.definition.DatabaseDefinition;
+import com.tqdev.crudapi.service.definition.JooqDefinitionLoader;
+import com.tqdev.crudapi.service.record.DatabaseRecords;
+import com.tqdev.crudapi.service.record.JooqRecordLoader;
 import com.tqdev.crudapi.service.record.ListResponse;
 import com.tqdev.crudapi.service.record.Record;
 import com.tqdev.crudapi.spatial.SpatialDSL;
@@ -79,6 +85,13 @@ public class JooqCrudApiService extends BaseCrudApiService
 			return true;
 		}
 		return false;
+	}
+
+	@Override
+	public void initialize(String columnsFilename, String recordsFilename)
+			throws JsonParseException, JsonMappingException, IOException {
+		JooqDefinitionLoader.load(dsl, DatabaseDefinition.fromFile(columnsFilename));
+		JooqRecordLoader.load(dsl, DatabaseRecords.fromFile(recordsFilename));
 	}
 
 }
