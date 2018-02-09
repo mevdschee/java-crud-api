@@ -12,7 +12,6 @@ import org.jooq.CreateTableConstraintStep;
 import org.jooq.DSLContext;
 import org.jooq.Field;
 import org.jooq.Table;
-import org.jooq.impl.DSL;
 import org.springframework.core.io.ClassPathResource;
 
 import com.fasterxml.jackson.core.JsonParseException;
@@ -54,17 +53,24 @@ public class DatabaseDefinition extends HashMap<String, TableDefinition> {
 	}
 
 	public void create(DSLContext dsl) throws DatabaseDefinitionException {
+		ArrayList<String> created = new ArrayList<>();
 		for (String tableName : keySet()) {
 			TableDefinition table = get(tableName);
 			ArrayList<Field<?>> fields = table.getFields(dsl);
-			CreateTableConstraintStep query = dsl.createTable(DSL.table(tableName)).columns(fields);
+			ArrayList<Constraint> constraints = table.getPkConstraints(dsl, tableName);
+			CreateTableConstraintStep query = dsl.createTable(tableName).columns(fields).constraints(constraints);
+			// TODO: log
 			System.out.println(query.getSQL());
-			query.execute();
+			int result = query.execute();
+			if (result > 0) {
+				created.add(tableName);
+			}
 		}
-		for (String tableName : keySet()) {
+		for (String tableName : created) {
 			TableDefinition table = get(tableName);
-			for (Constraint constraint : table.getConstraints(dsl, tableName, this)) {
-				AlterTableUsingIndexStep query = dsl.alterTable(DSL.table(tableName)).add(constraint);
+			for (Constraint constraint : table.getFkConstraints(dsl, tableName, this)) {
+				AlterTableUsingIndexStep query = dsl.alterTable(tableName).add(constraint);
+				// TODO: log
 				System.out.println(query.getSQL());
 				query.execute();
 			}

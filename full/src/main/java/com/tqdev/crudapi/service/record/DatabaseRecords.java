@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import org.jooq.DSLContext;
 import org.springframework.core.io.ClassPathResource;
 
 import com.fasterxml.jackson.core.JsonParseException;
@@ -27,15 +26,15 @@ public class DatabaseRecords extends HashMap<String, ArrayList<Record>> {
 		return mapper.readValue(resource.getInputStream(), DatabaseRecords.class);
 	}
 
-	public void create(CrudApiService service) {
+	public void create(CrudApiService service) throws DatabaseRecordsException {
 		for (String table : keySet()) {
 			for (Record record : get(table)) {
+				if (!service.getDatabaseDefinition().containsKey(table)) {
+					throw new DatabaseRecordsException(
+							String.format("Cannot insert into table '%s': Table does not exist", table));
+				}
 				service.create(table, record, new Params());
 			}
 		}
-	}
-
-	public void create(DSLContext dsl) throws DatabaseRecordsException {
-
 	}
 }

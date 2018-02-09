@@ -1,8 +1,11 @@
 package com.tqdev.crudapi.service.definition;
 
+import java.util.Map;
+
 import org.jooq.DSLContext;
 import org.jooq.DataType;
 import org.jooq.Field;
+import org.jooq.SQLDialect;
 import org.jooq.impl.DefaultDataType;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -73,9 +76,32 @@ public class ColumnDefinition {
 		this.fk = fk;
 	}
 
+	// ugly hack
+	@SuppressWarnings("unchecked")
+	private DataType<?> getTypeByName(SQLDialect dialect, String type) {
+		Map<String, DataType<?>>[] typesByName = null;
+		java.lang.reflect.Field[] fields = DefaultDataType.class.getDeclaredFields();
+		for (java.lang.reflect.Field field : fields) {
+			if (field.getName().equals("TYPES_BY_NAME")) {
+				field.setAccessible(true);
+				try {
+					typesByName = (Map<String, DataType<?>>[]) field.get(typesByName);
+				} catch (IllegalArgumentException | IllegalAccessException e) {
+					// should not happen
+					throw new RuntimeException(
+							"The command 'field.setAccessible(true);' on DefaultDataType's static 'TYPES_BY_NAME' failed");
+				}
+			}
+		}
+		return typesByName[dialect.ordinal()].get(DefaultDataType.normalise(type));
+	}
+
 	public DataType<?> getDataType(DSLContext dsl) {
-		DataType<?> result = DefaultDataType.getDefaultDataType(type);
-		result = result.getDataType(dsl.configuration());
+		DataType<?> result = getTypeByName(dsl.dialect(), type);
+		if (result == null) {
+			result = DefaultDataType.getDefaultDataType(type);
+		}
+		result = result.identity(pk);
 		if (length >= 0) {
 			result = result.length(length);
 		}

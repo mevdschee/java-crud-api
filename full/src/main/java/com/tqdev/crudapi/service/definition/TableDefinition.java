@@ -36,20 +36,30 @@ public class TableDefinition extends LinkedHashMap<String, ColumnDefinition> {
 		return fields;
 	}
 
-	public ArrayList<Constraint> getConstraints(DSLContext dsl, String tableName, DatabaseDefinition definition)
-			throws DatabaseDefinitionException {
+	public ArrayList<Constraint> getPkConstraints(DSLContext dsl, String tableName) {
 		ArrayList<Constraint> constraints = new ArrayList<>();
 		String pk = getPk();
 		if (pk != null) {
 			constraints.add(DSL.constraint(DSL.name("pk_" + tableName)).primaryKey(DSL.field(pk)));
 		}
+		return constraints;
+	}
+
+	public ArrayList<Constraint> getFkConstraints(DSLContext dsl, String tableName, DatabaseDefinition definition)
+			throws DatabaseDefinitionException {
+		ArrayList<Constraint> constraints = new ArrayList<>();
 		for (String columnName : keySet()) {
 			ColumnDefinition column = get(columnName);
 			String fk = column.getFk();
 			if (fk != null) {
-				String fkpk = definition.get(fk).getPk();
+				String pk = definition.get(fk).getPk();
+				if (pk == null) {
+					throw new DatabaseDefinitionException(String.format(
+							"Illegal 'fk' value for field '%s' of table '%s': Referenced table '%s' does not have a single field primary key",
+							columnName, tableName, fk));
+				}
 				constraints.add(DSL.constraint(DSL.name("fk_" + tableName + "_" + columnName))
-						.foreignKey(DSL.field(columnName)).references(DSL.table(fk), DSL.field(fkpk)));
+						.foreignKey(DSL.field(columnName)).references(DSL.table(fk), DSL.field(pk)));
 			}
 		}
 		return constraints;

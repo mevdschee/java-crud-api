@@ -17,13 +17,13 @@
 	"countries":{
 		"id":{"pk":true,"type":"int"},
 		"name":{"type":"varchar","length":255},
-		"shape":{"type":"geometry","nullable":true}
+		"shape":{"type":"text","nullable":true}
 	},
 	"barcodes":{
 		"id":{"pk":true,"type":"int"},
 		"product_id":{"type":"int","fk":"products"},
 		"hex":{"type":"varchar","length":255},
-		"bin":{"type":"varbinary","length":255}
+		"bin":{"type":"varchar","length":255}
 	},
 	"posts":{
 		"id":{"pk":true,"type":"int"},
@@ -41,7 +41,7 @@
 		"id":{"pk":true,"type":"int"},
 		"username":{"type":"varchar","length":255},
 		"password":{"type":"varchar","length":255},
-		"location":{"type":"geometry","nullable":true}
+		"location":{"type":"text","nullable":true}
 	},
 	"products":{
 		"id":{"pk":true,"type":"int"},

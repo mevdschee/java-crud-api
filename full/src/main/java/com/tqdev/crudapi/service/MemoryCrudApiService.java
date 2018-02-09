@@ -11,6 +11,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.tqdev.crudapi.service.definition.ColumnDefinition;
 import com.tqdev.crudapi.service.definition.DatabaseDefinition;
 import com.tqdev.crudapi.service.record.DatabaseRecords;
+import com.tqdev.crudapi.service.record.DatabaseRecordsException;
 import com.tqdev.crudapi.service.record.ListResponse;
 import com.tqdev.crudapi.service.record.MemoryRecord;
 import com.tqdev.crudapi.service.record.Record;
@@ -111,7 +112,7 @@ public class MemoryCrudApiService extends BaseCrudApiService
 			database = new ConcurrentHashMap<>();
 			applyDefinition();
 			return true;
-		} catch (IOException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 			return false;
 		}
@@ -125,7 +126,8 @@ public class MemoryCrudApiService extends BaseCrudApiService
 		updateDefinition();
 	}
 
-	private void applyDefinition() throws JsonParseException, JsonMappingException, IOException {
+	private void applyDefinition()
+			throws JsonParseException, JsonMappingException, IOException, DatabaseRecordsException {
 		for (String table : definition.keySet()) {
 			counters.put(table, new AtomicLong());
 			database.put(table, new ConcurrentHashMap<String, MemoryRecord>());

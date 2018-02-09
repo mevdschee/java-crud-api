@@ -3,6 +3,7 @@ package com.tqdev.crudapi.spatial;
 import org.jooq.Condition;
 import org.jooq.DSLContext;
 import org.jooq.Field;
+import org.jooq.SQLDialect;
 import org.jooq.impl.DefaultDataType;
 
 public class SpatialDSL {
@@ -60,9 +61,10 @@ public class SpatialDSL {
 	}
 
 	public static void registerDataTypes(DSLContext dsl) {
-		switch (dsl.configuration().dialect().family().toString()) {
+		SQLDialect dialect = dsl.dialect();
+		switch (dialect.family().toString()) {
 		case "MYSQL":
-			DefaultDataType.getDefaultDataType("geometry");
+			DefaultDataType.getDefaultDataType(dialect, "geometry");
 			break;
 		}
 	}
