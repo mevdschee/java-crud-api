@@ -36,7 +36,6 @@ public class JooqCrudApiService extends BaseCrudApiService
 		Table<?> t = DSL.table(DSL.name(table));
 		LinkedHashMap<Field<?>, Object> columns = columnValues(table, record, params, definition);
 		Field<?> pk = DSL.field(definition.get(table).getPk());
-		System.out.println(dsl.insertInto(t).set(columns).getSQL());
 		Object result = dsl.insertInto(t).set(columns).returning(pk).fetchOne();
 		return result == null ? null : String.valueOf(result);
 	}
