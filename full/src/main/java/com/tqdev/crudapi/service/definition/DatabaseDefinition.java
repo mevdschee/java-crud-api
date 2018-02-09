@@ -12,6 +12,8 @@ import org.jooq.CreateTableConstraintStep;
 import org.jooq.DSLContext;
 import org.jooq.Field;
 import org.jooq.Table;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.core.io.ClassPathResource;
 
 import com.fasterxml.jackson.core.JsonParseException;
@@ -19,6 +21,8 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class DatabaseDefinition extends HashMap<String, TableDefinition> {
+
+	public static final Logger logger = LoggerFactory.getLogger(DatabaseDefinition.class);
 
 	/**
 	 * 
@@ -52,6 +56,7 @@ public class DatabaseDefinition extends HashMap<String, TableDefinition> {
 		return prefix;
 	}
 
+	// TODO: Transactions
 	public void create(DSLContext dsl) throws DatabaseDefinitionException {
 		ArrayList<String> created = new ArrayList<>();
 		for (String tableName : keySet()) {
@@ -59,8 +64,7 @@ public class DatabaseDefinition extends HashMap<String, TableDefinition> {
 			ArrayList<Field<?>> fields = table.getFields(dsl);
 			ArrayList<Constraint> constraints = table.getPkConstraints(dsl, tableName);
 			CreateTableConstraintStep query = dsl.createTable(tableName).columns(fields).constraints(constraints);
-			// TODO: log
-			System.out.println(query.getSQL());
+			logger.info("Executing SQL: " + query.getSQL());
 			int result = query.execute();
 			if (result > 0) {
 				created.add(tableName);
@@ -70,8 +74,7 @@ public class DatabaseDefinition extends HashMap<String, TableDefinition> {
 			TableDefinition table = get(tableName);
 			for (Constraint constraint : table.getFkConstraints(dsl, tableName, this)) {
 				AlterTableUsingIndexStep query = dsl.alterTable(tableName).add(constraint);
-				// TODO: log
-				System.out.println(query.getSQL());
+				logger.info("Executing SQL: " + query.getSQL());
 				query.execute();
 			}
 		}
