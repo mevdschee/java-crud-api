@@ -96,7 +96,22 @@ public class ColumnDefinition {
 		return typesByName[dialect.ordinal()].get(DefaultDataType.normalise(type));
 	}
 
+	// hackety hack
+	private void override(DSLContext dsl) {
+		if (dsl.dialect() == SQLDialect.H2) {
+			if (type.equals("geometry")) {
+				type = "varchar";
+				length = 255;
+			}
+			if (type.equals("varbinary")) {
+				type = "varchar";
+				length = 255;
+			}
+		}
+	}
+
 	public DataType<?> getDataType(DSLContext dsl) {
+		override(dsl);
 		DataType<?> result = getTypeByName(dsl.dialect(), type);
 		if (result == null) {
 			result = DefaultDataType.getDefaultDataType(type);

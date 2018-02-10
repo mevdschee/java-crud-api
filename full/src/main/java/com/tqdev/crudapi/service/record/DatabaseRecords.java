@@ -1,5 +1,6 @@
 package com.tqdev.crudapi.service.record;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -23,7 +24,13 @@ public class DatabaseRecords extends HashMap<String, ArrayList<Record>> {
 			throws JsonParseException, JsonMappingException, IOException {
 		ObjectMapper mapper = new ObjectMapper();
 		ClassPathResource resource = new ClassPathResource(filename);
-		return mapper.readValue(resource.getInputStream(), DatabaseRecords.class);
+		DatabaseRecords result;
+		try {
+			result = mapper.readValue(resource.getInputStream(), DatabaseRecords.class);
+		} catch (FileNotFoundException e) {
+			result = new DatabaseRecords();
+		}
+		return result;
 	}
 
 	public void create(CrudApiService service) throws DatabaseRecordsException {

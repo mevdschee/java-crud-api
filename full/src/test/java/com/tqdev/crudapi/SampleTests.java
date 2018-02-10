@@ -3,6 +3,7 @@ package com.tqdev.crudapi;
 import static org.hamcrest.CoreMatchers.hasItems;
 import static org.hamcrest.Matchers.hasSize;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -32,6 +33,13 @@ public class SampleTests {
 	@Before
 	public void setup() throws Exception {
 		mockMvc = webAppContextSetup(this.wac).build();
+	}
+
+	@Test
+	public void testAddPosts() throws Exception {
+		mockMvc.perform(post("/data/posts").content("{\"user_id\": 1, \"category_id\": 1, \"content\": \"test\"}")
+				.accept("application/json")).andExpect(status().isOk())
+				.andExpect(content().contentTypeCompatibleWith("application/json"));
 	}
 
 	@Test

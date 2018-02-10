@@ -1,5 +1,6 @@
 package com.tqdev.crudapi.service.definition;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -56,7 +57,6 @@ public class DatabaseDefinition extends HashMap<String, TableDefinition> {
 		return prefix;
 	}
 
-	// TODO: Transactions
 	public void create(DSLContext dsl) throws DatabaseDefinitionException {
 		ArrayList<String> created = new ArrayList<>();
 		for (String tableName : keySet()) {
@@ -97,6 +97,12 @@ public class DatabaseDefinition extends HashMap<String, TableDefinition> {
 			throws JsonParseException, JsonMappingException, IOException {
 		ObjectMapper mapper = new ObjectMapper();
 		ClassPathResource resource = new ClassPathResource(filename);
-		return mapper.readValue(resource.getInputStream(), DatabaseDefinition.class);
+		DatabaseDefinition result;
+		try {
+			result = mapper.readValue(resource.getInputStream(), DatabaseDefinition.class);
+		} catch (FileNotFoundException e) {
+			result = new DatabaseDefinition();
+		}
+		return result;
 	}
 }
