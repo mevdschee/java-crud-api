@@ -2,9 +2,6 @@ server:
   port: 8080
   contextPath: /
 
-driver:
-  name: jooq
-
 spring:
   jooq:
     sql-dialect: H2
