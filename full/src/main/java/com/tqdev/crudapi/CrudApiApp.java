@@ -23,7 +23,6 @@ import com.tqdev.crudapi.meta.definition.DatabaseDefinitionException;
 public class CrudApiApp {
 
 	public static void main(String[] args) {
-		System.getProperties().setProperty("org.jooq.no-logo", "true");
 		SpringApplication.run(CrudApiApp.class, args);
 	}
 
