@@ -1,4 +1,4 @@
-package com.tqdev.crudapi.reflection;
+package com.tqdev.crudapi.meta.reflection;
 
 import org.jooq.Identity;
 import org.jooq.Table;

@@ -1,10 +1,10 @@
-package com.tqdev.crudapi.service;
+package com.tqdev.crudapi.core;
 
 import java.util.ArrayList;
 
 import org.jooq.SortField;
 
-import com.tqdev.crudapi.reflection.ReflectedTable;
+import com.tqdev.crudapi.meta.reflection.ReflectedTable;
 
 public interface JooqOrdering {
 

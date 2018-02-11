@@ -1,15 +1,14 @@
-package com.tqdev.crudapi.service;
+package com.tqdev.crudapi.core;
 
 import java.io.IOException;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
-import com.tqdev.crudapi.service.definition.DatabaseDefinition;
-import com.tqdev.crudapi.service.definition.DatabaseDefinitionException;
-import com.tqdev.crudapi.service.record.DatabaseRecords;
-import com.tqdev.crudapi.service.record.DatabaseRecordsException;
-import com.tqdev.crudapi.service.record.ListResponse;
-import com.tqdev.crudapi.service.record.Record;
+import com.tqdev.crudapi.core.record.DatabaseRecords;
+import com.tqdev.crudapi.core.record.DatabaseRecordsException;
+import com.tqdev.crudapi.core.record.ListResponse;
+import com.tqdev.crudapi.core.record.Record;
+import com.tqdev.crudapi.meta.definition.DatabaseDefinitionException;
 
 public interface CrudApiService {
 
@@ -29,15 +28,13 @@ public interface CrudApiService {
 
 	// meta
 
-	void updateDefinition();
-
-	DatabaseDefinition getDatabaseDefinition();
+	void update();
 
 	DatabaseRecords getDatabaseRecords();
 
 	// initialization
 
-	void initialize(String string, String string2) throws JsonParseException, JsonMappingException, IOException,
+	void initialize(String recordsFilename) throws JsonParseException, JsonMappingException, IOException,
 			DatabaseDefinitionException, DatabaseRecordsException;
 
 }

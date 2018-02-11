@@ -1,4 +1,4 @@
-package com.tqdev.crudapi.service;
+package com.tqdev.crudapi.core;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -14,13 +14,13 @@ import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
-import com.tqdev.crudapi.reflection.ReflectedTable;
-import com.tqdev.crudapi.service.definition.DatabaseDefinition;
-import com.tqdev.crudapi.service.definition.DatabaseDefinitionException;
-import com.tqdev.crudapi.service.record.DatabaseRecords;
-import com.tqdev.crudapi.service.record.DatabaseRecordsException;
-import com.tqdev.crudapi.service.record.ListResponse;
-import com.tqdev.crudapi.service.record.Record;
+import com.tqdev.crudapi.core.record.DatabaseRecords;
+import com.tqdev.crudapi.core.record.DatabaseRecordsException;
+import com.tqdev.crudapi.core.record.ListResponse;
+import com.tqdev.crudapi.core.record.Record;
+import com.tqdev.crudapi.meta.CrudMetaService;
+import com.tqdev.crudapi.meta.definition.DatabaseDefinitionException;
+import com.tqdev.crudapi.meta.reflection.ReflectedTable;
 import com.tqdev.crudapi.spatial.SpatialDSL;
 
 public class JooqCrudApiService extends BaseCrudApiService
@@ -28,12 +28,13 @@ public class JooqCrudApiService extends BaseCrudApiService
 
 	public static final Logger logger = LoggerFactory.getLogger(JooqCrudApiService.class);
 
-	private DSLContext dsl;
+	protected DSLContext dsl;
 
-	public JooqCrudApiService(DSLContext dsl) {
+	public JooqCrudApiService(DSLContext dsl, CrudMetaService meta) {
 		this.dsl = dsl;
+		this.tables = meta.getDatabaseReflection();
 		SpatialDSL.registerDataTypes(dsl);
-		updateDefinition();
+		update();
 	}
 
 	@SuppressWarnings("unchecked")
@@ -90,20 +91,13 @@ public class JooqCrudApiService extends BaseCrudApiService
 	}
 
 	@Override
-	public DatabaseDefinition getDatabaseDefinition() {
-		return DatabaseDefinition.fromValue(dsl);
+	public void update() {
+		tables.update(dsl);
 	}
 
 	@Override
-	public void updateDefinition() {
-		tables.updateReflection(dsl);
-	}
-
-	@Override
-	public void initialize(String columnsFilename, String recordsFilename) throws JsonParseException,
-			JsonMappingException, IOException, DatabaseDefinitionException, DatabaseRecordsException {
-		DatabaseDefinition.fromFile(columnsFilename).create(dsl);
-		updateDefinition();
+	public void initialize(String recordsFilename) throws JsonParseException, JsonMappingException, IOException,
+			DatabaseDefinitionException, DatabaseRecordsException {
 		DatabaseRecords.fromFile(recordsFilename).create(this);
 	}
 

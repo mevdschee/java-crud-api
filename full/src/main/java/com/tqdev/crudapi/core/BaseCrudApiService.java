@@ -1,16 +1,16 @@
-package com.tqdev.crudapi.service;
+package com.tqdev.crudapi.core;
 
 import java.util.ArrayList;
 
 import org.jooq.Field;
 
-import com.tqdev.crudapi.reflection.DatabaseReflection;
-import com.tqdev.crudapi.service.record.DatabaseRecords;
-import com.tqdev.crudapi.service.record.Record;
+import com.tqdev.crudapi.core.record.DatabaseRecords;
+import com.tqdev.crudapi.core.record.Record;
+import com.tqdev.crudapi.meta.reflection.DatabaseReflection;
 
 abstract class BaseCrudApiService implements CrudApiService {
 
-	protected DatabaseReflection tables = new DatabaseReflection();
+	protected DatabaseReflection tables;
 
 	protected void sanitizeRecord(String table, Record record) {
 		String[] keyset = record.keySet().toArray(new String[] {});
@@ -29,6 +29,11 @@ abstract class BaseCrudApiService implements CrudApiService {
 	}
 
 	@Override
+	public boolean exists(String table) {
+		return tables.get(table) != null;
+	}
+
+	@Override
 	public DatabaseRecords getDatabaseRecords() {
 		DatabaseRecords db = new DatabaseRecords();
 		for (String table : tables.tableNames()) {
@@ -39,11 +44,6 @@ abstract class BaseCrudApiService implements CrudApiService {
 			db.put(table, records);
 		}
 		return db;
-	}
-
-	@Override
-	public boolean exists(String table) {
-		return tables.get(table) != null;
 	}
 
 }

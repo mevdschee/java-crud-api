@@ -1,4 +1,4 @@
-package com.tqdev.crudapi.service.definition;
+package com.tqdev.crudapi.meta.definition;
 
 public class DatabaseDefinitionException extends Exception {
 

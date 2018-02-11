@@ -11,27 +11,40 @@ import org.springframework.context.annotation.PropertySource;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
-import com.tqdev.crudapi.service.CrudApiService;
-import com.tqdev.crudapi.service.JooqCrudApiService;
-import com.tqdev.crudapi.service.definition.DatabaseDefinitionException;
-import com.tqdev.crudapi.service.record.DatabaseRecordsException;
+import com.tqdev.crudapi.core.CrudApiService;
+import com.tqdev.crudapi.core.JooqCrudApiService;
+import com.tqdev.crudapi.core.record.DatabaseRecordsException;
+import com.tqdev.crudapi.meta.CrudMetaService;
+import com.tqdev.crudapi.meta.JooqCrudMetaService;
+import com.tqdev.crudapi.meta.definition.DatabaseDefinitionException;
 
 @SpringBootApplication(scanBasePackages = { "com.tqdev.crudapi" })
 @PropertySource("classpath:application.yml")
 public class CrudApiApp {
 
 	public static void main(String[] args) {
+		System.getProperties().setProperty("org.jooq.no-logo", "true");
 		SpringApplication.run(CrudApiApp.class, args);
 	}
 
 	@Bean
 	@Autowired
-	public CrudApiService crudApiService(DSLContext dsl) throws JsonParseException, JsonMappingException, IOException,
+	public CrudMetaService crudMetaService(DSLContext dsl) throws JsonParseException, JsonMappingException, IOException,
 			DatabaseDefinitionException, DatabaseRecordsException {
-		CrudApiService result;
-		System.getProperties().setProperty("org.jooq.no-logo", "true");
-		result = new JooqCrudApiService(dsl);
-		result.initialize("columns.json", "records.json");
+		CrudMetaService result;
+		result = new JooqCrudMetaService(dsl);
+		result.initialize("columns.json");
 		return result;
 	}
+
+	@Bean
+	@Autowired
+	public CrudApiService crudApiService(DSLContext dsl, CrudMetaService meta) throws JsonParseException,
+			JsonMappingException, IOException, DatabaseDefinitionException, DatabaseRecordsException {
+		CrudApiService result;
+		result = new JooqCrudApiService(dsl, meta);
+		result.initialize("records.json");
+		return result;
+	}
+
 }

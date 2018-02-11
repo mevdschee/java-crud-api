@@ -14,11 +14,11 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.tqdev.crudapi.service.CrudApiService;
-import com.tqdev.crudapi.service.ErrorCode;
-import com.tqdev.crudapi.service.Params;
-import com.tqdev.crudapi.service.record.ListResponse;
-import com.tqdev.crudapi.service.record.Record;
+import com.tqdev.crudapi.core.CrudApiService;
+import com.tqdev.crudapi.core.ErrorCode;
+import com.tqdev.crudapi.core.Params;
+import com.tqdev.crudapi.core.record.ListResponse;
+import com.tqdev.crudapi.core.record.Record;
 
 @RestController
 @RequestMapping("/data")

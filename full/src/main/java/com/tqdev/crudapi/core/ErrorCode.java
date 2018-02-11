@@ -1,4 +1,4 @@
-package com.tqdev.crudapi.service;
+package com.tqdev.crudapi.core;
 
 import org.springframework.http.HttpStatus;
 

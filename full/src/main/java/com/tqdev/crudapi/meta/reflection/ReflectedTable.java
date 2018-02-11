@@ -1,4 +1,4 @@
-package com.tqdev.crudapi.reflection;
+package com.tqdev.crudapi.meta.reflection;
 
 import java.util.HashMap;
 import java.util.Set;

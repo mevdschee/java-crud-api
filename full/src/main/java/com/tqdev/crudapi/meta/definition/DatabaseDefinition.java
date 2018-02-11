@@ -1,4 +1,4 @@
-package com.tqdev.crudapi.service.definition;
+package com.tqdev.crudapi.meta.definition;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;

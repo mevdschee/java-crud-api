@@ -8,11 +8,11 @@ import org.jooq.impl.DefaultDataType;
 
 public class SpatialDSL {
 
-	public static Field<String> asText(Field<?> field) {
+	public static Field<?> asText(Field<?> field) {
 		return new AsText(field);
 	}
 
-	public static Field<byte[]> geomFromText(Field<?> field) {
+	public static Field<?> geomFromText(Field<?> field) {
 		return new GeomFromText(field);
 	}
 

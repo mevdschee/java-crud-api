@@ -1,4 +1,4 @@
-package com.tqdev.crudapi.service;
+package com.tqdev.crudapi.core;
 
 import java.util.ArrayList;
 
@@ -6,7 +6,7 @@ import org.jooq.Condition;
 import org.jooq.Field;
 import org.jooq.impl.DSL;
 
-import com.tqdev.crudapi.reflection.ReflectedTable;
+import com.tqdev.crudapi.meta.reflection.ReflectedTable;
 import com.tqdev.crudapi.spatial.SpatialDSL;
 
 public interface JooqConditions {

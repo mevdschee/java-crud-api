@@ -1,4 +1,4 @@
-package com.tqdev.crudapi.service.record;
+package com.tqdev.crudapi.core.record;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -10,8 +10,8 @@ import org.springframework.core.io.ClassPathResource;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.tqdev.crudapi.service.CrudApiService;
-import com.tqdev.crudapi.service.Params;
+import com.tqdev.crudapi.core.CrudApiService;
+import com.tqdev.crudapi.core.Params;
 
 public class DatabaseRecords extends HashMap<String, ArrayList<Record>> {
 
@@ -36,7 +36,7 @@ public class DatabaseRecords extends HashMap<String, ArrayList<Record>> {
 	public void create(CrudApiService service) throws DatabaseRecordsException {
 		for (String table : keySet()) {
 			for (Record record : get(table)) {
-				if (!service.getDatabaseDefinition().containsKey(table)) {
+				if (!service.exists(table)) {
 					throw new DatabaseRecordsException(
 							String.format("Cannot insert into table '%s': Table does not exist", table));
 				}

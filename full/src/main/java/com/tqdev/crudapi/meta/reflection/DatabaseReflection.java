@@ -1,4 +1,4 @@
-package com.tqdev.crudapi.reflection;
+package com.tqdev.crudapi.meta.reflection;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -47,7 +47,7 @@ public class DatabaseReflection {
 		return prefix;
 	}
 
-	public void updateReflection(DSLContext dsl) {
+	public void update(DSLContext dsl) {
 		String prefix = findTablePrefix(dsl);
 		for (Table<?> table : dsl.meta().getTables()) {
 			if (!(table.toString().startsWith(prefix))) {
