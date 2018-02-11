@@ -8,6 +8,8 @@ import org.jooq.DSLContext;
 import org.jooq.Field;
 import org.jooq.Table;
 import org.jooq.impl.DSL;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -22,6 +24,8 @@ import com.tqdev.crudapi.spatial.SpatialDSL;
 public class JooqCrudApiService extends BaseCrudApiService
 		implements CrudApiService, JooqConditions, JooqColumnSelector, JooqOrdering, JooqPagination {
 
+	public static final Logger logger = LoggerFactory.getLogger(JooqCrudApiService.class);
+
 	private DSLContext dsl;
 
 	public JooqCrudApiService(DSLContext dsl) {
@@ -35,7 +39,7 @@ public class JooqCrudApiService extends BaseCrudApiService
 		sanitizeRecord(table, record);
 		Table<?> t = DSL.table(DSL.name(table));
 		LinkedHashMap<Field<?>, Object> columns = columnValues(table, record, params, definition);
-		Field<?> pk = DSL.field(definition.get(table).getPk());
+		Field<?> pk = DSL.field(DSL.name(definition.get(table).getPk()));
 		Object result = dsl.insertInto(t).set(columns).returning(pk).fetchOne();
 		return result == null ? null : String.valueOf(result);
 	}
@@ -90,8 +94,8 @@ public class JooqCrudApiService extends BaseCrudApiService
 	@Override
 	public void initialize(String columnsFilename, String recordsFilename) throws JsonParseException,
 			JsonMappingException, IOException, DatabaseDefinitionException, DatabaseRecordsException {
-		definition = DatabaseDefinition.fromFile(columnsFilename);
-		definition.create(dsl);
+		DatabaseDefinition.fromFile(columnsFilename).create(dsl);
+		updateDefinition();
 		DatabaseRecords.fromFile(recordsFilename).create(this);
 	}
 

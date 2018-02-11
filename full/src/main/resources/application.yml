@@ -4,8 +4,8 @@ server:
 
 spring:
   jooq:
-    sql-dialect: MYSQL
+    sql-dialect: POSTGRES
   datasource:
-    url: jdbc:mysql://localhost/php-crud-api
+    url: jdbc:postgresql://localhost/php-crud-api
     username: php-crud-api
     password: php-crud-api

@@ -11,7 +11,8 @@ abstract class BaseCrudApiService implements CrudApiService {
 	protected DatabaseDefinition definition = new DatabaseDefinition();
 
 	protected void sanitizeRecord(String table, Record record) {
-		for (String key : record.keySet()) {
+		String[] keyset = record.keySet().toArray(new String[] {});
+		for (String key : keyset) {
 			if (!definition.get(table).containsKey(key)) {
 				record.remove(key);
 			}

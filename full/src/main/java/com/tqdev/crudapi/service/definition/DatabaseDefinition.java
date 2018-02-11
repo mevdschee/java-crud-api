@@ -13,6 +13,7 @@ import org.jooq.CreateTableConstraintStep;
 import org.jooq.DSLContext;
 import org.jooq.Field;
 import org.jooq.Table;
+import org.jooq.impl.DSL;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.ClassPathResource;
@@ -63,7 +64,8 @@ public class DatabaseDefinition extends HashMap<String, TableDefinition> {
 			TableDefinition table = get(tableName);
 			ArrayList<Field<?>> fields = table.getFields(dsl);
 			ArrayList<Constraint> constraints = table.getPkConstraints(dsl, tableName);
-			CreateTableConstraintStep query = dsl.createTable(tableName).columns(fields).constraints(constraints);
+			CreateTableConstraintStep query = dsl.createTable(DSL.name(tableName)).columns(fields)
+					.constraints(constraints);
 			logger.info("Executing SQL: " + query.getSQL());
 			int result = query.execute();
 			if (result > 0) {
@@ -73,7 +75,7 @@ public class DatabaseDefinition extends HashMap<String, TableDefinition> {
 		for (String tableName : created) {
 			TableDefinition table = get(tableName);
 			for (Constraint constraint : table.getFkConstraints(dsl, tableName, this)) {
-				AlterTableUsingIndexStep query = dsl.alterTable(tableName).add(constraint);
+				AlterTableUsingIndexStep query = dsl.alterTable(DSL.name(tableName)).add(constraint);
 				logger.info("Executing SQL: " + query.getSQL());
 				query.execute();
 			}
@@ -84,7 +86,7 @@ public class DatabaseDefinition extends HashMap<String, TableDefinition> {
 		DatabaseDefinition definition = new DatabaseDefinition();
 		String prefix = findTablePrefix(dsl);
 		for (Table<?> table : dsl.meta().getTables()) {
-			if (!(prefix + "\"" + table.getName() + "\"").equals(table.toString())) {
+			if (!(table.toString().startsWith(prefix))) {
 				// table not in current catalog or schema
 				continue;
 			}

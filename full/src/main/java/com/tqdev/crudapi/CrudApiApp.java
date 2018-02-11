@@ -8,7 +8,6 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.PropertySource;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -27,7 +26,6 @@ public class CrudApiApp {
 
 	@Bean
 	@Autowired
-	@Transactional
 	public CrudApiService crudApiService(DSLContext dsl) throws JsonParseException, JsonMappingException, IOException,
 			DatabaseDefinitionException, DatabaseRecordsException {
 		CrudApiService result;

@@ -31,7 +31,7 @@ public class TableDefinition extends LinkedHashMap<String, ColumnDefinition> {
 		ArrayList<Field<?>> fields = new ArrayList<>();
 		for (String columnName : keySet()) {
 			ColumnDefinition column = get(columnName);
-			fields.add(DSL.field(columnName, column.getDataType(dsl)));
+			fields.add(DSL.field(DSL.name(columnName), column.getDataType(dsl)));
 		}
 		return fields;
 	}
@@ -40,7 +40,7 @@ public class TableDefinition extends LinkedHashMap<String, ColumnDefinition> {
 		ArrayList<Constraint> constraints = new ArrayList<>();
 		String pk = getPk();
 		if (pk != null) {
-			constraints.add(DSL.constraint(DSL.name("pk_" + tableName)).primaryKey(DSL.field(pk)));
+			constraints.add(DSL.constraint(DSL.name("pk_" + tableName)).primaryKey(DSL.field(DSL.name(pk))));
 		}
 		return constraints;
 	}
@@ -59,7 +59,8 @@ public class TableDefinition extends LinkedHashMap<String, ColumnDefinition> {
 							columnName, tableName, fk));
 				}
 				constraints.add(DSL.constraint(DSL.name("fk_" + tableName + "_" + columnName))
-						.foreignKey(DSL.field(columnName)).references(DSL.table(fk), DSL.field(pk)));
+						.foreignKey(DSL.field(DSL.name(columnName)))
+						.references(DSL.table(DSL.name(fk)), DSL.field(DSL.name(pk))));
 			}
 		}
 		return constraints;
