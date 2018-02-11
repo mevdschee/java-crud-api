@@ -40,9 +40,9 @@ public interface JooqColumnSelector {
 		for (String key : cols) {
 			if (record.containsKey(key)) {
 				if (definition.get(table).get(key).getType().equals("geometry")) {
-					columns.put(DSL.field(key), SpatialDSL.geomFromText(DSL.val(record.get(key))));
+					columns.put(DSL.field(DSL.name(key)), SpatialDSL.geomFromText(DSL.val(record.get(key))));
 				} else {
-					columns.put(DSL.field(key), record.get(key));
+					columns.put(DSL.field(DSL.name(key)), record.get(key));
 				}
 			}
 		}
@@ -53,9 +53,9 @@ public interface JooqColumnSelector {
 		ArrayList<Field<?>> columns = new ArrayList<>();
 		for (String key : columns(table, params, definition)) {
 			if (definition.get(table).get(key).getType().equals("geometry")) {
-				columns.add(SpatialDSL.asText(DSL.field(key)).as(key));
+				columns.add(SpatialDSL.asText(DSL.field(DSL.name(key))).as(key));
 			} else {
-				columns.add(DSL.field(key));
+				columns.add(DSL.field(DSL.name(key)));
 			}
 		}
 		return columns;

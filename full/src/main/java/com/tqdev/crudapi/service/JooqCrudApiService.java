@@ -48,7 +48,7 @@ public class JooqCrudApiService extends BaseCrudApiService
 	public Record read(String table, String id, Params params) {
 		Table<?> t = DSL.table(DSL.name(table));
 		ArrayList<Field<?>> columns = columnNames(table, params, definition);
-		Field<Object> pk = DSL.field(definition.get(table).getPk());
+		Field<Object> pk = DSL.field(DSL.name(definition.get(table).getPk()));
 		org.jooq.Record record = dsl.select(columns).from(t).where(pk.eq(id)).fetchOne();
 		return record == null ? null : Record.valueOf(record.intoMap());
 	}
@@ -58,14 +58,14 @@ public class JooqCrudApiService extends BaseCrudApiService
 		sanitizeRecord(table, record);
 		Table<?> t = DSL.table(DSL.name(table));
 		LinkedHashMap<Field<?>, Object> columns = columnValues(table, record, params, definition);
-		Field<Object> pk = DSL.field(definition.get(table).getPk());
+		Field<Object> pk = DSL.field(DSL.name(definition.get(table).getPk()));
 		return dsl.update(t).set(columns).where(pk.eq(id)).execute();
 	}
 
 	@Override
 	public Integer delete(String table, String id, Params params) {
 		Table<?> t = DSL.table(DSL.name(table));
-		Field<Object> pk = DSL.field(definition.get(table).getPk());
+		Field<Object> pk = DSL.field(DSL.name(definition.get(table).getPk()));
 		return dsl.deleteFrom(t).where(pk.eq(id)).execute();
 	}
 
