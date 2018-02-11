@@ -90,20 +90,19 @@ public class JooqCrudApiService extends BaseCrudApiService
 	}
 
 	@Override
-	public boolean updateDefinition() {
-		DatabaseDefinition definition = DatabaseDefinition.fromValue(dsl);
-		if (definition != null) {
-			this.definition = definition;
-			return true;
-		}
-		return false;
+	public DatabaseDefinition getDatabaseDefinition() {
+		return DatabaseDefinition.fromValue(dsl);
+	}
+
+	@Override
+	public void updateDefinition() {
+		tables.updateReflection(dsl);
 	}
 
 	@Override
 	public void initialize(String columnsFilename, String recordsFilename) throws JsonParseException,
 			JsonMappingException, IOException, DatabaseDefinitionException, DatabaseRecordsException {
 		DatabaseDefinition.fromFile(columnsFilename).create(dsl);
-		tables.updateReflection(dsl);
 		updateDefinition();
 		DatabaseRecords.fromFile(recordsFilename).create(this);
 	}

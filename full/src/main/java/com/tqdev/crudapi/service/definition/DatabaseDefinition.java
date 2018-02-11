@@ -108,13 +108,4 @@ public class DatabaseDefinition extends HashMap<String, TableDefinition> {
 		return result;
 	}
 
-	public Table<?> getTable(String table) {
-		return get(table).table;
-	}
-
-	public Field<Object> getPkField(String table) {
-		TableDefinition t = get(table);
-		return t.get(t.getPk()).field;
-	}
-
 }

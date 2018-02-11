@@ -8,14 +8,10 @@ import org.jooq.Field;
 import org.jooq.SQLDialect;
 import org.jooq.impl.DefaultDataType;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
 public class ColumnDefinition {
-
-	@JsonIgnore
-	public Field<Object> field;
 
 	private boolean pk = false;
 	private String type;
@@ -135,11 +131,8 @@ public class ColumnDefinition {
 		return result;
 	}
 
-	// not pretty
-	@SuppressWarnings("unchecked")
 	public static ColumnDefinition fromValue(Field<?> field) {
 		ColumnDefinition definition = new ColumnDefinition();
-		definition.field = (Field<Object>) field;
 		definition.setPk(field.getDataType().identity());
 		String typeName = field.getDataType().getTypeName();
 		DataType<?> defaultType = DefaultDataType.getDefaultDataType(typeName);

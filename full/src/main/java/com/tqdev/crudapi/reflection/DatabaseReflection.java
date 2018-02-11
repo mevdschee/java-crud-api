@@ -3,6 +3,7 @@ package com.tqdev.crudapi.reflection;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.HashMap;
+import java.util.Set;
 
 import org.jooq.DSLContext;
 import org.jooq.Table;
@@ -55,5 +56,9 @@ public class DatabaseReflection {
 			}
 			tables.put(table.getName(), new ReflectedTable(table));
 		}
+	}
+
+	public Set<String> tableNames() {
+		return tables.keySet();
 	}
 }

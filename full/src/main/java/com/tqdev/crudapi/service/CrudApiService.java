@@ -29,7 +29,7 @@ public interface CrudApiService {
 
 	// meta
 
-	boolean updateDefinition();
+	void updateDefinition();
 
 	DatabaseDefinition getDatabaseDefinition();
 

@@ -53,7 +53,7 @@ public interface JooqColumnSelector {
 	default public ArrayList<Field<?>> columnNames(ReflectedTable table, Params params) {
 		ArrayList<Field<?>> columns = new ArrayList<>();
 		for (String key : columns(table, params)) {
-			Field<Object> field = table.get(key);
+			Field<?> field = table.get(key);
 			if (field.getDataType().getTypeName().equals("geometry")) {
 				columns.add(SpatialDSL.asText(field).as(key));
 			} else {
