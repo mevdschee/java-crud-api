@@ -4,10 +4,11 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 
+import org.jooq.Condition;
 import org.jooq.DSLContext;
 import org.jooq.Field;
+import org.jooq.SortField;
 import org.jooq.Table;
-import org.jooq.impl.DSL;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,18 +38,18 @@ public class JooqCrudApiService extends BaseCrudApiService
 	@Override
 	public String create(String table, Record record, Params params) {
 		sanitizeRecord(table, record);
-		Table<?> t = DSL.table(DSL.name(table));
+		Table<?> t = definition.getTable(table);
 		LinkedHashMap<Field<?>, Object> columns = columnValues(table, record, params, definition);
-		Field<?> pk = DSL.field(DSL.name(definition.get(table).getPk()));
+		Field<Object> pk = definition.getPkField(table);
 		org.jooq.Record result = dsl.insertInto(t).set(columns).returning(pk).fetchOne();
 		return result == null ? null : String.valueOf(result.get(0));
 	}
 
 	@Override
 	public Record read(String table, String id, Params params) {
-		Table<?> t = DSL.table(DSL.name(table));
+		Table<?> t = definition.getTable(table);
 		ArrayList<Field<?>> columns = columnNames(table, params, definition);
-		Field<Object> pk = DSL.field(DSL.name(definition.get(table).getPk()));
+		Field<Object> pk = definition.getPkField(table);
 		org.jooq.Record record = dsl.select(columns).from(t).where(pk.eq(id)).fetchOne();
 		return record == null ? null : Record.valueOf(record.intoMap());
 	}
@@ -56,26 +57,30 @@ public class JooqCrudApiService extends BaseCrudApiService
 	@Override
 	public Integer update(String table, String id, Record record, Params params) {
 		sanitizeRecord(table, record);
-		Table<?> t = DSL.table(DSL.name(table));
+		Table<?> t = definition.getTable(table);
 		LinkedHashMap<Field<?>, Object> columns = columnValues(table, record, params, definition);
-		Field<Object> pk = DSL.field(DSL.name(definition.get(table).getPk()));
+		Field<Object> pk = definition.getPkField(table);
 		return dsl.update(t).set(columns).where(pk.eq(id)).execute();
 	}
 
 	@Override
 	public Integer delete(String table, String id, Params params) {
-		Table<?> t = DSL.table(DSL.name(table));
-		Field<Object> pk = DSL.field(DSL.name(definition.get(table).getPk()));
+		Table<?> t = definition.getTable(table);
+		Field<Object> pk = definition.getPkField(table);
 		return dsl.deleteFrom(t).where(pk.eq(id)).execute();
 	}
 
 	@Override
 	public ListResponse list(String table, Params params) {
-		Table<?> t = DSL.table(DSL.name(table));
-		ArrayList<Field<?>> columns = columnNames(table, params, definition);
 		ArrayList<Record> records = new ArrayList<>();
-		for (org.jooq.Record record : dsl.select(columns).from(t).where(conditions(params)).orderBy(ordering(params))
-				.limit(offset(params), numberOfRows(params)).fetch()) {
+		Table<?> t = definition.getTable(table);
+		ArrayList<Field<?>> columns = columnNames(table, params, definition);
+		ArrayList<Condition> conditions = conditions(table, params, definition);
+		ArrayList<SortField<?>> ordering = ordering(table, params, definition);
+		int offset = offset(params);
+		int numberOfRows = numberOfRows(params);
+		for (org.jooq.Record record : dsl.select(columns).from(t).where(conditions).orderBy(ordering)
+				.limit(offset, numberOfRows).fetch()) {
 			records.add(Record.valueOf(record.intoMap()));
 		}
 		return new ListResponse(records.toArray(new Record[records.size()]));

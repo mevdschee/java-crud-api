@@ -11,7 +11,12 @@ import org.jooq.Table;
 import org.jooq.UniqueKey;
 import org.jooq.impl.DSL;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 public class TableDefinition extends LinkedHashMap<String, ColumnDefinition> {
+
+	@JsonIgnore
+	public Table<?> table;
 
 	/**
 	 * 
@@ -98,6 +103,7 @@ public class TableDefinition extends LinkedHashMap<String, ColumnDefinition> {
 
 	public static TableDefinition fromValue(Table<?> table) {
 		TableDefinition definition = new TableDefinition();
+		definition.table = table;
 		for (Field<?> field : table.fields()) {
 			definition.put(field.getName(), ColumnDefinition.fromValue(field));
 		}

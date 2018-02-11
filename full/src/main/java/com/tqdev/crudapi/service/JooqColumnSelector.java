@@ -9,6 +9,7 @@ import java.util.Set;
 import org.jooq.Field;
 import org.jooq.impl.DSL;
 
+import com.tqdev.crudapi.service.definition.ColumnDefinition;
 import com.tqdev.crudapi.service.definition.DatabaseDefinition;
 import com.tqdev.crudapi.service.record.Record;
 import com.tqdev.crudapi.spatial.SpatialDSL;
@@ -39,10 +40,11 @@ public interface JooqColumnSelector {
 		Set<String> cols = columns(table, params, definition);
 		for (String key : cols) {
 			if (record.containsKey(key)) {
-				if (definition.get(table).get(key).getType().equals("geometry")) {
-					columns.put(DSL.field(DSL.name(key)), SpatialDSL.geomFromText(DSL.val(record.get(key))));
+				ColumnDefinition column = definition.get(table).get(key);
+				if (column.getType().equals("geometry")) {
+					columns.put(column.field, SpatialDSL.geomFromText(DSL.val(record.get(key))));
 				} else {
-					columns.put(DSL.field(DSL.name(key)), record.get(key));
+					columns.put(column.field, record.get(key));
 				}
 			}
 		}
@@ -52,10 +54,11 @@ public interface JooqColumnSelector {
 	default public ArrayList<Field<?>> columnNames(String table, Params params, DatabaseDefinition definition) {
 		ArrayList<Field<?>> columns = new ArrayList<>();
 		for (String key : columns(table, params, definition)) {
-			if (definition.get(table).get(key).getType().equals("geometry")) {
-				columns.add(SpatialDSL.asText(DSL.field(DSL.name(key))).as(key));
+			ColumnDefinition column = definition.get(table).get(key);
+			if (column.getType().equals("geometry")) {
+				columns.add(SpatialDSL.asText(column.field).as(key));
 			} else {
-				columns.add(DSL.field(DSL.name(key)));
+				columns.add(column.field);
 			}
 		}
 		return columns;
