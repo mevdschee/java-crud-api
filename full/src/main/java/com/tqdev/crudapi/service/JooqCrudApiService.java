@@ -40,8 +40,8 @@ public class JooqCrudApiService extends BaseCrudApiService
 		Table<?> t = DSL.table(DSL.name(table));
 		LinkedHashMap<Field<?>, Object> columns = columnValues(table, record, params, definition);
 		Field<?> pk = DSL.field(DSL.name(definition.get(table).getPk()));
-		Object result = dsl.insertInto(t).set(columns).returning(pk).fetchOne();
-		return result == null ? null : String.valueOf(result);
+		org.jooq.Record result = dsl.insertInto(t).set(columns).returning(pk).fetchOne();
+		return result == null ? null : String.valueOf(result.get(0));
 	}
 
 	@Override
