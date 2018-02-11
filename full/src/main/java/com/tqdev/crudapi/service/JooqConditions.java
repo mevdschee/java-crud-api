@@ -6,12 +6,12 @@ import org.jooq.Condition;
 import org.jooq.Field;
 import org.jooq.impl.DSL;
 
-import com.tqdev.crudapi.service.definition.DatabaseDefinition;
+import com.tqdev.crudapi.reflection.ReflectedTable;
 import com.tqdev.crudapi.spatial.SpatialDSL;
 
 public interface JooqConditions {
 
-	default public ArrayList<Condition> conditions(String table, Params params, DatabaseDefinition definition) {
+	default public ArrayList<Condition> conditions(ReflectedTable table, Params params) {
 		ArrayList<Condition> conditions = new ArrayList<>();
 		if (params.containsKey("filter")) {
 			for (String key : params.get("filter")) {
@@ -32,7 +32,7 @@ public interface JooqConditions {
 							command = command.substring(1);
 						}
 					}
-					Field<Object> field = definition.get(table).get(parts[0]).field;
+					Field<Object> field = table.get(parts[0]);
 					if (parts.length == 3 || (parts.length == 2
 							&& (command.equals("ic") || command.equals("is") || command.equals("iv")))) {
 						if (spatial) {

@@ -15,6 +15,8 @@ public interface CrudApiService {
 
 	// crud
 
+	boolean exists(String table);
+
 	String create(String table, Record record, Params params);
 
 	Record read(String table, String id, Params params);
@@ -37,4 +39,5 @@ public interface CrudApiService {
 
 	void initialize(String string, String string2) throws JsonParseException, JsonMappingException, IOException,
 			DatabaseDefinitionException, DatabaseRecordsException;
+
 }

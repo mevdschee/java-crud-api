@@ -2,6 +2,7 @@ package com.tqdev.crudapi.service;
 
 import java.util.ArrayList;
 
+import com.tqdev.crudapi.reflection.DatabaseReflection;
 import com.tqdev.crudapi.service.definition.DatabaseDefinition;
 import com.tqdev.crudapi.service.record.DatabaseRecords;
 import com.tqdev.crudapi.service.record.Record;
@@ -9,6 +10,8 @@ import com.tqdev.crudapi.service.record.Record;
 abstract class BaseCrudApiService implements CrudApiService {
 
 	protected DatabaseDefinition definition = new DatabaseDefinition();
+
+	protected DatabaseReflection tables = new DatabaseReflection();
 
 	protected void sanitizeRecord(String table, Record record) {
 		String[] keyset = record.keySet().toArray(new String[] {});
@@ -40,6 +43,11 @@ abstract class BaseCrudApiService implements CrudApiService {
 			db.put(table, records);
 		}
 		return db;
+	}
+
+	@Override
+	public boolean exists(String table) {
+		return tables.get(table) != null;
 	}
 
 }

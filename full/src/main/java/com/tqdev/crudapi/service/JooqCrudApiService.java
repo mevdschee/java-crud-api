@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
+import com.tqdev.crudapi.reflection.ReflectedTable;
 import com.tqdev.crudapi.service.definition.DatabaseDefinition;
 import com.tqdev.crudapi.service.definition.DatabaseDefinitionException;
 import com.tqdev.crudapi.service.record.DatabaseRecords;
@@ -35,48 +36,50 @@ public class JooqCrudApiService extends BaseCrudApiService
 		updateDefinition();
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public String create(String table, Record record, Params params) {
 		sanitizeRecord(table, record);
-		Table<?> t = definition.getTable(table);
-		LinkedHashMap<Field<?>, Object> columns = columnValues(table, record, params, definition);
-		Field<Object> pk = definition.getPkField(table);
+		ReflectedTable t = tables.get(table);
+		LinkedHashMap<Field<?>, Object> columns = columnValues(t, record, params);
+		Field<Object> pk = tables.get(table).getPk();
 		org.jooq.Record result = dsl.insertInto(t).set(columns).returning(pk).fetchOne();
 		return result == null ? null : String.valueOf(result.get(0));
 	}
 
 	@Override
 	public Record read(String table, String id, Params params) {
-		Table<?> t = definition.getTable(table);
-		ArrayList<Field<?>> columns = columnNames(table, params, definition);
-		Field<Object> pk = definition.getPkField(table);
+		ReflectedTable t = tables.get(table);
+		ArrayList<Field<?>> columns = columnNames(t, params);
+		Field<Object> pk = tables.get(table).getPk();
 		org.jooq.Record record = dsl.select(columns).from(t).where(pk.eq(id)).fetchOne();
 		return record == null ? null : Record.valueOf(record.intoMap());
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public Integer update(String table, String id, Record record, Params params) {
 		sanitizeRecord(table, record);
-		Table<?> t = definition.getTable(table);
-		LinkedHashMap<Field<?>, Object> columns = columnValues(table, record, params, definition);
-		Field<Object> pk = definition.getPkField(table);
+		ReflectedTable t = tables.get(table);
+		LinkedHashMap<Field<?>, Object> columns = columnValues(t, record, params);
+		Field<Object> pk = tables.get(table).getPk();
 		return dsl.update(t).set(columns).where(pk.eq(id)).execute();
 	}
 
 	@Override
 	public Integer delete(String table, String id, Params params) {
-		Table<?> t = definition.getTable(table);
-		Field<Object> pk = definition.getPkField(table);
+		Table<?> t = tables.get(table);
+		Field<Object> pk = tables.get(table).getPk();
 		return dsl.deleteFrom(t).where(pk.eq(id)).execute();
 	}
 
 	@Override
 	public ListResponse list(String table, Params params) {
 		ArrayList<Record> records = new ArrayList<>();
-		Table<?> t = definition.getTable(table);
-		ArrayList<Field<?>> columns = columnNames(table, params, definition);
-		ArrayList<Condition> conditions = conditions(table, params, definition);
-		ArrayList<SortField<?>> ordering = ordering(table, params, definition);
+		ReflectedTable t = tables.get(table);
+		ArrayList<Field<?>> columns = columnNames(t, params);
+		ArrayList<Condition> conditions = conditions(t, params);
+		ArrayList<SortField<?>> ordering = ordering(t, params);
 		int offset = offset(params);
 		int numberOfRows = numberOfRows(params);
 		for (org.jooq.Record record : dsl.select(columns).from(t).where(conditions).orderBy(ordering)
@@ -100,6 +103,7 @@ public class JooqCrudApiService extends BaseCrudApiService
 	public void initialize(String columnsFilename, String recordsFilename) throws JsonParseException,
 			JsonMappingException, IOException, DatabaseDefinitionException, DatabaseRecordsException {
 		DatabaseDefinition.fromFile(columnsFilename).create(dsl);
+		tables.updateReflection(dsl);
 		updateDefinition();
 		DatabaseRecords.fromFile(recordsFilename).create(this);
 	}

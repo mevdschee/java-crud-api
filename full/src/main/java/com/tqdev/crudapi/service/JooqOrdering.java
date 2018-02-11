@@ -3,13 +3,12 @@ package com.tqdev.crudapi.service;
 import java.util.ArrayList;
 
 import org.jooq.SortField;
-import org.jooq.impl.DSL;
 
-import com.tqdev.crudapi.service.definition.DatabaseDefinition;
+import com.tqdev.crudapi.reflection.ReflectedTable;
 
 public interface JooqOrdering {
 
-	default public ArrayList<SortField<?>> ordering(String table, Params params, DatabaseDefinition definition) {
+	default public ArrayList<SortField<?>> ordering(ReflectedTable table, Params params) {
 		ArrayList<SortField<?>> fields = new ArrayList<>();
 		if (params.containsKey("order")) {
 			for (String key : params.get("order")) {
@@ -19,9 +18,9 @@ public interface JooqOrdering {
 					ascending = !parts[1].toLowerCase().startsWith("desc");
 				}
 				if (ascending) {
-					fields.add(DSL.field(DSL.name(parts[0])).asc());
+					fields.add(table.get(parts[0]).asc());
 				} else {
-					fields.add(DSL.field(DSL.name(parts[0])).desc());
+					fields.add(table.get(parts[0]).desc());
 				}
 			}
 		}
