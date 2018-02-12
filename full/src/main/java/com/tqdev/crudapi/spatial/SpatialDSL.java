@@ -64,6 +64,7 @@ public class SpatialDSL {
 		SQLDialect dialect = dsl.dialect();
 		switch (dialect.family().toString()) {
 		case "MYSQL":
+		case "POSTGRES":
 			DefaultDataType.getDefaultDataType(dialect, "geometry");
 			break;
 		}

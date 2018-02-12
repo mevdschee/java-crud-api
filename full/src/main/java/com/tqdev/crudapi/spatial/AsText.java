@@ -30,6 +30,7 @@ class AsText extends CustomField<String> {
 	private QueryPart delegate(Configuration configuration) {
 		switch (configuration.dialect().family().toString()) {
 		case "MYSQL":
+		case "POSTGRES":
 			return DSL.field("ST_AsText({0})", String.class, field);
 		case "SQLSERVER":
 			return DSL.field("{0}.STAsText(0)", String.class, field);

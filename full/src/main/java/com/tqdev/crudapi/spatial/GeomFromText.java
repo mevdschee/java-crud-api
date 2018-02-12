@@ -30,6 +30,7 @@ class GeomFromText extends CustomField<byte[]> {
 	private QueryPart delegate(Configuration configuration) {
 		switch (configuration.dialect().family().toString()) {
 		case "MYSQL":
+		case "POSTGRES":
 			return DSL.field("ST_GeomFromText({0})", byte[].class, field);
 		case "SQLSERVER":
 			return DSL.field("{0}.STGeomFromText(0)", byte[].class, field);
