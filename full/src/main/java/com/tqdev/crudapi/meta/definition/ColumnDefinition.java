@@ -134,8 +134,11 @@ public class ColumnDefinition {
 	public static ColumnDefinition fromValue(Field<?> field) {
 		ColumnDefinition definition = new ColumnDefinition();
 		definition.setPk(field.getDataType().identity());
-		String typeName = field.getDataType().getTypeName();
-		DataType<?> defaultType = DefaultDataType.getDefaultDataType(typeName);
+		DataType<?> dataType = field.getDataType();
+		DataType<?> defaultType = dataType.getSQLDataType();
+		if (defaultType == null) {
+			defaultType = DefaultDataType.getDefaultDataType(dataType.getTypeName());
+		}
 		definition.setType(defaultType.getTypeName());
 		if (field.getDataType().hasLength()) {
 			definition.setLength(field.getDataType().length());
