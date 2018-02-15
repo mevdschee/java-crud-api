@@ -10,7 +10,6 @@ import com.tqdev.crudapi.core.record.DatabaseRecordsException;
 import com.tqdev.crudapi.meta.definition.DatabaseDefinition;
 import com.tqdev.crudapi.meta.definition.DatabaseDefinitionException;
 import com.tqdev.crudapi.meta.reflection.DatabaseReflection;
-import com.tqdev.crudapi.spatial.SpatialDSL;
 
 public class JooqCrudMetaService implements CrudMetaService {
 
@@ -21,7 +20,6 @@ public class JooqCrudMetaService implements CrudMetaService {
 	public JooqCrudMetaService(DSLContext dsl) {
 		this.dsl = dsl;
 		this.tables = new DatabaseReflection(dsl);
-		SpatialDSL.registerDataTypes(dsl);
 	}
 
 	@Override

@@ -17,6 +17,7 @@ import com.tqdev.crudapi.core.record.DatabaseRecordsException;
 import com.tqdev.crudapi.meta.CrudMetaService;
 import com.tqdev.crudapi.meta.JooqCrudMetaService;
 import com.tqdev.crudapi.meta.definition.DatabaseDefinitionException;
+import com.tqdev.crudapi.spatial.SpatialDSL;
 
 @SpringBootApplication(scanBasePackages = { "com.tqdev.crudapi" })
 @PropertySource("classpath:application.yml")
@@ -31,6 +32,7 @@ public class CrudApiApp {
 	public CrudMetaService crudMetaService(DSLContext dsl) throws JsonParseException, JsonMappingException, IOException,
 			DatabaseDefinitionException, DatabaseRecordsException {
 		CrudMetaService result;
+		SpatialDSL.registerDataTypes(dsl);
 		result = new JooqCrudMetaService(dsl);
 		result.initialize("columns.json");
 		return result;
