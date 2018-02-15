@@ -20,7 +20,7 @@ public class JooqCrudMetaService implements CrudMetaService {
 
 	public JooqCrudMetaService(DSLContext dsl) {
 		this.dsl = dsl;
-		this.tables = new DatabaseReflection();
+		this.tables = new DatabaseReflection(dsl);
 		SpatialDSL.registerDataTypes(dsl);
 	}
 
@@ -33,7 +33,6 @@ public class JooqCrudMetaService implements CrudMetaService {
 	public void initialize(String columnsFilename) throws JsonParseException, JsonMappingException, IOException,
 			DatabaseDefinitionException, DatabaseRecordsException {
 		DatabaseDefinition.fromFile(columnsFilename).create(dsl);
-
 	}
 
 	@Override

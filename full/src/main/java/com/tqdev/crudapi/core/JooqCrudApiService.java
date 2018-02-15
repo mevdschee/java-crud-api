@@ -92,7 +92,7 @@ public class JooqCrudApiService extends BaseCrudApiService
 
 	@Override
 	public void update() {
-		tables.update(dsl);
+		tables.update();
 	}
 
 	@Override

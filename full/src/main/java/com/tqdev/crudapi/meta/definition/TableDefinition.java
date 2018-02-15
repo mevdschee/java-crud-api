@@ -6,10 +6,9 @@ import java.util.LinkedHashMap;
 import org.jooq.Constraint;
 import org.jooq.DSLContext;
 import org.jooq.Field;
-import org.jooq.ForeignKey;
-import org.jooq.Table;
-import org.jooq.UniqueKey;
 import org.jooq.impl.DSL;
+
+import com.tqdev.crudapi.meta.reflection.ReflectedTable;
 
 public class TableDefinition extends LinkedHashMap<String, ColumnDefinition> {
 
@@ -66,51 +65,15 @@ public class TableDefinition extends LinkedHashMap<String, ColumnDefinition> {
 		return constraints;
 	}
 
-	private static Field<?> findPrimaryKey(Table<?> table) {
-		UniqueKey<?> pk = table.getPrimaryKey();
-		if (pk != null) {
-			Field<?>[] pks = pk.getFieldsArray();
-			if (pks.length == 1) {
-				return pks[0];
-			}
-		}
-		return null;
-	}
-
-	private static Field<?> findForeignKeyField(ForeignKey<?, ?> fk) {
-		Field<?>[] fks = fk.getFieldsArray();
-		if (fks.length == 1) {
-			return fks[0];
-		}
-		return null;
-	}
-
-	private static String findForeignKeyReference(ForeignKey<?, ?> fk) {
-		UniqueKey<?> pk = fk.getKey();
-		if (pk != null) {
-			Field<?>[] pks = pk.getFieldsArray();
-			if (pks.length == 1) {
-				return pk.getTable().getName();
-			}
-		}
-		return null;
-	}
-
-	public static TableDefinition fromValue(Table<?> table) {
+	public static TableDefinition fromValue(ReflectedTable table) {
 		TableDefinition definition = new TableDefinition();
 		for (Field<?> field : table.fields()) {
 			definition.put(field.getName(), ColumnDefinition.fromValue(field));
+			definition.get(field.getName()).setFk(table.getFk(field.getName()));
 		}
-		Field<?> pk = findPrimaryKey(table);
+		Field<?> pk = table.getPk();
 		if (pk != null) {
 			definition.get(pk.getName()).setPk(true);
-		}
-		for (ForeignKey<?, ?> fk : table.getReferences()) {
-			Field<?> field = findForeignKeyField(fk);
-			String reference = findForeignKeyReference(fk);
-			if (field != null && reference != null) {
-				definition.get(field.getName()).setFk(reference);
-			}
 		}
 		return definition;
 	}

@@ -10,7 +10,14 @@ import org.jooq.Table;
 
 public class DatabaseReflection {
 
-	private HashMap<String, ReflectedTable> tables = new HashMap<>();
+	protected DSLContext dsl;
+
+	protected HashMap<String, ReflectedTable> tables;
+
+	public DatabaseReflection(DSLContext dsl) {
+		this.dsl = dsl;
+		update();
+	}
 
 	public boolean exists(String name) {
 		return tables.containsKey(name);
@@ -20,7 +27,7 @@ public class DatabaseReflection {
 		return tables.get(name);
 	}
 
-	private static String findTablePrefix(DSLContext dsl) {
+	private String findTablePrefix() {
 		Connection connection = dsl.configuration().connectionProvider().acquire();
 		String catalog = null, schema = null;
 		try {
@@ -47,8 +54,9 @@ public class DatabaseReflection {
 		return prefix;
 	}
 
-	public void update(DSLContext dsl) {
-		String prefix = findTablePrefix(dsl);
+	public void update() {
+		tables = new HashMap<>();
+		String prefix = findTablePrefix();
 		for (Table<?> table : dsl.meta().getTables()) {
 			if (!(table.toString().startsWith(prefix))) {
 				// table not in current catalog or schema

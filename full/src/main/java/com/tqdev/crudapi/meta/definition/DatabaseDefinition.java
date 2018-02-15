@@ -10,7 +10,6 @@ import org.jooq.Constraint;
 import org.jooq.CreateTableConstraintStep;
 import org.jooq.DSLContext;
 import org.jooq.Field;
-import org.jooq.Table;
 import org.jooq.impl.DSL;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,6 +19,7 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tqdev.crudapi.meta.reflection.DatabaseReflection;
+import com.tqdev.crudapi.meta.reflection.ReflectedTable;
 
 public class DatabaseDefinition extends HashMap<String, TableDefinition> {
 
@@ -39,10 +39,8 @@ public class DatabaseDefinition extends HashMap<String, TableDefinition> {
 			CreateTableConstraintStep query = dsl.createTable(DSL.name(tableName)).columns(fields)
 					.constraints(constraints);
 			logger.info("Executing SQL: " + query.getSQL());
-			int result = query.execute();
-			if (result > 0) {
-				created.add(tableName);
-			}
+			query.execute();
+			created.add(tableName);
 		}
 		for (String tableName : created) {
 			TableDefinition table = get(tableName);
@@ -57,7 +55,7 @@ public class DatabaseDefinition extends HashMap<String, TableDefinition> {
 	public static DatabaseDefinition fromValue(DatabaseReflection tables) {
 		DatabaseDefinition definition = new DatabaseDefinition();
 		for (String tableName : tables.tableNames()) {
-			Table<?> table = tables.get(tableName);
+			ReflectedTable table = tables.get(tableName);
 			definition.put(tableName, TableDefinition.fromValue(table));
 		}
 		return definition;

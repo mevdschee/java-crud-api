@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Set;
 
 import org.jooq.Field;
+import org.jooq.ForeignKey;
 import org.jooq.Identity;
 import org.jooq.Record;
 import org.jooq.Table;
@@ -20,6 +21,7 @@ public class ReflectedTable extends CustomTable {
 	private static final long serialVersionUID = 1L;
 	private Table<?> table;
 	private HashMap<String, TableField<?, ?>> fields = new HashMap<>();
+	private HashMap<String, String> fks = new HashMap<>();
 	private TableField<?, ?> pk = null;
 
 	@SuppressWarnings("unchecked")
@@ -36,6 +38,9 @@ public class ReflectedTable extends CustomTable {
 				pk = primaryKey.getFields().get(0);
 			}
 		}
+		for (ForeignKey<?, ?> fk : table.getReferences()) {
+			fks.put(findForeignKeyFieldName(fk), findForeignKeyReference(fk));
+		}
 	}
 
 	@Override
@@ -43,9 +48,42 @@ public class ReflectedTable extends CustomTable {
 		return Record.class;
 	}
 
+	private TableField<?, ?> findPrimaryKey(Table<?> table) {
+		UniqueKey<?> pk = table.getPrimaryKey();
+		if (pk != null) {
+			TableField<?, ?>[] pks = pk.getFieldsArray();
+			if (pks.length == 1) {
+				return pks[0];
+			}
+		}
+		return null;
+	}
+
+	private String findForeignKeyFieldName(ForeignKey<?, ?> fk) {
+		TableField<?, ?>[] pks = fk.getFieldsArray();
+		if (pks.length == 1) {
+			return pks[0].getName();
+		}
+		return null;
+	}
+
+	private String findForeignKeyReference(ForeignKey<?, ?> fk) {
+		UniqueKey<?> pk = fk.getKey();
+		if (pk != null) {
+			Field<?>[] pks = pk.getFieldsArray();
+			if (pks.length == 1) {
+				return pk.getTable().getName();
+			}
+		}
+		return null;
+	}
+
 	@Override
 	public Identity getIdentity() {
-		TableField<?, ?> pk = table.getPrimaryKey().getFields().get(0);
+		TableField<?, ?> pk = findPrimaryKey(table);
+		if (pk == null) {
+			return null;
+		}
 		return new DynamicIdentity(table, pk);
 	}
 
@@ -57,6 +95,10 @@ public class ReflectedTable extends CustomTable {
 	@SuppressWarnings("unchecked")
 	public Field<Object> getPk() {
 		return (Field<Object>) pk;
+	}
+
+	public String getFk(String field) {
+		return fks.get(field);
 	}
 
 	public Set<String> fieldNames() {
