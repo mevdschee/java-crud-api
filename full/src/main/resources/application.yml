@@ -2,18 +2,24 @@ server:
   port: 8080
   contextPath: /
 
+spring:
+  jooq:
+    sql-dialect: POSTGRES
+  datasource:
+    url: jdbc:postgresql://localhost/php-crud-api
+    username: php-crud-api
+    password: php-crud-api
+
 #spring:
 #  jooq:
-#    sql-dialect: POSTGRES
+#    sql-dialect: MYSQL
 #  datasource:
-#    url: jdbc:postgresql://localhost/php-crud-api
+#    url: jdbc:mysql://localhost/php-crud-api
 #    username: php-crud-api
 #    password: php-crud-api
 
-spring:
-  jooq:
-    sql-dialect: MYSQL
-  datasource:
-    url: jdbc:mysql://localhost/php-crud-api
-    username: php-crud-api
-    password: php-crud-api
+#spring:
+#  jooq:
+#    sql-dialect: H2
+#  datasource:
+#    url: jdbc:h2:mem:test

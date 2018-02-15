@@ -12,8 +12,8 @@
 		{"id":2, "user_id":1, "category_id": 2, "content":"It works!"}
 	],
 	"tags":[
-		{"id":1, "name":"funny"},
-		{"id":2, "name":"important"}
+		{"id":1, "name":"funny", "is_important":false},
+		{"id":2, "name":"important", "is_important":true}
 	],
 	"comments":[
 		{"id":1, "post_id":1, "message":"great"},

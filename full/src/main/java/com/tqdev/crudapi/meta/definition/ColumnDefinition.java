@@ -1,7 +1,5 @@
 package com.tqdev.crudapi.meta.definition;
 
-import java.util.Map;
-
 import org.jooq.DSLContext;
 import org.jooq.DataType;
 import org.jooq.Field;
@@ -77,46 +75,18 @@ public class ColumnDefinition {
 		this.fk = fk;
 	}
 
-	// ugly hack
-	@SuppressWarnings("unchecked")
-	private DataType<?> getTypeByName(SQLDialect dialect, String type) {
-		Map<String, DataType<?>>[] typesByName = null;
-		java.lang.reflect.Field[] fields = DefaultDataType.class.getDeclaredFields();
-		for (java.lang.reflect.Field field : fields) {
-			if (field.getName().equals("TYPES_BY_NAME")) {
-				field.setAccessible(true);
-				try {
-					typesByName = (Map<String, DataType<?>>[]) field.get(typesByName);
-				} catch (IllegalArgumentException | IllegalAccessException e) {
-					// should not happen
-					throw new RuntimeException(
-							"The command 'field.setAccessible(true);' on DefaultDataType's static 'TYPES_BY_NAME' failed");
-				}
-			}
-		}
-		return typesByName[dialect.ordinal()].get(DefaultDataType.normalise(type));
-	}
-
 	// hackety hack
 	private void override(DSLContext dsl) {
 		if (dsl.dialect() == SQLDialect.H2) {
 			if (type.equals("geometry")) {
-				type = "varchar";
-				length = 255;
-			}
-			if (type.equals("varbinary")) {
-				type = "varchar";
-				length = 255;
+				type = "nclob";
 			}
 		}
 	}
 
 	public DataType<?> getDataType(DSLContext dsl) {
 		override(dsl);
-		DataType<?> result = getTypeByName(dsl.dialect(), type);
-		if (result == null) {
-			result = DefaultDataType.getDefaultDataType(type);
-		}
+		DataType<?> result = DefaultDataType.getDataType(SQLDialect.DEFAULT, type);
 		result = result.identity(pk);
 		if (length >= 0) {
 			result = result.length(length);
@@ -133,23 +103,23 @@ public class ColumnDefinition {
 
 	public static ColumnDefinition fromValue(Field<?> field) {
 		ColumnDefinition definition = new ColumnDefinition();
-		definition.setPk(field.getDataType().identity());
 		DataType<?> dataType = field.getDataType();
+		definition.setPk(dataType.identity());
 		DataType<?> defaultType = dataType.getSQLDataType();
 		if (defaultType == null) {
 			defaultType = DefaultDataType.getDefaultDataType(dataType.getTypeName());
 		}
 		definition.setType(defaultType.getTypeName());
-		if (field.getDataType().hasLength()) {
-			definition.setLength(field.getDataType().length());
+		if (dataType.hasLength()) {
+			definition.setLength(dataType.length());
 		}
-		if (field.getDataType().hasPrecision()) {
-			definition.setPrecision(field.getDataType().precision());
+		if (dataType.hasPrecision()) {
+			definition.setPrecision(dataType.precision());
 		}
-		if (field.getDataType().hasScale()) {
-			definition.setScale(field.getDataType().scale());
+		if (dataType.hasScale()) {
+			definition.setScale(dataType.scale());
 		}
-		definition.setNullable(field.getDataType().nullable());
+		definition.setNullable(dataType.nullable());
 		return definition;
 	}
 
