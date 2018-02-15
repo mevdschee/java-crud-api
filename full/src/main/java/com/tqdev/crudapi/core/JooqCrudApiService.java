@@ -21,7 +21,6 @@ import com.tqdev.crudapi.core.record.Record;
 import com.tqdev.crudapi.meta.CrudMetaService;
 import com.tqdev.crudapi.meta.definition.DatabaseDefinitionException;
 import com.tqdev.crudapi.meta.reflection.ReflectedTable;
-import com.tqdev.crudapi.spatial.SpatialDSL;
 
 public class JooqCrudApiService extends BaseCrudApiService
 		implements CrudApiService, JooqConditions, JooqColumnSelector, JooqOrdering, JooqPagination {
@@ -33,7 +32,6 @@ public class JooqCrudApiService extends BaseCrudApiService
 	public JooqCrudApiService(DSLContext dsl, CrudMetaService meta) {
 		this.dsl = dsl;
 		this.tables = meta.getDatabaseReflection();
-		SpatialDSL.registerDataTypes(dsl);
 	}
 
 	@SuppressWarnings("unchecked")
