@@ -34,7 +34,6 @@ public class JooqCrudApiService extends BaseCrudApiService
 		this.dsl = dsl;
 		this.tables = meta.getDatabaseReflection();
 		SpatialDSL.registerDataTypes(dsl);
-		update();
 	}
 
 	@SuppressWarnings("unchecked")
