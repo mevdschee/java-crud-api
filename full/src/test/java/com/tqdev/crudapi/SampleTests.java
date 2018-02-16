@@ -37,8 +37,9 @@ public class SampleTests {
 
 	@Test
 	public void testAddPosts() throws Exception {
-		mockMvc.perform(post("/data/posts").content("{\"user_id\": 1, \"category_id\": 1, \"content\": \"test\"}")
-				.accept("application/json")).andExpect(status().isOk()).andExpect(content().json("3"));
+		mockMvc.perform(post("/data/posts").contentType("application/json")
+				.content("{\"user_id\": 1, \"category_id\": 1, \"content\": \"test\"}").accept("application/json"))
+				.andExpect(status().isOk()).andExpect(content().json("3"));
 	}
 
 	@Test
@@ -61,6 +62,13 @@ public class SampleTests {
 		mockMvc.perform(get("/data/users/1").accept("application/json")).andExpect(status().isOk())
 				.andExpect(content().contentTypeCompatibleWith("application/json"))
 				.andExpect(jsonPath("$.username").value("user1"));
+	}
+
+	@Test
+	public void testReadUserXml() throws Exception {
+		mockMvc.perform(get("/data/users/1").accept("application/xml")).andExpect(status().isOk())
+				.andExpect(content().contentTypeCompatibleWith("application/xml")).andExpect(content().string(
+						"<Record><password>pass1</password><location/><id>1</id><username>user1</username></Record>"));
 	}
 
 	@Test
