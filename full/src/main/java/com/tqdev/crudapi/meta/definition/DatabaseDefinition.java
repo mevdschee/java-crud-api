@@ -3,7 +3,7 @@ package com.tqdev.crudapi.meta.definition;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 
 import org.jooq.AlterTableUsingIndexStep;
 import org.jooq.Constraint;
@@ -21,7 +21,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tqdev.crudapi.meta.reflection.DatabaseReflection;
 import com.tqdev.crudapi.meta.reflection.ReflectedTable;
 
-public class DatabaseDefinition extends HashMap<String, TableDefinition> {
+public class DatabaseDefinition extends LinkedHashMap<String, TableDefinition> {
 
 	public static final Logger logger = LoggerFactory.getLogger(DatabaseDefinition.class);
 

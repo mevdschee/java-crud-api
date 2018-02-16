@@ -31,6 +31,7 @@ public class JooqCrudMetaService implements CrudMetaService {
 	public void initialize(String columnsFilename) throws JsonParseException, JsonMappingException, IOException,
 			DatabaseDefinitionException, DatabaseRecordsException {
 		DatabaseDefinition.fromFile(columnsFilename).create(dsl);
+		this.tables.update();
 	}
 
 	@Override

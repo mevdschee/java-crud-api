@@ -10,16 +10,16 @@ server:
 #    username: php-crud-api
 #    password: php-crud-api
 
-spring:
-  jooq:
-    sql-dialect: MYSQL
-  datasource:
-    url: jdbc:mysql://localhost/php-crud-api
-    username: php-crud-api
-    password: php-crud-api
-
 #spring:
 #  jooq:
-#    sql-dialect: H2
+#    sql-dialect: MYSQL
 #  datasource:
-#    url: jdbc:h2:mem:test
+#    url: jdbc:mysql://localhost/php-crud-api
+#    username: php-crud-api
+#    password: php-crud-api
+
+spring:
+  jooq:
+    sql-dialect: H2
+  datasource:
+    url: jdbc:h2:mem:test

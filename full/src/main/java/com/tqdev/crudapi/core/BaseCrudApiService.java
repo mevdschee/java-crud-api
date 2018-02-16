@@ -30,7 +30,7 @@ abstract class BaseCrudApiService implements CrudApiService {
 
 	@Override
 	public boolean exists(String table) {
-		return tables.get(table) != null;
+		return tables.exists(table);
 	}
 
 	@Override

@@ -3,7 +3,7 @@ package com.tqdev.crudapi.core.record;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 
 import org.springframework.core.io.ClassPathResource;
 
@@ -13,7 +13,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tqdev.crudapi.core.CrudApiService;
 import com.tqdev.crudapi.core.Params;
 
-public class DatabaseRecords extends HashMap<String, ArrayList<Record>> {
+public class DatabaseRecords extends LinkedHashMap<String, ArrayList<Record>> {
 
 	/**
 	 * 
