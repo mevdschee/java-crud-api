@@ -17,7 +17,7 @@
   - [ ] Supports POST variables as input
   - [x] Supports a JSON object as input
   - [x] Supports a JSON array as input (batch insert)
-  - [ ] Supports file upload from web forms (multipart/form-data)
+  - [x] Supports file upload from web forms (multipart/form-data)
   - [ ] Condensed JSON ouput: first row contains field names (non-default) 
   - [ ] Sanitize and validate input using callbacks
   - [ ] Permission system for databases, tables, columns and records

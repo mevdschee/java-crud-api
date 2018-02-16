@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tqdev.crudapi.core.CrudApiService;
 import com.tqdev.crudapi.core.ErrorCode;
 import com.tqdev.crudapi.core.Params;
@@ -65,7 +67,16 @@ public class CrudApiController extends BaseController {
 		}
 	}
 
-	@RequestMapping(value = "/{table}", method = RequestMethod.POST)
+	@RequestMapping(value = "/{table}", method = RequestMethod.POST, headers = "Content-Type=application/x-www-form-urlencoded")
+	public ResponseEntity<?> create(@PathVariable("table") String table,
+			@RequestBody MultiValueMap<String, String> record,
+			@RequestParam LinkedMultiValueMap<String, String> params) {
+		ObjectMapper mapper = new ObjectMapper();
+		Object pojo = mapper.convertValue(record.toSingleValueMap(), Object.class);
+		return create(table, pojo, params);
+	}
+
+	@RequestMapping(value = "/{table}", method = RequestMethod.POST, headers = "Content-Type=application/json")
 	public ResponseEntity<?> create(@PathVariable("table") String table, @RequestBody Object record,
 			@RequestParam LinkedMultiValueMap<String, String> params) {
 		logger.info("Creating record in {} with properties {}", table, record);
@@ -87,7 +98,16 @@ public class CrudApiController extends BaseController {
 		}
 	}
 
-	@RequestMapping(value = "/{table}/{id}", method = RequestMethod.PUT)
+	@RequestMapping(value = "/{table}/{id}", method = RequestMethod.PUT, headers = "Content-Type=application/x-www-form-urlencoded")
+	public ResponseEntity<?> update(@PathVariable("table") String table, @PathVariable("id") String id,
+			@RequestBody MultiValueMap<String, String> record,
+			@RequestParam LinkedMultiValueMap<String, String> params) {
+		ObjectMapper mapper = new ObjectMapper();
+		Object pojo = mapper.convertValue(record.toSingleValueMap(), Object.class);
+		return update(table, id, pojo, params);
+	}
+
+	@RequestMapping(value = "/{table}/{id}", method = RequestMethod.PUT, headers = "Content-Type=application/json")
 	public ResponseEntity<?> update(@PathVariable("table") String table, @PathVariable("id") String id,
 			@RequestBody Object record, @RequestParam LinkedMultiValueMap<String, String> params) {
 		logger.info("Updating record in {} with id {} and properties {}", table, id, record);
