@@ -14,10 +14,10 @@
   - [x] Single ~~PHP~~JAR file, easy to deploy.
   - [x] Very little code, easy to adapt and maintain
   - [ ] ~~Streaming data, low memory footprint~~ (dropped) 
-  - [ ] Supports POST variables as input
+  - [x] Supports POST variables as input
   - [x] Supports a JSON object as input
   - [x] Supports a JSON array as input (batch insert)
-  - [x] Supports file upload from web forms (multipart/form-data)
+  - [ ] Supports file upload from web forms (multipart/form-data)
   - [ ] Condensed JSON ouput: first row contains field names (non-default) 
   - [ ] Sanitize and validate input using callbacks
   - [ ] Permission system for databases, tables, columns and records
