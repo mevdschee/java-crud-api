@@ -58,17 +58,17 @@ public class SampleTests {
 	}
 
 	@Test
-	public void testReadUser() throws Exception {
+	public void testReadUserJson() throws Exception {
 		mockMvc.perform(get("/data/users/1").accept("application/json")).andExpect(status().isOk())
-				.andExpect(content().contentTypeCompatibleWith("application/json"))
-				.andExpect(jsonPath("$.username").value("user1"));
+				.andExpect(content().contentTypeCompatibleWith("application/json")).andExpect(
+						content().string("{\"id\":1,\"username\":\"user1\",\"password\":\"pass1\",\"location\":null}"));
 	}
 
 	@Test
 	public void testReadUserXml() throws Exception {
 		mockMvc.perform(get("/data/users/1").accept("application/xml")).andExpect(status().isOk())
 				.andExpect(content().contentTypeCompatibleWith("application/xml")).andExpect(content().string(
-						"<Record><password>pass1</password><location/><id>1</id><username>user1</username></Record>"));
+						"<Record><id>1</id><username>user1</username><password>pass1</password><location/></Record>"));
 	}
 
 	@Test

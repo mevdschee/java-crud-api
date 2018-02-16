@@ -1,6 +1,7 @@
 package com.tqdev.crudapi.meta.reflection;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Set;
 
 import org.jooq.Field;
@@ -20,8 +21,8 @@ public class ReflectedTable extends CustomTable {
 	 */
 	private static final long serialVersionUID = 1L;
 	private Table<?> table;
-	private HashMap<String, TableField<?, ?>> fields = new HashMap<>();
-	private HashMap<String, String> fks = new HashMap<>();
+	private HashMap<String, TableField<?, ?>> fields = new LinkedHashMap<>();
+	private HashMap<String, String> fks = new LinkedHashMap<>();
 	private TableField<?, ?> pk = null;
 
 	@SuppressWarnings("unchecked")
