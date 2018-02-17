@@ -6,7 +6,7 @@
   - Complex writes (transactions) are not supported
   - Complex queries calling functions (like "concat" or "sum") are not supported
   - MySQL storage engine must be either InnoDB or XtraDB
-  - Only MySQL and PostgreSQL spatial/GIS functionality (todo: add SQLServer)
+  - Only MySQL and PostgreSQL have spatial/GIS functionality (todo: add SQLServer)
 
 ### Features
 
