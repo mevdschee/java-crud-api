@@ -1,36 +1,113 @@
+### Limitations
 
-This is a Java port of the [php-crud-api](https://github.com/mevdschee/php-crud-api) project (single file REST API). It currently only implements the core functionality.
+  - Primary keys should either be auto-increment (from 1 to 2^53) or UUID
+  - Composite primary or foreign keys are not supported
+  - Complex filters (with both "and" & "or") are not supported
+  - Complex writes (transactions) are not supported
+  - Complex queries calling functions (like "concat" or "sum") are not supported
+  - MySQL storage engine must be either InnoDB or XtraDB
+  - Only MySQL and PostgreSQL spatial/GIS functionality (todo: add SQLServer)
 
-### Dependencies
+### Features
 
-Install dependencies using:
+  - [x] Supports POST variables as input (x-www-form-urlencoded)
+  - [x] Supports a JSON object as input
+  - [x] Supports a JSON array as input (batch insert)
+  - [ ] Supports file upload from web forms (multipart/form-data)
+  - [ ] Condensed JSON output: first row contains field names (non-default)
+  - [ ] Sanitize and validate input using callbacks
+  - [ ] Permission system for databases, tables, columns and records
+  - [ ] Multi-tenant database layouts are supported
+  - [x] Multi-domain CORS support for cross-domain requests
+  - [ ] Combined requests with support for multiple table names
+  - [x] Search support on multiple criteria
+  - [x] Pagination, sorting and column selection
+  - [ ] Foreign keys are turned into objects on demand
+  - [ ] Atomic increment support via PATCH (for counters)
+  - [x] Binary fields supported with base64 encoding
+  - [x] Spatial/GIS fields and filters supported with WKT
+  - [ ] Unstructured data support through JSON/JSONB/XML
+  - [ ] Generate API documentation using Swagger tools
+  - [ ] Authentication via JWT token or username/password
 
-    sudo apt-get install maven openjdk-7-jdk
+### Extra Features
 
-Then build the server.
+  - [x] Support for output in JSON or XML
+  - [x] Does not reflect on every request (better performance)
+  - [x] Support for input and output of database structure and records
+  - [x] Support for 13 different database systems (thanks to jOOQ)
 
-### Configuring
+## Features
 
-In the file "core/src/main/resources/jetty.properties" you can configure the listening host and port.
+These features match features in PHP-CRUD-API.
 
-In "core/src/main/resources/hikari.properties" you can configure the MySQL connection.
+### Multi-domain CORS support
 
-### Running
+By default all cross-origin requests are allowed. Use the key "rest.cors.allowed-origins" and
+set it to one or multiple hosts in a comma separated list (e.g. "http://localost:8080,http://localhost:9090").
 
-To run the api (during development) type:
+## Extra Features
 
-    mvn exec:java
+These features are new and where not included in PHP-CRUD-API.
 
-In production I recommend deploying the JAR file as described below.
+### Support for output in JSON or XML
 
-### Building a executable JAR file
+By sending the "Accept: application/json" header you are specifying you want to receive JSON
+By sending the "Accept: application/xml" header you are specifying you want to receive XML
 
-To compile everything in a single executable JAR file, run:
+### Input and output of database structure and records
 
-    mvn compile assembly:single
+These are the supported types:
 
-You can execute the JAR using:
+character types:
+- varchar(length)
+- char(length)
+- longvarchar(length)
+- clob(length)
 
-    java -jar server.jar
+unicode types:
+- nvarchar(length)
+- nchar(length)
+- longnvarchar(length)
+- nclob(length)
 
-You can see the api at work at http://localhost:8080/posts/1.
+boolean types:
+- boolean
+- bit
+
+integer types:
+- tinyint
+- smallint
+- integer
+- bigint
+
+floating point types:
+- double
+- float
+- real
+
+decimal types:
+- numeric(precision,scale)
+- decimal(precision,scale)
+
+date/time types:
+- date
+- time
+- timestamp
+
+binary types:
+- binary(length)
+- varbinary(length)
+- longvarbinary(length)
+- blob(length)
+
+other types:
+- other /* for JDBC unknown types */
+- record /* for JDBC STRUCT type */
+- result /* emulates REF CURSOR types and similar constructs */
+- uuid /* non-jdbc type, limited support */
+- geometry /* non-jdbc type, extension with limited support */
+- xml /* non-jdbc type, extension with limited support */
+- json /* non-jdbc type, extension with limited support */
+
+The length parameter is always optional and not recommended on binary types and large objects (such as clob and nclob).
