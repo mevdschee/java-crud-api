@@ -22,7 +22,7 @@
   - [ ] Sanitize and validate input using callbacks
   - [ ] Permission system for databases, tables, columns and records
   - [ ] Multi-tenant database layouts are supported
-  - [ ] Multi-domain CORS support for cross-domain requests
+  - [x] Multi-domain CORS support for cross-domain requests
   - [ ] Combined requests with support for multiple table names
   - [x] Search support on multiple criteria
   - [x] Pagination, sorting and column selection
@@ -49,7 +49,7 @@
 By sending the "Accept: application/json" header you are specifying you want to receive JSON
 By sending the "Accept: application/xml" header you are specifying you want to receive XML
 
-### Output database structure and records
+### Input and output of database structure and records
 
 These are the supported types:
 

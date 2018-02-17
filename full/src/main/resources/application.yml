@@ -2,6 +2,10 @@ server:
   port: 8080
   contextPath: /
 
+rest:
+  cors:
+    allowed-origins: "*"
+
 #spring:
 #  jooq:
 #    sql-dialect: POSTGRES
