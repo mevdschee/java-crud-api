@@ -42,6 +42,13 @@
   - [x] Support for input and output of database structure and records
   - [x] Support for 13 different database systems (thanks to jOOQ)
 
+## Features
+
+### Multi-domain CORS support
+
+By default all cross-origin requests are allowed. Use the key "rest.cors.allowed-origins" and
+set it to one or multiple hosts in a comma separated list (e.g. "http://localost:8080,http://localhost:9090").
+
 ## Extra Features
 
 ### Support for output in JSON or XML

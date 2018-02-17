@@ -2,9 +2,9 @@ server:
   port: 8080
   contextPath: /
 
-rest:
-  cors:
-    allowed-origins: "*"
+#rest:
+#  cors:
+#    allowed-origins: "*"
 
 #spring:
 #  jooq:
