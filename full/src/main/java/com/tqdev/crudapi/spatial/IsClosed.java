@@ -29,6 +29,7 @@ public class IsClosed extends CustomCondition {
 	private QueryPart delegate(Configuration configuration) {
 		switch (configuration.dialect().family().toString()) {
 		case "MYSQL":
+		case "POSTGRES":
 			return DSL.field("ST_IsClosed({0})", Boolean.class, field);
 		case "SQLSERVER":
 			return DSL.field("{0}.STIsClosed()", Boolean.class, field);

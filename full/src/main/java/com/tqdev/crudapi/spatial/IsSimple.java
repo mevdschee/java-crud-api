@@ -29,6 +29,7 @@ public class IsSimple extends CustomCondition {
 	private QueryPart delegate(Configuration configuration) {
 		switch (configuration.dialect().family().toString()) {
 		case "MYSQL":
+		case "POSTGRES":
 			return DSL.field("ST_IsSimple({0})", Boolean.class, field);
 		case "SQLSERVER":
 			return DSL.field("{0}.STIsSimple()", Boolean.class, field);

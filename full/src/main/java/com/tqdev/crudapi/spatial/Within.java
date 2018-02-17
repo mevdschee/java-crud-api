@@ -31,6 +31,7 @@ public class Within extends CustomCondition {
 	private QueryPart delegate(Configuration configuration) {
 		switch (configuration.dialect().family().toString()) {
 		case "MYSQL":
+		case "POSTGRES":
 			return DSL.field("ST_Within({0}, {1})", Boolean.class, field1, field2);
 		case "SQLSERVER":
 			return DSL.field("{0}.STWithin({1})", Boolean.class, field1, field2);
