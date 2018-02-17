@@ -52,8 +52,9 @@ These features are new and where not included in PHP-CRUD-API.
 
 ### Support for output in JSON or XML
 
-By sending the "Accept: application/json" header you are specifying you want to receive JSON
-By sending the "Accept: application/xml" header you are specifying you want to receive XML
+By sending the "Accept: application/json" header you are specifying you want to receive JSON.
+By sending the "Accept: application/xml" header you are specifying you want to receive XML. 
+Alternatively you may also end your URL in ".json" or ".xml" to specify the output format. 
 
 ### Input and output of database structure and records
 
