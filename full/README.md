@@ -14,7 +14,7 @@
   - [x] Supports a JSON object as input
   - [x] Supports a JSON array as input (batch insert)
   - [ ] Supports file upload from web forms (multipart/form-data)
-  - [ ] Condensed JSON output: first row contains field names (non-default)
+  - [ ] Optional condensed JSON: only first row contains field names
   - [ ] Sanitize and validate input using callbacks
   - [ ] Permission system for databases, tables, columns and records
   - [ ] Multi-tenant database layouts are supported
