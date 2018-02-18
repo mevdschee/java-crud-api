@@ -42,7 +42,7 @@ These features are new and where not included in PHP-CRUD-API.
   - [x] Support for output in JSON or XML
   - [x] Does not reflect on every request (better performance)
   - [x] Support for input and output of database structure and records
-  - [x] Support for 13 different database systems (thanks to jOOQ)
+  - [x] Support for all major database systems (thanks to jOOQ)
   - [x] Support for boolean and binary data in all database engines
 
 ## Features
