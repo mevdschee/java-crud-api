@@ -99,7 +99,7 @@ public class CrudApiController extends BaseController {
 	}
 
 	@RequestMapping(value = "/{table}/{id}", method = RequestMethod.PUT, headers = "Content-Type=application/x-www-form-urlencoded")
-	public ResponseEntity<?> update(@PathVariable("table") String table, @PathVariable("id") String id,
+	public ResponseEntity<?> increment(@PathVariable("table") String table, @PathVariable("id") String id,
 			@RequestBody MultiValueMap<String, String> record,
 			@RequestParam LinkedMultiValueMap<String, String> params) {
 		ObjectMapper mapper = new ObjectMapper();
@@ -108,6 +108,42 @@ public class CrudApiController extends BaseController {
 	}
 
 	@RequestMapping(value = "/{table}/{id}", method = RequestMethod.PUT, headers = "Content-Type=application/json")
+	public ResponseEntity<?> increment(@PathVariable("table") String table, @PathVariable("id") String id,
+			@RequestBody Object record, @RequestParam LinkedMultiValueMap<String, String> params) {
+		logger.info("Inrementing record in {} with id {} and properties {}", table, id, record);
+		if (!service.exists(table)) {
+			return error(ErrorCode.TABLE_NOT_FOUND, table);
+		}
+		if (id.indexOf(',') >= 0 && record instanceof ArrayList<?>) {
+			ArrayList<Object> result = new ArrayList<>();
+			String[] ids = id.split(",");
+			ArrayList<?> records = new ArrayList<>();
+			if (ids.length != records.size()) {
+				return error(ErrorCode.ARGUMENT_COUNT_MISMATCH, id);
+			}
+			for (int i = 0; i < ids.length; i++) {
+				result.add(service.increment(table, ids[i], Record.valueOf(records.get(i)), new Params(params)));
+			}
+			return success(result);
+		} else {
+			Integer response = service.increment(table, id, Record.valueOf(record), new Params(params));
+			if (response == null) {
+				return error(ErrorCode.CANNOT_UPDATE_RECORD, record.toString());
+			}
+			return success(response);
+		}
+	}
+
+	@RequestMapping(value = "/{table}/{id}", method = RequestMethod.PATCH, headers = "Content-Type=application/x-www-form-urlencoded")
+	public ResponseEntity<?> update(@PathVariable("table") String table, @PathVariable("id") String id,
+			@RequestBody MultiValueMap<String, String> record,
+			@RequestParam LinkedMultiValueMap<String, String> params) {
+		ObjectMapper mapper = new ObjectMapper();
+		Object pojo = mapper.convertValue(record.toSingleValueMap(), Object.class);
+		return update(table, id, pojo, params);
+	}
+
+	@RequestMapping(value = "/{table}/{id}", method = RequestMethod.PATCH, headers = "Content-Type=application/json")
 	public ResponseEntity<?> update(@PathVariable("table") String table, @PathVariable("id") String id,
 			@RequestBody Object record, @RequestParam LinkedMultiValueMap<String, String> params) {
 		logger.info("Updating record in {} with id {} and properties {}", table, id, record);

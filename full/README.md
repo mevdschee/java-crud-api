@@ -23,7 +23,7 @@
   - [x] Search support on multiple criteria
   - [x] Pagination, sorting and column selection
   - [ ] Foreign keys are turned into objects on demand
-  - [ ] Atomic increment support via PATCH (for counters)
+  - [x] Atomic increment support via PATCH (for counters)
   - [x] Binary fields supported with base64 encoding
   - [x] Spatial/GIS fields and filters supported with WKT
   - [ ] Unstructured data support through JSON/JSONB/XML

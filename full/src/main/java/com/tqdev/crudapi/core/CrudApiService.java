@@ -22,6 +22,8 @@ public interface CrudApiService {
 
 	Integer update(String table, String id, Record record, Params params);
 
+	Integer increment(String table, String id, Record record, Params params);
+
 	Integer delete(String table, String id, Params params);
 
 	ListResponse list(String table, Params params);

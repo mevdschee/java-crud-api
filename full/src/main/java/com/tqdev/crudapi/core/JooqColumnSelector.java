@@ -50,6 +50,22 @@ public interface JooqColumnSelector {
 		return columns;
 	}
 
+	default public LinkedHashMap<Field<?>, Object> columnIncrements(ReflectedTable table, Record record,
+			Params params) {
+		LinkedHashMap<Field<?>, Object> columns = new LinkedHashMap<>();
+		Set<String> cols = columns(table, params);
+		for (String key : cols) {
+			if (record.containsKey(key)) {
+				Field<Object> field = table.get(key);
+				Object value = record.get(key);
+				if (value instanceof Number) {
+					columns.put(field, field.add((Number) value));
+				}
+			}
+		}
+		return columns;
+	}
+
 	default public ArrayList<Field<?>> columnNames(ReflectedTable table, Params params) {
 		ArrayList<Field<?>> columns = new ArrayList<>();
 		for (String key : columns(table, params)) {

@@ -65,6 +65,15 @@ public class JooqCrudApiService extends BaseCrudApiService
 	}
 
 	@Override
+	public Integer increment(String table, String id, Record record, Params params) {
+		sanitizeRecord(table, record);
+		ReflectedTable t = tables.get(table);
+		LinkedHashMap<Field<?>, Object> columns = columnValues(t, record, params);
+		Field<Object> pk = tables.get(table).getPk();
+		return dsl.update(t).set(columns).where(pk.eq(id)).execute();
+	}
+
+	@Override
 	public Integer delete(String table, String id, Params params) {
 		Table<?> t = tables.get(table);
 		Field<Object> pk = tables.get(table).getPk();
