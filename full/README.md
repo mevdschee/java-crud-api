@@ -1,5 +1,7 @@
 ### Limitations
 
+These limitation were also present in PHP-CRUD-API.
+
   - Primary keys should either be auto-increment (from 1 to 2^53) or UUID
   - Composite primary or foreign keys are not supported
   - Complex filters (with both "and" & "or") are not supported
@@ -9,6 +11,8 @@
   - Only MySQL, PostgreSQL and SQLServer support spatial/GIS functionality
 
 ### Features
+
+These features match features in PHP-CRUD-API.
 
   - [x] Supports POST variables as input (x-www-form-urlencoded)
   - [x] Supports a JSON object as input
@@ -32,23 +36,22 @@
 
 ### Extra Features
 
+These features are new and where not included in PHP-CRUD-API.
+
   - [x] Support for output in JSON or XML
   - [x] Does not reflect on every request (better performance)
   - [x] Support for input and output of database structure and records
   - [x] Support for 13 different database systems (thanks to jOOQ)
+  - [x] Support for boolean and binary data in all database engines
 
 ## Features
-
-These features match features in PHP-CRUD-API.
 
 ### Multi-domain CORS support
 
 By default all cross-origin requests are allowed. Use the key "rest.cors.allowed-origins" and
-set it to one or multiple hosts in a comma separated list (e.g. "http://localost:8080,http://localhost:9090").
+set it to one or multiple hosts in a comma separated list (e.g. "http://localhost:8080,http://localhost:9090").
 
 ## Extra Features
-
-These features are new and where not included in PHP-CRUD-API.
 
 ### Support for output in JSON or XML
 
