@@ -64,6 +64,7 @@ public class JooqCrudApiService extends BaseCrudApiService
 		return dsl.update(t).set(columns).where(pk.eq(id)).execute();
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public Integer increment(String table, String id, Record record, Params params) {
 		sanitizeRecord(table, record);
