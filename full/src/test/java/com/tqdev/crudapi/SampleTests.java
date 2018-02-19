@@ -169,16 +169,26 @@ public class SampleTests {
 	}
 
 	@Test
+	public void test017ReadUserXml() throws Exception {
+		mockMvc.perform(get("/data/users/1").accept("application/xml")).andExpect(status().isOk()).andExpect(content()
+				.string("<Record><id>1</id><username>user1</username><password>pass1</password><location/></Record>"));
+	}
+
+	@Test
+	public void test018ListUsersXml() throws Exception {
+		mockMvc.perform(get("/data/users").accept("application/xml")).andExpect(status().isOk()).andExpect(content()
+				.string("<ListResponse><Records><Record><id>1</id><username>user1</username><password>pass1</password><location/></Record><Record><id>2</id><username>user2</username><password>pass2</password><location/></Record></Records></ListResponse>"));
+	}
+
+	@Test
 	public void testListPostColumns() throws Exception {
 		mockMvc.perform(get("/data/posts?columns=id,content").accept("application/json")).andExpect(status().isOk())
-				.andExpect(content().contentTypeCompatibleWith("application/json"))
 				.andExpect(jsonPath("$.records[*].id", hasSize(4))).andExpect(jsonPath("$.records[0].*", hasSize(2)));
 	}
 
 	@Test
 	public void testListPosts() throws Exception {
 		mockMvc.perform(get("/data/posts").accept("application/json")).andExpect(status().isOk())
-				.andExpect(content().contentTypeCompatibleWith("application/json"))
 				.andExpect(jsonPath("$.records[*].id", hasItems(1, 2)))
 				.andExpect(jsonPath("$.records[*].content", hasItems("blog started", "It works!")));
 	}
@@ -186,23 +196,14 @@ public class SampleTests {
 	@Test
 	public void testListSingleUser() throws Exception {
 		mockMvc.perform(get("/data/users?filter=id,eq,1").accept("application/json")).andExpect(status().isOk())
-				.andExpect(content().contentTypeCompatibleWith("application/json"))
 				.andExpect(jsonPath("$.records[*].id", hasSize(1)))
 				.andExpect(jsonPath("$.records[0].username").value("user1"));
 	}
 
 	@Test
 	public void testReadUserJson() throws Exception {
-		mockMvc.perform(get("/data/users/1").accept("application/json")).andExpect(status().isOk())
-				.andExpect(content().contentTypeCompatibleWith("application/json")).andExpect(
-						content().string("{\"id\":1,\"username\":\"user1\",\"password\":\"pass1\",\"location\":null}"));
-	}
-
-	@Test
-	public void testReadUserXml() throws Exception {
-		mockMvc.perform(get("/data/users/1").accept("application/xml")).andExpect(status().isOk())
-				.andExpect(content().contentTypeCompatibleWith("application/xml")).andExpect(content().string(
-						"<Record><id>1</id><username>user1</username><password>pass1</password><location/></Record>"));
+		mockMvc.perform(get("/data/users/1").accept("application/json")).andExpect(status().isOk()).andExpect(
+				content().string("{\"id\":1,\"username\":\"user1\",\"password\":\"pass1\",\"location\":null}"));
 	}
 
 }
