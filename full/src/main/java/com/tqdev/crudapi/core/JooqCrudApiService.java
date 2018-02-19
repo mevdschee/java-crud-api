@@ -106,7 +106,11 @@ public class JooqCrudApiService extends BaseCrudApiService
 			for (org.jooq.Record record : query.fetch()) {
 				records.add(Record.valueOf(record.intoMap()));
 			}
-			return new ListResponse(records.toArray(new Record[records.size()]), count);
+			if (count > records.size()) {
+				return new ListResponse(records.toArray(new Record[records.size()]), count);
+			} else {
+				return new ListResponse(records.toArray(new Record[records.size()]));
+			}
 		} else {
 			int offset = offset(params);
 			int numberOfRows = numberOfRows(params);
