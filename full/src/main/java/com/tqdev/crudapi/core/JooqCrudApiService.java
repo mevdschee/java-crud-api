@@ -7,6 +7,7 @@ import java.util.LinkedHashMap;
 import org.jooq.Condition;
 import org.jooq.DSLContext;
 import org.jooq.Field;
+import org.jooq.SelectForUpdateStep;
 import org.jooq.SortField;
 import org.jooq.Table;
 import org.jooq.impl.DSL;
@@ -89,15 +90,24 @@ public class JooqCrudApiService extends BaseCrudApiService
 		ArrayList<Field<?>> columns = columnNames(t, params);
 		ArrayList<Condition> conditions = conditions(t, params);
 		ArrayList<SortField<?>> ordering = ordering(t, params);
-		if (hasSeek(params)) {
+		if (!hasPagination(params)) {
 			Object[] seek = seekAfter(columns.size(), params);
 			int numberOfRows = seekSize(params);
-			for (org.jooq.Record record : dsl.select(columns).from(t).where(conditions).orderBy(ordering)
-					.seekAfter(seek).limit(numberOfRows).fetch()) {
+			int numberOfPages = seekPages(params);
+			int count = (int) dsl.select(DSL.count()).from(t).where(conditions).limit(numberOfPages * numberOfRows)
+					.fetchOne(0);
+			SelectForUpdateStep<org.jooq.Record> query;
+			if (hasSeek(params)) {
+				query = dsl.select(columns).from(t).where(conditions).orderBy(ordering).seekAfter(seek)
+						.limit(numberOfRows);
+			} else {
+				query = dsl.select(columns).from(t).where(conditions).orderBy(ordering).limit(numberOfRows);
+			}
+			for (org.jooq.Record record : query.fetch()) {
 				records.add(Record.valueOf(record.intoMap()));
 			}
-			return new ListResponse(records.toArray(new Record[records.size()]));
-		} else if (hasPagination(params)) {
+			return new ListResponse(records.toArray(new Record[records.size()]), count);
+		} else {
 			int offset = offset(params);
 			int numberOfRows = numberOfRows(params);
 			int count = (int) dsl.select(DSL.count()).from(t).where(conditions).fetchOne(0);
@@ -106,11 +116,6 @@ public class JooqCrudApiService extends BaseCrudApiService
 				records.add(Record.valueOf(record.intoMap()));
 			}
 			return new ListResponse(records.toArray(new Record[records.size()]), count);
-		} else {
-			for (org.jooq.Record record : dsl.select(columns).from(t).where(conditions).orderBy(ordering).fetch()) {
-				records.add(Record.valueOf(record.intoMap()));
-			}
-			return new ListResponse(records.toArray(new Record[records.size()]));
 		}
 	}
 

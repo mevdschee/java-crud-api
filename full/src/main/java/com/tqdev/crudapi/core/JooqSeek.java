@@ -9,16 +9,13 @@ public interface JooqSeek {
 	}
 
 	default public Object[] seekAfter(int columnCount, Params params) {
-		ArrayList<Object> values = null;
+		ArrayList<Object> values = new ArrayList<>();
 		if (params.containsKey("seek")) {
 			for (String key : params.get("seek")) {
-				values = new ArrayList<>();
-				for (String part : key.split(",", columnCount)) {
-					values.add(part);
-				}
-				while (values.size() < columnCount) {
-					values.add(null);
-				}
+				values.add(key);
+			}
+			while (values.size() < columnCount) {
+				values.add(null);
 			}
 		}
 		return values.toArray();
@@ -32,5 +29,15 @@ public interface JooqSeek {
 			}
 		}
 		return numberOfRows;
+	}
+
+	default public int seekPages(Params params) {
+		int numberOfPages = 10;
+		if (params.containsKey("pages")) {
+			for (String key : params.get("pages")) {
+				numberOfPages = Integer.valueOf(key);
+			}
+		}
+		return numberOfPages;
 	}
 }
