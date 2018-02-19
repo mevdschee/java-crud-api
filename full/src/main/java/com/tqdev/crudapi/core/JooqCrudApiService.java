@@ -91,32 +91,31 @@ public class JooqCrudApiService extends BaseCrudApiService
 		ArrayList<Condition> conditions = conditions(t, params);
 		ArrayList<SortField<?>> ordering = ordering(t, params);
 		if (!hasPagination(params)) {
-			Object[] seek = seekAfter(columns.size(), params);
-			int numberOfRows = seekSize(params);
-			int numberOfPages = seekPages(params);
-			int count = (int) dsl.select(DSL.count()).from(t).where(conditions).limit(numberOfPages * numberOfRows)
-					.fetchOne(0);
+			int rows = seekSize(params);
+			int pages = seekPages(params);
+			int limit = pages * rows;
+			int count = (int) dsl.select(DSL.count()).from(t).where(conditions).limit(limit).fetchOne(0);
 			SelectForUpdateStep<org.jooq.Record> query;
 			if (hasSeek(params)) {
-				query = dsl.select(columns).from(t).where(conditions).orderBy(ordering).seekAfter(seek)
-						.limit(numberOfRows);
+				Object[] seek = seekAfter(columns.size(), params);
+				query = dsl.select(columns).from(t).where(conditions).orderBy(ordering).seekAfter(seek).limit(rows);
 			} else {
-				query = dsl.select(columns).from(t).where(conditions).orderBy(ordering).limit(numberOfRows);
+				query = dsl.select(columns).from(t).where(conditions).orderBy(ordering).limit(rows);
 			}
 			for (org.jooq.Record record : query.fetch()) {
 				records.add(Record.valueOf(record.intoMap()));
 			}
-			if (count > records.size()) {
+			if (count >= limit) {
 				return new ListResponse(records.toArray(new Record[records.size()]), count);
 			} else {
 				return new ListResponse(records.toArray(new Record[records.size()]));
 			}
 		} else {
-			int offset = offset(params);
-			int numberOfRows = numberOfRows(params);
+			int offset = pageOffset(params);
+			int limit = pageSize(params);
 			int count = (int) dsl.select(DSL.count()).from(t).where(conditions).fetchOne(0);
 			for (org.jooq.Record record : dsl.select(columns).from(t).where(conditions).orderBy(ordering)
-					.limit(offset, numberOfRows).fetch()) {
+					.limit(offset, limit).fetch()) {
 				records.add(Record.valueOf(record.intoMap()));
 			}
 			return new ListResponse(records.toArray(new Record[records.size()]), count);
