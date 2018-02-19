@@ -2,6 +2,7 @@ package com.tqdev.crudapi;
 
 import static org.hamcrest.CoreMatchers.hasItems;
 import static org.hamcrest.Matchers.hasSize;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
@@ -126,10 +127,45 @@ public class SampleTests {
 	}
 
 	@Test
-	public void testAddPostsFormEncoded() throws Exception {
+	public void test012DeletePost() throws Exception {
+		mockMvc.perform(delete("/data/posts/3")).andExpect(status().isOk()).andExpect(content().string("1"));
+		mockMvc.perform(get("/data/posts/3")).andExpect(status().isNotFound())
+				.andExpect(content().string("{\"code\":1003,\"message\":\"Record '3' not found\"}"));
+	}
+
+	@Test
+	public void test013AddPostWithPost() throws Exception {
 		mockMvc.perform(post("/data/posts").contentType("application/x-www-form-urlencoded")
-				.content("user_id=1&category_id=1&content=test").accept("application/json")).andExpect(status().isOk())
+				.content("user_id=1&category_id=1&content=test")).andExpect(status().isOk())
 				.andExpect(content().string("4"));
+	}
+
+	@Test
+	public void test014EditPostWithPost() throws Exception {
+		mockMvc.perform(put("/data/posts/4").contentType("application/x-www-form-urlencoded")
+				.content("user_id=1&category_id=1&content=test+(edited)")).andExpect(status().isOk())
+				.andExpect(content().string("1"));
+		mockMvc.perform(get("/data/posts/4")).andExpect(status().isOk()).andExpect(
+				content().string("{\"id\":4,\"user_id\":1,\"category_id\":1,\"content\":\"test (edited)\"}"));
+	}
+
+	@Test
+	public void test015DeletePostWithPostIgnoreColumns() throws Exception {
+		mockMvc.perform(delete("/data/posts/4?columns=id,content")).andExpect(status().isOk())
+				.andExpect(content().string("1"));
+		mockMvc.perform(get("/data/posts/4")).andExpect(status().isNotFound())
+				.andExpect(content().string("{\"code\":1003,\"message\":\"Record '4' not found\"}"));
+	}
+
+	@Test
+	public void test016ListWithPaginate() throws Exception {
+		for (int i = 1; i <= 10; i++) {
+			mockMvc.perform(post("/data/posts").contentType("application/json")
+					.content("{\"user_id\":1,\"category_id\":1,\"content\":\"#" + i + "\"}")).andExpect(status().isOk())
+					.andExpect(content().string("" + (4 + i)));
+		}
+		mockMvc.perform(get("/data/posts?page=2,2&order=id")).andExpect(status().isOk()).andExpect(content().string(
+				"{\"records\":[{\"id\":5,\"user_id\":1,\"category_id\":1,\"content\":\"#1\"},{\"id\":6,\"user_id\":1,\"category_id\":1,\"content\":\"#2\"}]}"));
 	}
 
 	@Test
