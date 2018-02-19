@@ -2,6 +2,10 @@ package com.tqdev.crudapi.core;
 
 public interface JooqPagination {
 
+	default public boolean hasPagination(Params params) {
+		return params.containsKey("page");
+	}
+
 	default public int offset(Params params) {
 		int offset = 0;
 		int numberOfRows = numberOfRows(params);

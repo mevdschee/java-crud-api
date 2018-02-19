@@ -9,6 +9,7 @@ import org.jooq.DSLContext;
 import org.jooq.Field;
 import org.jooq.SortField;
 import org.jooq.Table;
+import org.jooq.impl.DSL;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,7 +24,7 @@ import com.tqdev.crudapi.meta.definition.DatabaseDefinitionException;
 import com.tqdev.crudapi.meta.reflection.ReflectedTable;
 
 public class JooqCrudApiService extends BaseCrudApiService
-		implements CrudApiService, JooqConditions, JooqColumnSelector, JooqOrdering, JooqPagination {
+		implements CrudApiService, JooqConditions, JooqColumnSelector, JooqOrdering, JooqPagination, JooqSeek {
 
 	public static final Logger logger = LoggerFactory.getLogger(JooqCrudApiService.class);
 
@@ -88,13 +89,29 @@ public class JooqCrudApiService extends BaseCrudApiService
 		ArrayList<Field<?>> columns = columnNames(t, params);
 		ArrayList<Condition> conditions = conditions(t, params);
 		ArrayList<SortField<?>> ordering = ordering(t, params);
-		int offset = offset(params);
-		int numberOfRows = numberOfRows(params);
-		for (org.jooq.Record record : dsl.select(columns).from(t).where(conditions).orderBy(ordering)
-				.limit(offset, numberOfRows).fetch()) {
-			records.add(Record.valueOf(record.intoMap()));
+		if (hasSeek(params)) {
+			Object[] seek = seekAfter(columns.size(), params);
+			int numberOfRows = seekSize(params);
+			for (org.jooq.Record record : dsl.select(columns).from(t).where(conditions).orderBy(ordering)
+					.seekAfter(seek).limit(numberOfRows).fetch()) {
+				records.add(Record.valueOf(record.intoMap()));
+			}
+			return new ListResponse(records.toArray(new Record[records.size()]));
+		} else if (hasPagination(params)) {
+			int offset = offset(params);
+			int numberOfRows = numberOfRows(params);
+			int count = (int) dsl.select(DSL.count()).from(t).where(conditions).fetchOne(0);
+			for (org.jooq.Record record : dsl.select(columns).from(t).where(conditions).orderBy(ordering)
+					.limit(offset, numberOfRows).fetch()) {
+				records.add(Record.valueOf(record.intoMap()));
+			}
+			return new ListResponse(records.toArray(new Record[records.size()]), count);
+		} else {
+			for (org.jooq.Record record : dsl.select(columns).from(t).where(conditions).orderBy(ordering).fetch()) {
+				records.add(Record.valueOf(record.intoMap()));
+			}
+			return new ListResponse(records.toArray(new Record[records.size()]));
 		}
-		return new ListResponse(records.toArray(new Record[records.size()]));
 	}
 
 	@Override

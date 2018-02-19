@@ -1,13 +1,10 @@
 package com.tqdev.crudapi;
 
-import static org.hamcrest.CoreMatchers.hasItems;
-import static org.hamcrest.Matchers.hasSize;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
 
@@ -165,7 +162,7 @@ public class SampleTests {
 					.andExpect(content().string("" + (4 + i)));
 		}
 		mockMvc.perform(get("/data/posts?page=2,2&order=id")).andExpect(status().isOk()).andExpect(content().string(
-				"{\"records\":[{\"id\":5,\"user_id\":1,\"category_id\":1,\"content\":\"#1\"},{\"id\":6,\"user_id\":1,\"category_id\":1,\"content\":\"#2\"}]}"));
+				"{\"records\":[{\"id\":5,\"user_id\":1,\"category_id\":1,\"content\":\"#1\"},{\"id\":6,\"user_id\":1,\"category_id\":1,\"content\":\"#2\"}],\"results\":12}"));
 	}
 
 	@Test
@@ -181,29 +178,17 @@ public class SampleTests {
 	}
 
 	@Test
-	public void testListPostColumns() throws Exception {
-		mockMvc.perform(get("/data/posts?columns=id,content").accept("application/json")).andExpect(status().isOk())
-				.andExpect(jsonPath("$.records[*].id", hasSize(4))).andExpect(jsonPath("$.records[0].*", hasSize(2)));
+	public void test019ListWithPaginateInMultipleOrder() throws Exception {
+		mockMvc.perform(get("/data/posts?page=1,2&order=category_id,asc&order=id,desc").accept("application/json"))
+				.andExpect(status().isOk()).andExpect(content().string(
+						"{\"records\":[{\"id\":14,\"user_id\":1,\"category_id\":1,\"content\":\"#10\"},{\"id\":13,\"user_id\":1,\"category_id\":1,\"content\":\"#9\"}],\"results\":12}"));
 	}
 
 	@Test
-	public void testListPosts() throws Exception {
-		mockMvc.perform(get("/data/posts").accept("application/json")).andExpect(status().isOk())
-				.andExpect(jsonPath("$.records[*].id", hasItems(1, 2)))
-				.andExpect(jsonPath("$.records[*].content", hasItems("blog started", "It works!")));
-	}
-
-	@Test
-	public void testListSingleUser() throws Exception {
-		mockMvc.perform(get("/data/users?filter=id,eq,1").accept("application/json")).andExpect(status().isOk())
-				.andExpect(jsonPath("$.records[*].id", hasSize(1)))
-				.andExpect(jsonPath("$.records[0].username").value("user1"));
-	}
-
-	@Test
-	public void testReadUserJson() throws Exception {
-		mockMvc.perform(get("/data/users/1").accept("application/json")).andExpect(status().isOk()).andExpect(
-				content().string("{\"id\":1,\"username\":\"user1\",\"password\":\"pass1\",\"location\":null}"));
+	public void test020ListWithPaginateInDescendingOrder() throws Exception {
+		mockMvc.perform(get("/data/posts?page=2,2&order=id,desc").accept("application/json")).andExpect(status().isOk())
+				.andExpect(content().string(
+						"{\"records\":[{\"id\":12,\"user_id\":1,\"category_id\":1,\"content\":\"#8\"},{\"id\":11,\"user_id\":1,\"category_id\":1,\"content\":\"#7\"}],\"results\":12}"));
 	}
 
 }
