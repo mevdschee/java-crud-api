@@ -25,7 +25,7 @@ These features match features in PHP-CRUD-API.
   - [x] Multi-domain CORS support for cross-domain requests
   - [ ] Combined requests with support for multiple table names
   - [x] Search support on multiple criteria
-  - [x] Pagination, sorting and column selection
+  - [x] Pagination, seeking, sorting and column selection
   - [ ] Relation detection and filtering on foreign keys (hasMany)
   - [ ] Foreign keys are turned into objects on demand (belongsTo)
   - [x] Atomic increment support via PATCH (for counters)
