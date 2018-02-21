@@ -9,7 +9,6 @@ import org.jooq.DSLContext;
 import org.jooq.Field;
 import org.jooq.ResultQuery;
 import org.jooq.SelectLimitStep;
-import org.jooq.SelectSeekStepN;
 import org.jooq.SortField;
 import org.jooq.Table;
 import org.jooq.impl.DSL;
@@ -93,12 +92,8 @@ public class JooqCrudApiService extends BaseCrudApiService
 		ArrayList<Condition> conditions = conditions(t, params);
 		ArrayList<SortField<?>> ordering = ordering(t, params);
 		if (!hasPage(params)) {
-			Object[] seek = seekAfter(params);
 			int size = resultSize(params);
 			ResultQuery<org.jooq.Record> query = dsl.select(columns).from(t).where(conditions).orderBy(ordering);
-			if (seek != null) {
-				query = ((SelectSeekStepN<org.jooq.Record>) query).seekAfter(seek);
-			}
 			if (size != -1) {
 				query = ((SelectLimitStep<org.jooq.Record>) query).limit(size);
 			}

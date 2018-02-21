@@ -198,26 +198,13 @@ public class SampleTests {
 	}
 
 	@Test
-	public void test022ListWithSeek() throws Exception {
-		mockMvc.perform(get("/data/posts?order=id,asc,4&size=2")).andExpect(status().isOk()).andExpect(content().string(
-				"{\"records\":[{\"id\":5,\"user_id\":1,\"category_id\":1,\"content\":\"#1\"},{\"id\":6,\"user_id\":1,\"category_id\":1,\"content\":\"#2\"}]}"));
-	}
-
-	@Test
-	public void test023ListWithSeekOnMultipleFields() throws Exception {
-		mockMvc.perform(get("/data/posts?order=category_id,asc,1&order=id,desc,13&size=2")).andExpect(status().isOk())
-				.andExpect(content().string(
-						"{\"records\":[{\"id\":12,\"user_id\":1,\"category_id\":1,\"content\":\"#8\"},{\"id\":11,\"user_id\":1,\"category_id\":1,\"content\":\"#7\"}]}"));
-	}
-
-	@Test
-	public void test024ListWithZeroPageSize() throws Exception {
+	public void test022ListWithZeroPageSize() throws Exception {
 		mockMvc.perform(get("/data/posts?order=id&page=1,0")).andExpect(status().isOk())
 				.andExpect(content().string("{\"records\":[],\"results\":12}"));
 	}
 
 	@Test
-	public void test025ListWithZeroSize() throws Exception {
+	public void test023ListWithZeroSize() throws Exception {
 		mockMvc.perform(get("/data/posts?order=id&size=0")).andExpect(status().isOk())
 				.andExpect(content().string("{\"records\":[]}"));
 	}
