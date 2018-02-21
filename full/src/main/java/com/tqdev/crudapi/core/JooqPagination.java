@@ -4,6 +4,8 @@ import java.util.ArrayList;
 
 public interface JooqPagination {
 
+	public static final int DEFAULT_PAGE_SIZE = 20;
+
 	default public boolean hasPage(Params params) {
 		return params.containsKey("page");
 	}
@@ -22,7 +24,7 @@ public interface JooqPagination {
 	}
 
 	default public int pageSize(Params params) {
-		int pageSize = 20;
+		int pageSize = DEFAULT_PAGE_SIZE;
 		if (params.containsKey("page")) {
 			for (String key : params.get("page")) {
 				String[] parts = key.split(",", 2);
@@ -56,7 +58,7 @@ public interface JooqPagination {
 	}
 
 	default public int resultSize(Params params) {
-		int numberOfRows = 20;
+		int numberOfRows = DEFAULT_PAGE_SIZE;
 		if (params.containsKey("size")) {
 			for (String key : params.get("size")) {
 				numberOfRows = Integer.valueOf(key);
