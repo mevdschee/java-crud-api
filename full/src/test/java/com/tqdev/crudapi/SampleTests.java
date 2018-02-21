@@ -210,4 +210,9 @@ public class SampleTests {
 						"{\"records\":[{\"id\":12,\"user_id\":1,\"category_id\":1,\"content\":\"#8\"},{\"id\":11,\"user_id\":1,\"category_id\":1,\"content\":\"#7\"}]}"));
 	}
 
+	@Test
+	public void test024ListWithZeroPageSize() throws Exception {
+		mockMvc.perform(get("/data/posts?order=id&page=1,0")).andExpect(status().isOk())
+				.andExpect(content().string("{\"records\":[],\"results\":12}"));
+	}
 }
