@@ -93,8 +93,7 @@ public class JooqCrudApiService extends BaseCrudApiService
 		ArrayList<Condition> conditions = conditions(t, params);
 		ArrayList<SortField<?>> ordering = ordering(t, params);
 		if (!hasPage(params)) {
-			ResultQuery<org.jooq.Record> query;
-			query = dsl.select(columns).from(t).where(conditions).orderBy(ordering);
+			ResultQuery<org.jooq.Record> query = dsl.select(columns).from(t).where(conditions).orderBy(ordering);
 			if (hasSeek(params)) {
 				query = ((SelectSeekStepN<org.jooq.Record>) query).seekAfter(seekAfter(columns.size(), params));
 			}
