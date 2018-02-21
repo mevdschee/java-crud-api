@@ -27,7 +27,7 @@ import com.tqdev.crudapi.meta.definition.DatabaseDefinitionException;
 import com.tqdev.crudapi.meta.reflection.ReflectedTable;
 
 public class JooqCrudApiService extends BaseCrudApiService
-		implements CrudApiService, JooqConditions, JooqColumnSelector, JooqOrdering, JooqPagination, JooqSeek {
+		implements CrudApiService, JooqConditions, JooqColumnSelector, JooqOrdering, JooqPagination {
 
 	public static final Logger logger = LoggerFactory.getLogger(JooqCrudApiService.class);
 
@@ -92,14 +92,14 @@ public class JooqCrudApiService extends BaseCrudApiService
 		ArrayList<Field<?>> columns = columnNames(t, params);
 		ArrayList<Condition> conditions = conditions(t, params);
 		ArrayList<SortField<?>> ordering = ordering(t, params);
-		if (!hasPagination(params)) {
+		if (!hasPage(params)) {
 			ResultQuery<org.jooq.Record> query;
 			query = dsl.select(columns).from(t).where(conditions).orderBy(ordering);
 			if (hasSeek(params)) {
 				query = ((SelectSeekStepN<org.jooq.Record>) query).seekAfter(seekAfter(columns.size(), params));
 			}
 			if (hasSize(params)) {
-				query = ((SelectLimitStep<org.jooq.Record>) query).limit(seekSize(params));
+				query = ((SelectLimitStep<org.jooq.Record>) query).limit(resultSize(params));
 			}
 			for (org.jooq.Record record : query.fetch()) {
 				records.add(Record.valueOf(record.intoMap()));
