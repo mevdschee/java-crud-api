@@ -12,7 +12,7 @@ public class ListResponse {
 	private Record[] records;
 
 	@JsonInclude(Include.NON_DEFAULT)
-	private int results = -1;
+	private int results;
 
 	public ListResponse(Record[] records) {
 		this.records = records;

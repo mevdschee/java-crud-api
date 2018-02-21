@@ -92,8 +92,6 @@ public class JooqCrudApiService extends BaseCrudApiService
 		ArrayList<SortField<?>> ordering = ordering(t, params);
 		if (!hasPagination(params)) {
 			int rows = seekSize(params);
-			int pages = seekPages(params);
-			int count = (int) dsl.select(DSL.count()).from(t).where(conditions).limit(pages * rows).fetchOne(0);
 			SelectForUpdateStep<org.jooq.Record> query;
 			if (hasSeek(params)) {
 				Object[] seek = seekAfter(columns.size(), params);
@@ -104,11 +102,7 @@ public class JooqCrudApiService extends BaseCrudApiService
 			for (org.jooq.Record record : query.fetch()) {
 				records.add(Record.valueOf(record.intoMap()));
 			}
-			if (count >= rows) {
-				return new ListResponse(records.toArray(new Record[records.size()]), count);
-			} else {
-				return new ListResponse(records.toArray(new Record[records.size()]));
-			}
+			return new ListResponse(records.toArray(new Record[records.size()]));
 		} else {
 			int offset = pageOffset(params);
 			int limit = pageSize(params);

@@ -31,13 +31,4 @@ public interface JooqSeek {
 		return numberOfRows;
 	}
 
-	default public int seekPages(Params params) {
-		int numberOfPages = 10;
-		if (params.containsKey("pages")) {
-			for (String key : params.get("pages")) {
-				numberOfPages = Integer.valueOf(key);
-			}
-		}
-		return numberOfPages;
-	}
 }
