@@ -21,6 +21,10 @@ public interface JooqSeek {
 		return values.toArray();
 	}
 
+	default public boolean hasSize(Params params) {
+		return params.containsKey("size");
+	}
+
 	default public int seekSize(Params params) {
 		int numberOfRows = 20;
 		if (params.containsKey("size")) {

@@ -7,7 +7,9 @@ import java.util.LinkedHashMap;
 import org.jooq.Condition;
 import org.jooq.DSLContext;
 import org.jooq.Field;
-import org.jooq.SelectForUpdateStep;
+import org.jooq.ResultQuery;
+import org.jooq.SelectLimitStep;
+import org.jooq.SelectSeekStepN;
 import org.jooq.SortField;
 import org.jooq.Table;
 import org.jooq.impl.DSL;
@@ -91,13 +93,13 @@ public class JooqCrudApiService extends BaseCrudApiService
 		ArrayList<Condition> conditions = conditions(t, params);
 		ArrayList<SortField<?>> ordering = ordering(t, params);
 		if (!hasPagination(params)) {
-			int rows = seekSize(params);
-			SelectForUpdateStep<org.jooq.Record> query;
+			ResultQuery<org.jooq.Record> query;
+			query = dsl.select(columns).from(t).where(conditions).orderBy(ordering);
 			if (hasSeek(params)) {
-				Object[] seek = seekAfter(columns.size(), params);
-				query = dsl.select(columns).from(t).where(conditions).orderBy(ordering).seekAfter(seek).limit(rows);
-			} else {
-				query = dsl.select(columns).from(t).where(conditions).orderBy(ordering).limit(rows);
+				query = ((SelectSeekStepN<org.jooq.Record>) query).seekAfter(seekAfter(columns.size(), params));
+			}
+			if (hasSize(params)) {
+				query = ((SelectLimitStep<org.jooq.Record>) query).limit(seekSize(params));
 			}
 			for (org.jooq.Record record : query.fetch()) {
 				records.add(Record.valueOf(record.intoMap()));
