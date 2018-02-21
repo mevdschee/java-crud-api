@@ -27,4 +27,21 @@ public interface JooqOrdering {
 		return fields;
 	}
 
+	default public Object[] seekAfter(Params params) {
+		ArrayList<Object> values = new ArrayList<>();
+		int count = 0;
+		if (params.containsKey("order")) {
+			for (String key : params.get("order")) {
+				String[] parts = key.split(",", 3);
+				if (parts.length > 2) {
+					values.add(parts[2]);
+					count++;
+				} else {
+					values.add(null);
+				}
+			}
+		}
+		return count > 0 ? values.toArray() : null;
+	}
+
 }

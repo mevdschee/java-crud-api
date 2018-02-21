@@ -1,7 +1,5 @@
 package com.tqdev.crudapi.core;
 
-import java.util.ArrayList;
-
 public interface JooqPagination {
 
 	public static final int DEFAULT_PAGE_SIZE = 20;
@@ -34,23 +32,6 @@ public interface JooqPagination {
 			}
 		}
 		return pageSize;
-	}
-
-	default public Object[] seekAfter(Params params) {
-		ArrayList<Object> values = new ArrayList<>();
-		int count = 0;
-		if (params.containsKey("order")) {
-			for (String key : params.get("order")) {
-				String[] parts = key.split(",", 3);
-				if (parts.length > 2) {
-					values.add(parts[2]);
-					count++;
-				} else {
-					values.add(null);
-				}
-			}
-		}
-		return count > 0 ? values.toArray() : null;
 	}
 
 	default public int resultSize(Params params) {
