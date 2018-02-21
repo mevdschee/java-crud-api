@@ -36,29 +36,25 @@ public interface JooqPagination {
 		return pageSize;
 	}
 
-	default public boolean hasSeek(Params params) {
-		return params.containsKey("seek");
-	}
-
-	default public Object[] seekAfter(int columnCount, Params params) {
+	default public Object[] seekAfter(Params params) {
 		ArrayList<Object> values = new ArrayList<>();
-		if (params.containsKey("seek")) {
-			for (String key : params.get("seek")) {
-				values.add(key);
-			}
-			while (values.size() < columnCount) {
-				values.add(null);
+		int count = 0;
+		if (params.containsKey("order")) {
+			for (String key : params.get("order")) {
+				String[] parts = key.split(",", 3);
+				if (parts.length > 2) {
+					values.add(parts[2]);
+					count++;
+				} else {
+					values.add(null);
+				}
 			}
 		}
-		return values.toArray();
-	}
-
-	default public boolean hasSize(Params params) {
-		return params.containsKey("size");
+		return count > 0 ? values.toArray() : null;
 	}
 
 	default public int resultSize(Params params) {
-		int numberOfRows = DEFAULT_PAGE_SIZE;
+		int numberOfRows = -1;
 		if (params.containsKey("size")) {
 			for (String key : params.get("size")) {
 				numberOfRows = Integer.valueOf(key);

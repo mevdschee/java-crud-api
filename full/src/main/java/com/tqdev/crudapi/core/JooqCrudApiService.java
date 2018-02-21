@@ -93,12 +93,14 @@ public class JooqCrudApiService extends BaseCrudApiService
 		ArrayList<Condition> conditions = conditions(t, params);
 		ArrayList<SortField<?>> ordering = ordering(t, params);
 		if (!hasPage(params)) {
+			Object[] seek = seekAfter(params);
+			int size = resultSize(params);
 			ResultQuery<org.jooq.Record> query = dsl.select(columns).from(t).where(conditions).orderBy(ordering);
-			if (hasSeek(params)) {
-				query = ((SelectSeekStepN<org.jooq.Record>) query).seekAfter(seekAfter(columns.size(), params));
+			if (seek != null) {
+				query = ((SelectSeekStepN<org.jooq.Record>) query).seekAfter(seek);
 			}
-			if (hasSize(params)) {
-				query = ((SelectLimitStep<org.jooq.Record>) query).limit(resultSize(params));
+			if (size != -1) {
+				query = ((SelectLimitStep<org.jooq.Record>) query).limit(size);
 			}
 			for (org.jooq.Record record : query.fetch()) {
 				records.add(Record.valueOf(record.intoMap()));
