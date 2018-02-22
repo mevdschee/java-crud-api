@@ -208,4 +208,22 @@ public class SampleTests {
 		mockMvc.perform(get("/data/posts?order=id&size=0")).andExpect(status().isOk())
 				.andExpect(content().string("{\"records\":[]}"));
 	}
+
+	@Test
+	public void test024ListWithPaginateLastPage() throws Exception {
+		mockMvc.perform(get("/data/posts?page=3,5&order=id")).andExpect(status().isOk()).andExpect(content().string(
+				"{\"records\":[{\"id\":13,\"user_id\":1,\"category_id\":1,\"content\":\"#9\"},{\"id\":14,\"user_id\":1,\"category_id\":1,\"content\":\"#10\"}],\"results\":12}"));
+	}
+
+	@Test
+	public void test025ListExampleFromReadmeFullRecord() throws Exception {
+		mockMvc.perform(get("/data/posts?filter=id,eq,1")).andExpect(status().isOk()).andExpect(content()
+				.string("{\"records\":[{\"id\":1,\"user_id\":1,\"category_id\":1,\"content\":\"blog started\"}]}"));
+	}
+
+	@Test
+	public void test026ListExampleFromReadmeWithExclude() throws Exception {
+		mockMvc.perform(get("/data/posts?exclude=id&filter=id,eq,1")).andExpect(status().isOk()).andExpect(
+				content().string("{\"records\":[{\"user_id\":1,\"category_id\":1,\"content\":\"blog started\"}]}"));
+	}
 }
