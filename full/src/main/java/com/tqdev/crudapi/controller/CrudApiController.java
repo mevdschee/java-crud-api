@@ -1,13 +1,13 @@
 package com.tqdev.crudapi.controller;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -69,10 +69,10 @@ public class CrudApiController extends BaseController {
 
 	@RequestMapping(value = "/{table}", method = RequestMethod.POST, headers = "Content-Type=application/x-www-form-urlencoded")
 	public ResponseEntity<?> create(@PathVariable("table") String table,
-			@RequestBody MultiValueMap<String, String> record,
+			@RequestBody LinkedMultiValueMap<String, String> record,
 			@RequestParam LinkedMultiValueMap<String, String> params) {
 		ObjectMapper mapper = new ObjectMapper();
-		Object pojo = mapper.convertValue(record.toSingleValueMap(), Object.class);
+		Object pojo = mapper.convertValue(convertToSingleValueMap(record), Object.class);
 		return create(table, pojo, params);
 	}
 
@@ -98,12 +98,39 @@ public class CrudApiController extends BaseController {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
+	private LinkedHashMap<String, Object> convertToSingleValueMap(LinkedMultiValueMap<String, String> map) {
+		LinkedHashMap<String, Object> result = new LinkedHashMap<>();
+		for (String key : map.keySet()) {
+			for (String v : map.get(key)) {
+				Object value = v;
+				if (key.endsWith("__is_null")) {
+					key = key.substring(0, key.indexOf("__is_null"));
+					value = null;
+				}
+				if (result.containsKey(key)) {
+					Object current = result.get(key);
+					if (current.getClass().isArray()) {
+						((ArrayList<Object>) current).add(value);
+					} else {
+						ArrayList<Object> arr = new ArrayList<>();
+						arr.add(current);
+						arr.add(v);
+						value = arr;
+					}
+				}
+				result.put(key, value);
+			}
+		}
+		return result;
+	}
+
 	@RequestMapping(value = "/{table}/{id}", method = RequestMethod.PUT, headers = "Content-Type=application/x-www-form-urlencoded")
 	public ResponseEntity<?> increment(@PathVariable("table") String table, @PathVariable("id") String id,
-			@RequestBody MultiValueMap<String, String> record,
+			@RequestBody LinkedMultiValueMap<String, String> record,
 			@RequestParam LinkedMultiValueMap<String, String> params) {
 		ObjectMapper mapper = new ObjectMapper();
-		Object pojo = mapper.convertValue(record.toSingleValueMap(), Object.class);
+		Object pojo = mapper.convertValue(convertToSingleValueMap(record), Object.class);
 		return update(table, id, pojo, params);
 	}
 
@@ -136,10 +163,10 @@ public class CrudApiController extends BaseController {
 
 	@RequestMapping(value = "/{table}/{id}", method = RequestMethod.PATCH, headers = "Content-Type=application/x-www-form-urlencoded")
 	public ResponseEntity<?> update(@PathVariable("table") String table, @PathVariable("id") String id,
-			@RequestBody MultiValueMap<String, String> record,
+			@RequestBody LinkedMultiValueMap<String, String> record,
 			@RequestParam LinkedMultiValueMap<String, String> params) {
 		ObjectMapper mapper = new ObjectMapper();
-		Object pojo = mapper.convertValue(record.toSingleValueMap(), Object.class);
+		Object pojo = mapper.convertValue(convertToSingleValueMap(record), Object.class);
 		return update(table, id, pojo, params);
 	}
 

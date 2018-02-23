@@ -10,6 +10,7 @@ import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppC
 
 import java.net.URLEncoder;
 
+import org.apache.tomcat.util.codec.binary.Base64;
 import org.junit.Before;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
@@ -225,5 +226,26 @@ public class SampleTests {
 	public void test026ListExampleFromReadmeWithExclude() throws Exception {
 		mockMvc.perform(get("/data/posts?exclude=id&filter=id,eq,1")).andExpect(status().isOk()).andExpect(
 				content().string("{\"records\":[{\"user_id\":1,\"category_id\":1,\"content\":\"blog started\"}]}"));
+	}
+
+	@Test
+	public void test031EditCategoryWithBinaryContentWithPost() throws Exception {
+		String string = "€ \0abc\0\n\r\b\0";
+		String binary = Base64.encodeBase64String(string.getBytes("UTF-8"));
+		String b64url = Base64.encodeBase64URLSafeString(string.getBytes("UTF-8"));
+		mockMvc.perform(
+				put("/data/categories/2").contentType("application/x-www-form-urlencoded").content("icon=" + b64url))
+				.andExpect(status().isOk()).andExpect(content().string("1"));
+		mockMvc.perform(get("/data/categories/2")).andExpect(status().isOk())
+				.andExpect(content().string("{\"id\":2,\"name\":\"article\",\"icon\":\"" + binary + "\"}"));
+	}
+
+	@Test
+	public void test033EditCategoryWithNullWithPost() throws Exception {
+		mockMvc.perform(
+				put("/data/categories/2").contentType("application/x-www-form-urlencoded").content("icon__is_null"))
+				.andExpect(status().isOk()).andExpect(content().string("1"));
+		mockMvc.perform(get("/data/categories/2")).andExpect(status().isOk())
+				.andExpect(content().string("{\"id\":2,\"name\":\"article\",\"icon\":null}"));
 	}
 }
