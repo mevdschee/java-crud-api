@@ -1,6 +1,7 @@
 package com.tqdev.crudapi.core;
 
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -61,6 +62,8 @@ public interface JooqColumnSelector {
 				Field<Object> field = table.get(key);
 				if (field.getDataType().getTypeName().equals("geometry")) {
 					columns.put(field, SpatialDSL.geomFromText(DSL.val(record.get(key))));
+				} else if (field.getDataType().isBinary() && record.get(key) != null) {
+					columns.put(field, Base64.getDecoder().decode((String) record.get(key)));
 				} else {
 					columns.put(field, record.get(key));
 				}
