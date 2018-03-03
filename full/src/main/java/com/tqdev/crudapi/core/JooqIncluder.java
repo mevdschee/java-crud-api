@@ -48,12 +48,16 @@ public interface JooqIncluder {
 		return fkValues;
 	}
 
-	default void fillFkValues(ReflectedTable t1, ReflectedTable t2, ArrayList<Record> records,
-			HashMap<Object, Object> fkValues, DSLContext dsl) {
+	default void fillFkValues(ReflectedTable t1, ReflectedTable t2, HashMap<Object, Object> fkValues, DSLContext dsl) {
+		ArrayList<Record> records = new ArrayList<>();
 		Field<Object> pk = t2.getPk();
 		ResultQuery<org.jooq.Record> query = dsl.select(t2.fields()).from(t2).where(pk.in(fkValues.keySet()));
 		for (org.jooq.Record record : query.fetch()) {
-			Record r = Record.valueOf(record.intoMap());
+			records.add(Record.valueOf(record.intoMap()));
+		}
+		// recurse with includes tail?
+		// addIncludes(records)
+		for (Record r : records) {
 			Object pkValue = r.get(pk.getName());
 			fkValues.put(pkValue, r);
 		}
@@ -78,7 +82,7 @@ public interface JooqIncluder {
 
 	default public void addBelongsTo(ReflectedTable t1, ReflectedTable t2, ArrayList<Record> records, DSLContext dsl) {
 		HashMap<Object, Object> fkValues = getFkValues(t1, t2, records);
-		fillFkValues(t1, t2, records, fkValues, dsl);
+		fillFkValues(t1, t2, fkValues, dsl);
 		setFkValues(t1, t2, records, fkValues);
 	}
 }
