@@ -229,9 +229,16 @@ public class SampleTests {
 	}
 
 	@Test
-	public void test027ListExampleFromReadme() throws Exception {
-		mockMvc.perform(get("/data/posts?include=users&filter=id,eq,1")).andExpect(status().isOk())
-				.andExpect(content().string("{\"records\":[]}"));
+	public void test027ListExampleFromReadme_temp1() throws Exception {
+		mockMvc.perform(get("/data/posts?include=users&filter=id,eq,1")).andExpect(status().isOk()).andExpect(content()
+				.string("{\"records\":[{\"id\":1,\"user_id\":{\"id\":1,\"username\":\"user1\",\"password\":\"pass1\",\"location\":null},\"category_id\":1,\"content\":\"blog started\"}]}"));
+	}
+
+	@Test
+	public void test028ListExampleFromReadme_temp2() throws Exception {
+		mockMvc.perform(get("/data/posts?include=comments&filter=id,eq,1")).andExpect(status().isOk())
+				.andExpect(content().string(
+						"{\"records\":[{\"id\":1,\"user_id\":1,\"category_id\":1,\"content\":\"blog started\",\"comments\":[{\"id\":1,\"post_id\":1,\"message\":\"great\"},{\"id\":2,\"post_id\":1,\"message\":\"fantastic\"}]}]}"));
 	}
 
 	@Test
