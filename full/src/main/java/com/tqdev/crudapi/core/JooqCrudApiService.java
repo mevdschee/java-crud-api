@@ -26,7 +26,7 @@ import com.tqdev.crudapi.meta.definition.DatabaseDefinitionException;
 import com.tqdev.crudapi.meta.reflection.ReflectedTable;
 
 public class JooqCrudApiService extends BaseCrudApiService
-		implements CrudApiService, JooqConditions, JooqColumnSelector, JooqOrdering, JooqPagination {
+		implements CrudApiService, JooqConditions, JooqColumnSelector, JooqOrdering, JooqPagination, JooqIncluder {
 
 	public static final Logger logger = LoggerFactory.getLogger(JooqCrudApiService.class);
 
@@ -91,26 +91,25 @@ public class JooqCrudApiService extends BaseCrudApiService
 		ArrayList<Field<?>> columns = columnNames(t, params);
 		ArrayList<Condition> conditions = conditions(t, params);
 		ArrayList<SortField<?>> ordering = ordering(t, params);
+		int count = 0;
+		ResultQuery<org.jooq.Record> query;
 		if (!hasPage(params)) {
 			int size = resultSize(params);
-			ResultQuery<org.jooq.Record> query = dsl.select(columns).from(t).where(conditions).orderBy(ordering);
+			query = dsl.select(columns).from(t).where(conditions).orderBy(ordering);
 			if (size != -1) {
 				query = ((SelectLimitStep<org.jooq.Record>) query).limit(size);
 			}
-			for (org.jooq.Record record : query.fetch()) {
-				records.add(Record.valueOf(record.intoMap()));
-			}
-			return new ListResponse(records.toArray(new Record[records.size()]));
 		} else {
 			int offset = pageOffset(params);
 			int limit = pageSize(params);
-			int count = (int) dsl.select(DSL.count()).from(t).where(conditions).fetchOne(0);
-			for (org.jooq.Record record : dsl.select(columns).from(t).where(conditions).orderBy(ordering)
-					.limit(offset, limit).fetch()) {
-				records.add(Record.valueOf(record.intoMap()));
-			}
-			return new ListResponse(records.toArray(new Record[records.size()]), count);
+			count = (int) dsl.select(DSL.count()).from(t).where(conditions).fetchOne(0);
+			query = dsl.select(columns).from(t).where(conditions).orderBy(ordering).limit(offset, limit);
 		}
+		for (org.jooq.Record record : query.fetch()) {
+			records.add(Record.valueOf(record.intoMap()));
+		}
+		addIncludes(table, records, tables, params, dsl);
+		return new ListResponse(records.toArray(new Record[records.size()]), count);
 	}
 
 	@Override

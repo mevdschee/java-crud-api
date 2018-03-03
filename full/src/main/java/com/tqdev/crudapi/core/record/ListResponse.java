@@ -14,11 +14,6 @@ public class ListResponse {
 	@JsonInclude(Include.NON_DEFAULT)
 	private int results;
 
-	public ListResponse(Record[] records) {
-		this.records = records;
-		this.results = 0;
-	}
-
 	public ListResponse(Record[] records, int results) {
 		this.records = records;
 		this.results = results;

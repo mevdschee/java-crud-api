@@ -229,6 +229,12 @@ public class SampleTests {
 	}
 
 	@Test
+	public void test027ListExampleFromReadme() throws Exception {
+		mockMvc.perform(get("/data/posts?include=users&filter=id,eq,1")).andExpect(status().isOk())
+				.andExpect(content().string("{\"records\":[]}"));
+	}
+
+	@Test
 	public void test031EditCategoryWithBinaryContentWithPost() throws Exception {
 		String string = "€ \0abc\0\n\r\b\0";
 		String binary = Base64.encodeBase64String(string.getBytes("UTF-8"));
