@@ -1,7 +1,9 @@
 package com.tqdev.crudapi.meta.reflection;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Set;
 
 import org.jooq.Field;
@@ -96,6 +98,21 @@ public class ReflectedTable extends CustomTable {
 	@SuppressWarnings("unchecked")
 	public Field<Object> getPk() {
 		return (Field<Object>) pk;
+	}
+
+	public List<Field<Object>> getFks() {
+		return getFksTo(null);
+	}
+
+	@SuppressWarnings("unchecked")
+	public List<Field<Object>> getFksTo(String table) {
+		List<Field<Object>> result = new ArrayList<>();
+		for (String key : fks.keySet()) {
+			if (table == null || fks.get(key).equals(table)) {
+				result.add((Field<Object>) fields.get(key));
+			}
+		}
+		return result;
 	}
 
 	public String getFk(String field) {
