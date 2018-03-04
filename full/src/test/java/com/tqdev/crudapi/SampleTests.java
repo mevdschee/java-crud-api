@@ -242,6 +242,13 @@ public class SampleTests {
 	}
 
 	@Test
+	public void test029ListExampleFromReadme_temp3() throws Exception {
+		mockMvc.perform(get("/data/posts?include=post_tags,tags&include=comments&filter=id,eq,1"))
+				.andExpect(status().isOk()).andExpect(content().string(
+						"{\"records\":[{\"id\":1,\"user_id\":1,\"category_id\":1,\"content\":\"blog started\",\"post_tags\":[{\"id\":1,\"post_id\":1,\"tag_id\":{\"id\":1,\"name\":\"funny\",\"is_important\":false}},{\"id\":2,\"post_id\":1,\"tag_id\":{\"id\":2,\"name\":\"important\",\"is_important\":true}}],\"comments\":[{\"id\":1,\"post_id\":1,\"message\":\"great\"},{\"id\":2,\"post_id\":1,\"message\":\"fantastic\"}]}]}"));
+	}
+
+	@Test
 	public void test031EditCategoryWithBinaryContentWithPost() throws Exception {
 		String string = "€ \0abc\0\n\r\b\0";
 		String binary = Base64.encodeBase64String(string.getBytes("UTF-8"));

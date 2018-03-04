@@ -18,23 +18,52 @@ public interface JooqIncluder {
 
 	default public void addIncludes(String tableName, ArrayList<Record> records, DatabaseReflection tables,
 			Params params, DSLContext dsl) {
-		ReflectedTable t1 = tables.get(tableName);
-		if (t1 == null) {
+		if (params.containsKey("include")) {
+			for (String includedTableNames : params.get("include")) {
+				ReflectedTable t1 = tables.get(tableName);
+				ArrayList<ReflectedTable[]> includes = new ArrayList<>();
+				for (String includedTableName : includedTableNames.split(",")) {
+					ReflectedTable t2 = tables.get(includedTableName);
+					if (t2 != null) {
+						includes.add(new ReflectedTable[] { t1, t2 });
+					}
+					t1 = t2;
+				}
+				addIncludesForTables(includes, records, dsl);
+			}
+		}
+	}
+
+	default public void addIncludesForTables(ArrayList<ReflectedTable[]> includes, ArrayList<Record> records,
+			DSLContext dsl) {
+		if (includes.isEmpty()) {
 			return;
 		}
-		if (params.containsKey("include")) {
-			for (String includedTableName : params.get("include")) {
-				ReflectedTable t2 = tables.get(includedTableName);
-				if (t2 == null) {
-					continue;
-				}
-				if (!t1.getFksTo(t2.getName()).isEmpty()) {
-					addBelongsTo(t1, t2, records, dsl);
-				}
-				if (!t2.getFksTo(t1.getName()).isEmpty()) {
-					addHasMany(t1, t2, records, dsl);
-				}
-			}
+
+		ReflectedTable[] include = includes.remove(0);
+		ReflectedTable t1 = include[0];
+		ReflectedTable t2 = include[1];
+
+		boolean belongsTo = !t1.getFksTo(t2.getName()).isEmpty();
+		boolean hasMany = !t2.getFksTo(t1.getName()).isEmpty();
+
+		ArrayList<Record> newRecords = new ArrayList<>();
+
+		HashMap<Object, Object> fkValues = getFkEmptyValues(t1, t2, records);
+		addFkRecords(t2, fkValues, dsl, newRecords);
+
+		HashMap<Object, ArrayList<Object>> pkValues = getPkEmptyValues(t1, records);
+		addPkRecords(t1, t2, pkValues, dsl, newRecords);
+
+		addIncludesForTables(includes, newRecords, dsl);
+
+		if (belongsTo) {
+			fillFkValues(t2, newRecords, fkValues);
+			setFkValues(t1, t2, records, fkValues);
+		}
+		if (hasMany) {
+			fillPkValues(t1, t2, newRecords, pkValues);
+			setPkValues(t1, t2, records, pkValues);
 		}
 	}
 
@@ -53,14 +82,13 @@ public interface JooqIncluder {
 		return fkValues;
 	}
 
-	default ArrayList<Record> getFkRecords(ReflectedTable t2, HashMap<Object, Object> fkValues, DSLContext dsl) {
-		ArrayList<Record> fkRecords = new ArrayList<>();
+	default void addFkRecords(ReflectedTable t2, HashMap<Object, Object> fkValues, DSLContext dsl,
+			ArrayList<Record> records) {
 		Field<Object> pk = t2.getPk();
 		ResultQuery<org.jooq.Record> query = dsl.select(t2.fields()).from(t2).where(pk.in(fkValues.keySet()));
 		for (org.jooq.Record record : query.fetch()) {
-			fkRecords.add(Record.valueOf(record.intoMap()));
+			records.add(Record.valueOf(record.intoMap()));
 		}
-		return fkRecords;
 	}
 
 	default void fillFkValues(ReflectedTable t2, ArrayList<Record> fkRecords, HashMap<Object, Object> fkValues) {
@@ -85,14 +113,6 @@ public interface JooqIncluder {
 		}
 	}
 
-	default public void addBelongsTo(ReflectedTable t1, ReflectedTable t2, ArrayList<Record> records, DSLContext dsl) {
-		HashMap<Object, Object> fkValues = getFkEmptyValues(t1, t2, records);
-		ArrayList<Record> fkRecords = getFkRecords(t2, fkValues, dsl);
-		// recurse?
-		fillFkValues(t2, fkRecords, fkValues);
-		setFkValues(t1, t2, records, fkValues);
-	}
-
 	default HashMap<Object, ArrayList<Object>> getPkEmptyValues(ReflectedTable t1, ArrayList<Record> records) {
 		HashMap<Object, ArrayList<Object>> pkValues = new HashMap<>();
 		for (Record record : records) {
@@ -102,9 +122,8 @@ public interface JooqIncluder {
 		return pkValues;
 	}
 
-	default ArrayList<Record> getPkRecords(ReflectedTable t1, ReflectedTable t2,
-			HashMap<Object, ArrayList<Object>> pkValues, DSLContext dsl) {
-		ArrayList<Record> pkRecords = new ArrayList<>();
+	default void addPkRecords(ReflectedTable t1, ReflectedTable t2, HashMap<Object, ArrayList<Object>> pkValues,
+			DSLContext dsl, ArrayList<Record> records) {
 		List<Field<Object>> fks = t2.getFksTo(t1.getName());
 		Condition condition = DSL.falseCondition();
 		for (Field<Object> fk : fks) {
@@ -116,9 +135,8 @@ public interface JooqIncluder {
 		}
 		ResultQuery<org.jooq.Record> query = dsl.select(t2.fields()).from(t2).where(condition);
 		for (org.jooq.Record record : query.fetch()) {
-			pkRecords.add(Record.valueOf(record.intoMap()));
+			records.add(Record.valueOf(record.intoMap()));
 		}
-		return pkRecords;
 	}
 
 	default void fillPkValues(ReflectedTable t1, ReflectedTable t2, ArrayList<Record> pkRecords,
@@ -143,11 +161,4 @@ public interface JooqIncluder {
 		}
 	}
 
-	default public void addHasMany(ReflectedTable t1, ReflectedTable t2, ArrayList<Record> records, DSLContext dsl) {
-		HashMap<Object, ArrayList<Object>> pkValues = getPkEmptyValues(t1, records);
-		ArrayList<Record> pkRecords = getPkRecords(t1, t2, pkValues, dsl);
-		// recurse?
-		fillPkValues(t1, t2, pkRecords, pkValues);
-		setPkValues(t1, t2, records, pkValues);
-	}
 }
