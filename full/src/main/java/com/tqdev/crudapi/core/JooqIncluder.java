@@ -48,20 +48,25 @@ public interface JooqIncluder {
 		boolean hasMany = !t2.getFksTo(t1.getName()).isEmpty();
 
 		ArrayList<Record> newRecords = new ArrayList<>();
+		HashMap<Object, Object> fkValues = null;
+		HashMap<Object, ArrayList<Object>> pkValues = null;
 
-		HashMap<Object, Object> fkValues = getFkEmptyValues(t1, t2, records);
-		addFkRecords(t2, fkValues, dsl, newRecords);
-
-		HashMap<Object, ArrayList<Object>> pkValues = getPkEmptyValues(t1, records);
-		addPkRecords(t1, t2, pkValues, dsl, newRecords);
+		if (belongsTo) {
+			fkValues = getFkEmptyValues(t1, t2, records);
+			addFkRecords(t2, fkValues, dsl, newRecords);
+		}
+		if (hasMany) {
+			pkValues = getPkEmptyValues(t1, records);
+			addPkRecords(t1, t2, pkValues, dsl, newRecords);
+		}
 
 		addIncludesForTables(includes, newRecords, dsl);
 
-		if (belongsTo) {
+		if (fkValues != null) {
 			fillFkValues(t2, newRecords, fkValues);
 			setFkValues(t1, t2, records, fkValues);
 		}
-		if (hasMany) {
+		if (pkValues != null) {
 			fillPkValues(t1, t2, newRecords, pkValues);
 			setPkValues(t1, t2, records, pkValues);
 		}
