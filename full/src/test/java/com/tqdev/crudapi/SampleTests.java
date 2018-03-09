@@ -2,9 +2,11 @@ package com.tqdev.crudapi;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.options;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
 
@@ -264,8 +266,37 @@ public class SampleTests {
 	}
 
 	@Test
-	public void test032EditCategoryWithBinaryContentWithPost() throws Exception {
-		String string = "€ \0abc\0\n\r\b\0";
+	public void test032ListExampleFromReadmeWithTransformWithExclude() throws Exception {
+		mockMvc.perform(
+				get("/data/posts?include=categories&include=post_tags,tags&include=comments&exclude=comments.message&filter=id,eq,1"))
+				.andExpect(status().isOk()).andExpect(content().string(
+						"{\"records\":[{\"id\":1,\"user_id\":1,\"category_id\":{\"id\":1,\"name\":\"announcement\",\"icon\":null},\"content\":\"blog started\",\"post_tags\":[{\"id\":1,\"post_id\":1,\"tag_id\":{\"id\":1,\"name\":\"funny\",\"is_important\":false}},{\"id\":2,\"post_id\":1,\"tag_id\":{\"id\":2,\"name\":\"important\",\"is_important\":true}}],\"comments\":[{\"id\":1,\"post_id\":1},{\"id\":2,\"post_id\":1}]}]}"));
+	}
+
+	@Test
+	public void test033EditCategoryWithBinaryContent() throws Exception {
+		String string = "€ \000abc\000\n\r\\b\000";
+		String binary = Base64.encodeBase64String(string.getBytes("UTF-8"));
+		String b64url = Base64.encodeBase64URLSafeString(string.getBytes("UTF-8"));
+		mockMvc.perform(
+				put("/data/categories/2").contentType("application/json").content("{\"icon\":\"" + b64url + "\"}"))
+				.andExpect(status().isOk()).andExpect(content().string("1"));
+		mockMvc.perform(get("/data/categories/2")).andExpect(status().isOk())
+				.andExpect(content().string("{\"id\":2,\"name\":\"article\",\"icon\":\"" + binary + "\"}"));
+	}
+
+	@Test
+	public void test034EditCategoryWithNull() throws Exception {
+
+		mockMvc.perform(put("/data/categories/2").contentType("application/json").content("{\"icon\":null}"))
+				.andExpect(status().isOk()).andExpect(content().string("1"));
+		mockMvc.perform(get("/data/categories/2")).andExpect(status().isOk())
+				.andExpect(content().string("{\"id\":2,\"name\":\"article\",\"icon\":null}"));
+	}
+
+	@Test
+	public void test035EditCategoryWithBinaryContentWithPost() throws Exception {
+		String string = "€ \000abc\000\n\r\\b\000";
 		String binary = Base64.encodeBase64String(string.getBytes("UTF-8"));
 		String b64url = Base64.encodeBase64URLSafeString(string.getBytes("UTF-8"));
 		mockMvc.perform(
@@ -276,11 +307,33 @@ public class SampleTests {
 	}
 
 	@Test
-	public void test033EditCategoryWithNullWithPost() throws Exception {
+	public void test036ListCategoriesWithBinaryContent() throws Exception {
+		mockMvc.perform(get("/data/categories")).andExpect(status().isOk()).andExpect(content().string(
+				"{\"records\":[{\"id\":1,\"name\":\"announcement\",\"icon\":null},{\"id\":2,\"name\":\"article\",\"icon\":\"4oKsIABhYmMACg1cYgA=\"}]}"));
+	}
+
+	@Test
+	public void test037EditCategoryWithNullWithPost() throws Exception {
 		mockMvc.perform(
 				put("/data/categories/2").contentType("application/x-www-form-urlencoded").content("icon__is_null"))
 				.andExpect(status().isOk()).andExpect(content().string("1"));
 		mockMvc.perform(get("/data/categories/2")).andExpect(status().isOk())
 				.andExpect(content().string("{\"id\":2,\"name\":\"article\",\"icon\":null}"));
 	}
+
+	@Test
+	public void test038AddPostFailure() throws Exception {
+		mockMvc.perform(post("/data/posts").contentType("application/json")).andExpect(status().isBadRequest())
+				.andExpect(content().string("null"));
+	}
+
+	@Test
+	public void test039OptionsRequest() throws Exception {
+		mockMvc.perform(options("data/posts/2")).andExpect(status().isOk())
+				.andExpect(header().string("Access-Control-Allow-Headers", "Content-Type, X-XSRF-TOKEN"))
+				.andExpect(header().string("Access-Control-Allow-Methods", "OPTIONS, GET, PUT, POST, DELETE, PATCH"))
+				.andExpect(header().string("Access-Control-Allow-Credentials", "true"))
+				.andExpect(header().string("Access-Control-Max-Age", "1728000"));
+	}
+
 }
