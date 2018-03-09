@@ -42,7 +42,7 @@ public class JooqCrudApiService extends BaseCrudApiService
 	public String create(String table, Record record, Params params) {
 		sanitizeRecord(table, record);
 		ReflectedTable t = tables.get(table);
-		LinkedHashMap<Field<?>, Object> columns = columnValues(t, record, params);
+		LinkedHashMap<Field<?>, Object> columns = columnValues(t, true, record, params);
 		Field<Object> pk = tables.get(table).getPk();
 		org.jooq.Record result = dsl.insertInto(t).set(columns).returning(pk).fetchOne();
 		return result == null ? null : String.valueOf(result.get(0));
@@ -51,7 +51,7 @@ public class JooqCrudApiService extends BaseCrudApiService
 	@Override
 	public Record read(String table, String id, Params params) {
 		ReflectedTable t = tables.get(table);
-		ArrayList<Field<?>> columns = columnNames(t, params);
+		ArrayList<Field<?>> columns = columnNames(t, true, params);
 		Field<Object> pk = tables.get(table).getPk();
 		org.jooq.Record record = dsl.select(columns).from(t).where(pk.eq(id)).fetchOne();
 		return record == null ? null : Record.valueOf(record.intoMap());
@@ -62,7 +62,7 @@ public class JooqCrudApiService extends BaseCrudApiService
 	public Integer update(String table, String id, Record record, Params params) {
 		sanitizeRecord(table, record);
 		ReflectedTable t = tables.get(table);
-		LinkedHashMap<Field<?>, Object> columns = columnValues(t, record, params);
+		LinkedHashMap<Field<?>, Object> columns = columnValues(t, true, record, params);
 		Field<Object> pk = tables.get(table).getPk();
 		return dsl.update(t).set(columns).where(pk.eq(id)).execute();
 	}
@@ -72,7 +72,7 @@ public class JooqCrudApiService extends BaseCrudApiService
 	public Integer increment(String table, String id, Record record, Params params) {
 		sanitizeRecord(table, record);
 		ReflectedTable t = tables.get(table);
-		LinkedHashMap<Field<?>, Object> columns = columnValues(t, record, params);
+		LinkedHashMap<Field<?>, Object> columns = columnValues(t, true, record, params);
 		Field<Object> pk = tables.get(table).getPk();
 		return dsl.update(t).set(columns).where(pk.eq(id)).execute();
 	}
@@ -88,7 +88,7 @@ public class JooqCrudApiService extends BaseCrudApiService
 	public ListResponse list(String table, Params params) {
 		ArrayList<Record> records = new ArrayList<>();
 		ReflectedTable t = tables.get(table);
-		ArrayList<Field<?>> columns = columnNames(t, params);
+		ArrayList<Field<?>> columns = columnNames(t, true, params);
 		ArrayList<Condition> conditions = conditions(t, params);
 		ArrayList<SortField<?>> ordering = ordering(t, params);
 		int count = 0;

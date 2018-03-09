@@ -16,8 +16,8 @@ import com.tqdev.crudapi.spatial.SpatialDSL;
 
 public interface JooqColumnSelector {
 
-	default Set<String> select(String tableName, Params params, String paramName, Set<String> fieldNames,
-			boolean include) {
+	default Set<String> select(String tableName, boolean primaryTable, Params params, String paramName,
+			Set<String> fieldNames, boolean include) {
 		if (!params.containsKey(paramName)) {
 			return fieldNames;
 		}
@@ -27,9 +27,14 @@ public interface JooqColumnSelector {
 		}
 		LinkedHashSet<String> result = new LinkedHashSet<>();
 		for (String key : fieldNames) {
-			if (columns.containsKey("*.*") || columns.containsKey(tableName + ".*")
-					|| columns.containsKey(tableName + "." + key) || columns.containsKey("*")
-					|| columns.containsKey(key)) {
+			boolean match = columns.containsKey("*.*");
+			if (!match) {
+				match = columns.containsKey(tableName + ".*") || columns.containsKey(tableName + "." + key);
+			}
+			if (primaryTable && !match) {
+				match = columns.containsKey("*") || columns.containsKey(key);
+			}
+			if (match) {
 				if (include) {
 					result.add(key);
 				}
@@ -42,17 +47,18 @@ public interface JooqColumnSelector {
 		return result;
 	}
 
-	default Set<String> columns(ReflectedTable table, Params params) {
+	default Set<String> columns(ReflectedTable table, boolean primaryTable, Params params) {
 		String tableName = table.getName();
 		Set<String> results = table.fieldNames();
-		results = select(tableName, params, "columns", results, true);
-		results = select(tableName, params, "exclude", results, false);
+		results = select(tableName, primaryTable, params, "columns", results, true);
+		results = select(tableName, primaryTable, params, "exclude", results, false);
 		return results;
 	}
 
-	default public LinkedHashMap<Field<?>, Object> columnValues(ReflectedTable table, Record record, Params params) {
+	default public LinkedHashMap<Field<?>, Object> columnValues(ReflectedTable table, boolean primaryTable,
+			Record record, Params params) {
 		LinkedHashMap<Field<?>, Object> columns = new LinkedHashMap<>();
-		Set<String> cols = columns(table, params);
+		Set<String> cols = columns(table, primaryTable, params);
 		for (String key : cols) {
 			if (record.containsKey(key)) {
 				Field<Object> field = table.get(key);
@@ -68,10 +74,10 @@ public interface JooqColumnSelector {
 		return columns;
 	}
 
-	default public LinkedHashMap<Field<?>, Object> columnIncrements(ReflectedTable table, Record record,
-			Params params) {
+	default public LinkedHashMap<Field<?>, Object> columnIncrements(ReflectedTable table, boolean primaryTable,
+			Record record, Params params) {
 		LinkedHashMap<Field<?>, Object> columns = new LinkedHashMap<>();
-		Set<String> cols = columns(table, params);
+		Set<String> cols = columns(table, primaryTable, params);
 		for (String key : cols) {
 			if (record.containsKey(key)) {
 				Field<Object> field = table.get(key);
@@ -84,9 +90,9 @@ public interface JooqColumnSelector {
 		return columns;
 	}
 
-	default public ArrayList<Field<?>> columnNames(ReflectedTable table, Params params) {
+	default public ArrayList<Field<?>> columnNames(ReflectedTable table, boolean primaryTable, Params params) {
 		ArrayList<Field<?>> columns = new ArrayList<>();
-		for (String key : columns(table, params)) {
+		for (String key : columns(table, primaryTable, params)) {
 			Field<?> field = table.get(key);
 			if (field.getDataType().getTypeName().equals("geometry")) {
 				columns.add(SpatialDSL.asText(field).as(key));

@@ -14,10 +14,13 @@ import com.tqdev.crudapi.core.record.Record;
 import com.tqdev.crudapi.meta.reflection.DatabaseReflection;
 import com.tqdev.crudapi.meta.reflection.ReflectedTable;
 
-public interface JooqIncluder {
+public interface JooqIncluder extends JooqColumnSelector {
 
 	default public void addIncludes(String tableName, ArrayList<Record> records, DatabaseReflection tables,
 			Params params, DSLContext dsl) {
+
+		// should be tree.. not list of paths
+
 		if (params.containsKey("include")) {
 			for (String includedTableNames : params.get("include")) {
 				ReflectedTable t1 = tables.get(tableName);
@@ -29,13 +32,13 @@ public interface JooqIncluder {
 					}
 					t1 = t2;
 				}
-				addIncludesForTables(includes, records, dsl);
+				addIncludesForTables(includes, records, params, dsl);
 			}
 		}
 	}
 
 	default public void addIncludesForTables(ArrayList<ReflectedTable[]> includes, ArrayList<Record> records,
-			DSLContext dsl) {
+			Params params, DSLContext dsl) {
 		if (includes.isEmpty()) {
 			return;
 		}
@@ -53,14 +56,14 @@ public interface JooqIncluder {
 
 		if (belongsTo) {
 			fkValues = getFkEmptyValues(t1, t2, records);
-			addFkRecords(t2, fkValues, dsl, newRecords);
+			addFkRecords(t2, fkValues, params, dsl, newRecords);
 		}
 		if (hasMany) {
 			pkValues = getPkEmptyValues(t1, records);
-			addPkRecords(t1, t2, pkValues, dsl, newRecords);
+			addPkRecords(t1, t2, pkValues, params, dsl, newRecords);
 		}
 
-		addIncludesForTables(includes, newRecords, dsl);
+		addIncludesForTables(includes, newRecords, params, dsl);
 
 		if (fkValues != null) {
 			fillFkValues(t2, newRecords, fkValues);
@@ -87,10 +90,11 @@ public interface JooqIncluder {
 		return fkValues;
 	}
 
-	default void addFkRecords(ReflectedTable t2, HashMap<Object, Object> fkValues, DSLContext dsl,
+	default void addFkRecords(ReflectedTable t2, HashMap<Object, Object> fkValues, Params params, DSLContext dsl,
 			ArrayList<Record> records) {
 		Field<Object> pk = t2.getPk();
-		ResultQuery<org.jooq.Record> query = dsl.select(t2.fields()).from(t2).where(pk.in(fkValues.keySet()));
+		ArrayList<Field<?>> fields = columnNames(t2, false, params);
+		ResultQuery<org.jooq.Record> query = dsl.select(fields).from(t2).where(pk.in(fkValues.keySet()));
 		for (org.jooq.Record record : query.fetch()) {
 			records.add(Record.valueOf(record.intoMap()));
 		}
@@ -128,8 +132,9 @@ public interface JooqIncluder {
 	}
 
 	default void addPkRecords(ReflectedTable t1, ReflectedTable t2, HashMap<Object, ArrayList<Object>> pkValues,
-			DSLContext dsl, ArrayList<Record> records) {
+			Params params, DSLContext dsl, ArrayList<Record> records) {
 		List<Field<Object>> fks = t2.getFksTo(t1.getName());
+		ArrayList<Field<?>> fields = columnNames(t2, false, params);
 		Condition condition = DSL.falseCondition();
 		for (Field<Object> fk : fks) {
 			if (condition == null) {
@@ -138,7 +143,7 @@ public interface JooqIncluder {
 				condition = condition.or(fk.in(pkValues.keySet()));
 			}
 		}
-		ResultQuery<org.jooq.Record> query = dsl.select(t2.fields()).from(t2).where(condition);
+		ResultQuery<org.jooq.Record> query = dsl.select(fields).from(t2).where(condition);
 		for (org.jooq.Record record : query.fetch()) {
 			records.add(Record.valueOf(record.intoMap()));
 		}
