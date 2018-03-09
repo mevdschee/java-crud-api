@@ -45,16 +45,25 @@ public class JooqCrudApiService extends BaseCrudApiService
 		LinkedHashMap<Field<?>, Object> columns = columnValues(t, true, record, params);
 		Field<Object> pk = tables.get(table).getPk();
 		org.jooq.Record result = dsl.insertInto(t).set(columns).returning(pk).fetchOne();
-		return result == null ? null : String.valueOf(result.get(0));
+		if (result == null) {
+			return null;
+		}
+		return String.valueOf(result.get(0));
 	}
 
 	@Override
 	public Record read(String table, String id, Params params) {
 		ReflectedTable t = tables.get(table);
+		addMandatoryColumns(table, tables, params);
 		ArrayList<Field<?>> columns = columnNames(t, true, params);
 		Field<Object> pk = tables.get(table).getPk();
 		org.jooq.Record record = dsl.select(columns).from(t).where(pk.eq(id)).fetchOne();
-		return record == null ? null : Record.valueOf(record.intoMap());
+		if (record == null) {
+			return null;
+		}
+		Record r = Record.valueOf(record.intoMap());
+		addIncludes(table, r, tables, params, dsl);
+		return r;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -88,6 +97,7 @@ public class JooqCrudApiService extends BaseCrudApiService
 	public ListResponse list(String table, Params params) {
 		ArrayList<Record> records = new ArrayList<>();
 		ReflectedTable t = tables.get(table);
+		addMandatoryColumns(table, tables, params);
 		ArrayList<Field<?>> columns = columnNames(t, true, params);
 		ArrayList<Condition> conditions = conditions(t, params);
 		ArrayList<SortField<?>> ordering = ordering(t, params);

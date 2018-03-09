@@ -2,6 +2,7 @@ package com.tqdev.crudapi.core;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 
 import org.jooq.Condition;
@@ -16,62 +17,96 @@ import com.tqdev.crudapi.meta.reflection.ReflectedTable;
 
 public interface JooqIncluder extends JooqColumnSelector {
 
-	default public void addIncludes(String tableName, ArrayList<Record> records, DatabaseReflection tables,
-			Params params, DSLContext dsl) {
+	default public void addMandatoryColumns(String tableName, DatabaseReflection tables, Params params) {
 
-		// should be tree.. not list of paths
-
-		if (params.containsKey("include")) {
+		if (params.containsKey("include") && params.containsKey("columns")) {
 			for (String includedTableNames : params.get("include")) {
 				ReflectedTable t1 = tables.get(tableName);
-				ArrayList<ReflectedTable[]> includes = new ArrayList<>();
 				for (String includedTableName : includedTableNames.split(",")) {
 					ReflectedTable t2 = tables.get(includedTableName);
 					if (t2 != null) {
-						includes.add(new ReflectedTable[] { t1, t2 });
+						List<Field<Object>> fks1 = t1.getFksTo(t2.getName());
+						if (!fks1.isEmpty()) {
+							params.add("mandatory", t2.getName() + "." + t2.getPk().getName());
+						}
+						for (Field<Object> fk : fks1) {
+							params.add("mandatory", t1.getName() + "." + fk.getName());
+						}
+						List<Field<Object>> fks2 = t2.getFksTo(t1.getName());
+						if (!fks1.isEmpty()) {
+							params.add("mandatory", t1.getName() + "." + t1.getPk().getName());
+						}
+						for (Field<Object> fk : fks2) {
+							params.add("mandatory", t2.getName() + "." + fk.getName());
+						}
 					}
 					t1 = t2;
 				}
-				addIncludesForTables(includes, records, params, dsl);
 			}
 		}
 	}
 
-	default public void addIncludesForTables(ArrayList<ReflectedTable[]> includes, ArrayList<Record> records,
+	default public void addIncludes(String tableName, Record record, DatabaseReflection tables, Params params,
+			DSLContext dsl) {
+		ArrayList<Record> records = new ArrayList<>();
+		records.add(record);
+		addIncludes(tableName, records, tables, params, dsl);
+	}
+
+	default public void addIncludes(String tableName, ArrayList<Record> records, DatabaseReflection tables,
 			Params params, DSLContext dsl) {
-		if (includes.isEmpty()) {
+
+		if (params.containsKey("include")) {
+			TreeMap<ReflectedTable> includes = new TreeMap<>();
+			for (String includedTableNames : params.get("include")) {
+				LinkedList<ReflectedTable> path = new LinkedList<>();
+				for (String includedTableName : includedTableNames.split(",")) {
+					ReflectedTable t = tables.get(includedTableName);
+					if (t != null) {
+						path.add(t);
+					}
+				}
+				includes.put(path);
+			}
+
+			addIncludesForTables(tables.get(tableName), includes, records, params, dsl);
+		}
+	}
+
+	default public void addIncludesForTables(ReflectedTable t1, TreeMap<ReflectedTable> includes,
+			ArrayList<Record> records, Params params, DSLContext dsl) {
+		if (includes == null) {
 			return;
 		}
 
-		ReflectedTable[] include = includes.remove(0);
-		ReflectedTable t1 = include[0];
-		ReflectedTable t2 = include[1];
+		for (ReflectedTable t2 : includes.keySet()) {
 
-		boolean belongsTo = !t1.getFksTo(t2.getName()).isEmpty();
-		boolean hasMany = !t2.getFksTo(t1.getName()).isEmpty();
+			boolean belongsTo = !t1.getFksTo(t2.getName()).isEmpty();
+			boolean hasMany = !t2.getFksTo(t1.getName()).isEmpty();
 
-		ArrayList<Record> newRecords = new ArrayList<>();
-		HashMap<Object, Object> fkValues = null;
-		HashMap<Object, ArrayList<Object>> pkValues = null;
+			ArrayList<Record> newRecords = new ArrayList<>();
+			HashMap<Object, Object> fkValues = null;
+			HashMap<Object, ArrayList<Object>> pkValues = null;
 
-		if (belongsTo) {
-			fkValues = getFkEmptyValues(t1, t2, records);
-			addFkRecords(t2, fkValues, params, dsl, newRecords);
-		}
-		if (hasMany) {
-			pkValues = getPkEmptyValues(t1, records);
-			addPkRecords(t1, t2, pkValues, params, dsl, newRecords);
-		}
+			if (belongsTo) {
+				fkValues = getFkEmptyValues(t1, t2, records);
+				addFkRecords(t2, fkValues, params, dsl, newRecords);
+			}
+			if (hasMany) {
+				pkValues = getPkEmptyValues(t1, records);
+				addPkRecords(t1, t2, pkValues, params, dsl, newRecords);
+			}
 
-		addIncludesForTables(includes, newRecords, params, dsl);
+			addIncludesForTables(t2, includes.get(t2), newRecords, params, dsl);
 
-		if (fkValues != null) {
-			fillFkValues(t2, newRecords, fkValues);
-			setFkValues(t1, t2, records, fkValues);
-		}
-		if (pkValues != null) {
-			fillPkValues(t1, t2, newRecords, pkValues);
-			setPkValues(t1, t2, records, pkValues);
+			if (fkValues != null) {
+				fillFkValues(t2, newRecords, fkValues);
+				setFkValues(t1, t2, records, fkValues);
+			}
+			if (pkValues != null) {
+				fillPkValues(t1, t2, newRecords, pkValues);
+				setPkValues(t1, t2, records, pkValues);
+			}
 		}
 	}
 

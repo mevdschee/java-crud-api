@@ -229,20 +229,20 @@ public class SampleTests {
 	}
 
 	@Test
-	public void test027ListExampleFromReadme_temp1() throws Exception {
+	public void test027ListExampleFromReadmeUsersOnly() throws Exception {
 		mockMvc.perform(get("/data/posts?include=users&filter=id,eq,1")).andExpect(status().isOk()).andExpect(content()
 				.string("{\"records\":[{\"id\":1,\"user_id\":{\"id\":1,\"username\":\"user1\",\"password\":\"pass1\",\"location\":null},\"category_id\":1,\"content\":\"blog started\"}]}"));
 	}
 
 	@Test
-	public void test028ListExampleFromReadme_temp2() throws Exception {
+	public void test028ListExampleFromReadmeCommentsOnly() throws Exception {
 		mockMvc.perform(get("/data/posts?include=comments&filter=id,eq,1")).andExpect(status().isOk())
 				.andExpect(content().string(
 						"{\"records\":[{\"id\":1,\"user_id\":1,\"category_id\":1,\"content\":\"blog started\",\"comments\":[{\"id\":1,\"post_id\":1,\"message\":\"great\"},{\"id\":2,\"post_id\":1,\"message\":\"fantastic\"}]}]}"));
 	}
 
 	@Test
-	public void test029ListExampleFromReadme_temp3() throws Exception {
+	public void test029ListExampleFromReadmeTagsOnly() throws Exception {
 		mockMvc.perform(get("/data/posts?include=post_tags,tags&include=comments&filter=id,eq,1"))
 				.andExpect(status().isOk()).andExpect(content().string(
 						"{\"records\":[{\"id\":1,\"user_id\":1,\"category_id\":1,\"content\":\"blog started\",\"post_tags\":[{\"id\":1,\"post_id\":1,\"tag_id\":{\"id\":1,\"name\":\"funny\",\"is_important\":false}},{\"id\":2,\"post_id\":1,\"tag_id\":{\"id\":2,\"name\":\"important\",\"is_important\":true}}],\"comments\":[{\"id\":1,\"post_id\":1,\"message\":\"great\"},{\"id\":2,\"post_id\":1,\"message\":\"fantastic\"}]}]}"));
@@ -256,7 +256,15 @@ public class SampleTests {
 	}
 
 	@Test
-	public void test031EditCategoryWithBinaryContentWithPost() throws Exception {
+	public void test031ListExampleFromReadmeTagNameOnly() throws Exception {
+		mockMvc.perform(
+				get("/data/posts?columns=tags.name&include=categories&include=post_tags,tags&include=comments&filter=id,eq,1"))
+				.andExpect(status().isOk()).andExpect(content().string(
+						"{\"records\":[{\"id\":1,\"category_id\":{\"id\":1},\"post_tags\":[{\"id\":1,\"post_id\":1,\"tag_id\":{\"id\":1,\"name\":\"funny\"}},{\"id\":2,\"post_id\":1,\"tag_id\":{\"id\":2,\"name\":\"important\"}}],\"comments\":[{\"post_id\":1},{\"post_id\":1}]}]}"));
+	}
+
+	@Test
+	public void test032EditCategoryWithBinaryContentWithPost() throws Exception {
 		String string = "€ \0abc\0\n\r\b\0";
 		String binary = Base64.encodeBase64String(string.getBytes("UTF-8"));
 		String b64url = Base64.encodeBase64URLSafeString(string.getBytes("UTF-8"));
