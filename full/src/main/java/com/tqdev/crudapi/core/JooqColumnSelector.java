@@ -16,7 +16,7 @@ import com.tqdev.crudapi.spatial.SpatialDSL;
 
 public interface JooqColumnSelector {
 
-	default boolean isMandatory(String tableName, String fieldName, Params params) {
+	default boolean isMandatoryField(String tableName, String fieldName, Params params) {
 		return params.containsKey("mandatory") && params.get("mandatory").contains(tableName + "." + fieldName);
 	}
 
@@ -39,11 +39,11 @@ public interface JooqColumnSelector {
 				match = columns.containsKey("*") || columns.containsKey(key);
 			}
 			if (match) {
-				if (include || isMandatory(tableName, key, params)) {
+				if (include || isMandatoryField(tableName, key, params)) {
 					result.add(key);
 				}
 			} else {
-				if (!include || isMandatory(tableName, key, params)) {
+				if (!include || isMandatoryField(tableName, key, params)) {
 					result.add(key);
 				}
 			}
