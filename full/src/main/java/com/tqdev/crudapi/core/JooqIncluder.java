@@ -18,30 +18,31 @@ import com.tqdev.crudapi.meta.reflection.ReflectedTable;
 public interface JooqIncluder extends JooqColumnSelector {
 
 	default public void addMandatoryColumns(String tableName, DatabaseReflection tables, Params params) {
-
-		if (params.containsKey("include") && params.containsKey("columns")) {
-			for (String includedTableNames : params.get("include")) {
-				ReflectedTable t1 = tables.get(tableName);
-				for (String includedTableName : includedTableNames.split(",")) {
-					ReflectedTable t2 = tables.get(includedTableName);
-					if (t2 != null) {
-						List<Field<Object>> fks1 = t1.getFksTo(t2.getName());
-						if (!fks1.isEmpty()) {
-							params.add("mandatory", t2.getName() + "." + t2.getPk().getName());
-						}
-						for (Field<Object> fk : fks1) {
-							params.add("mandatory", t1.getName() + "." + fk.getName());
-						}
-						List<Field<Object>> fks2 = t2.getFksTo(t1.getName());
-						if (!fks1.isEmpty()) {
-							params.add("mandatory", t1.getName() + "." + t1.getPk().getName());
-						}
-						for (Field<Object> fk : fks2) {
-							params.add("mandatory", t2.getName() + "." + fk.getName());
-						}
-					}
-					t1 = t2;
+		if (!params.containsKey("include") || !params.containsKey("columns")) {
+			return;
+		}
+		for (String includedTableNames : params.get("include")) {
+			ReflectedTable t1 = tables.get(tableName);
+			for (String includedTableName : includedTableNames.split(",")) {
+				ReflectedTable t2 = tables.get(includedTableName);
+				if (t2 == null) {
+					continue;
 				}
+				List<Field<Object>> fks1 = t1.getFksTo(t2.getName());
+				if (!fks1.isEmpty()) {
+					params.add("mandatory", t2.getName() + "." + t2.getPk().getName());
+				}
+				for (Field<Object> fk : fks1) {
+					params.add("mandatory", t1.getName() + "." + fk.getName());
+				}
+				List<Field<Object>> fks2 = t2.getFksTo(t1.getName());
+				if (!fks1.isEmpty()) {
+					params.add("mandatory", t1.getName() + "." + t1.getPk().getName());
+				}
+				for (Field<Object> fk : fks2) {
+					params.add("mandatory", t2.getName() + "." + fk.getName());
+				}
+				t1 = t2;
 			}
 		}
 	}
