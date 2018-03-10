@@ -44,7 +44,7 @@ These features are new and where not included in PHP-CRUD-API.
   - [x] Support for input and output of database structure and records
   - [x] Support for all major database systems (thanks to jOOQ)
   - [x] Support for boolean and binary data in all database engines
-  - [x] Support for relational data on read operation (not only on list)
+  - [x] Support for relational data on read (not only on list operation)
 
 ## Features
 
