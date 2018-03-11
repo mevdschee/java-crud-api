@@ -1,10 +1,11 @@
 server:
   port: 8080
-  contextPath: /
+  servlet:
+    context-path: /
 
-#rest:
-#  cors:
-#    allowed-origins: "*"
+rest:
+  cors:
+    allowed-origins: "*"
 
 #spring:
 #  jooq:
@@ -14,13 +15,21 @@ server:
 #    username: php-crud-api
 #    password: php-crud-api
 
+#spring:
+#  jooq:
+#    sql-dialect: MYSQL
+#  datasource:
+#    url: jdbc:mysql://localhost/php-crud-api
+#    username: php-crud-api
+#    password: php-crud-api
+
 spring:
   jooq:
     sql-dialect: MYSQL
   datasource:
-    url: jdbc:mysql://localhost/php-crud-api
-    username: php-crud-api
-    password: php-crud-api
+    url: jdbc:mysql://172.17.0.2/sakila?useSSL=false
+    username: root
+    password: sakila
 
 #spring:
 #  jooq:

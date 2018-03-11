@@ -18,6 +18,7 @@ import com.tqdev.crudapi.meta.CrudMetaService;
 import com.tqdev.crudapi.meta.JooqCrudMetaService;
 import com.tqdev.crudapi.meta.definition.DatabaseDefinitionException;
 import com.tqdev.crudapi.spatial.SpatialDSL;
+import org.springframework.web.bind.annotation.CrossOrigin;
 
 @SpringBootApplication(scanBasePackages = { "com.tqdev.crudapi" })
 @PropertySource("classpath:application.yml")
