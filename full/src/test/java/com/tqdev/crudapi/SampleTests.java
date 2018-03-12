@@ -169,18 +169,6 @@ public class SampleTests {
 	}
 
 	@Test
-	public void test017ReadUserXml() throws Exception {
-		mockMvc.perform(get("/data/users/1").accept("application/xml")).andExpect(status().isOk()).andExpect(content()
-				.string("<Record><id>1</id><username>user1</username><password>pass1</password><location/></Record>"));
-	}
-
-	@Test
-	public void test018ListUsersXml() throws Exception {
-		mockMvc.perform(get("/data/users").accept("application/xml")).andExpect(status().isOk()).andExpect(content()
-				.string("<ListResponse><Records><Record><id>1</id><username>user1</username><password>pass1</password><location/></Record><Record><id>2</id><username>user2</username><password>pass2</password><location/></Record></Records></ListResponse>"));
-	}
-
-	@Test
 	public void test019ListWithPaginateInMultipleOrder() throws Exception {
 		mockMvc.perform(get("/data/posts?page=1,2&order=category_id,asc&order=id,desc").accept("application/json"))
 				.andExpect(status().isOk()).andExpect(content().string(
@@ -341,7 +329,7 @@ public class SampleTests {
 
 	@Test
 	public void test041OptionsRequest() throws Exception {
-		mockMvc.perform(options("data/posts/2")).andExpect(status().isOk())
+		mockMvc.perform(options("/data/posts/2")).andExpect(status().isOk())
 				.andExpect(header().string("Access-Control-Allow-Headers", "Content-Type, X-XSRF-TOKEN"))
 				.andExpect(header().string("Access-Control-Allow-Methods", "OPTIONS, GET, PUT, POST, DELETE, PATCH"))
 				.andExpect(header().string("Access-Control-Allow-Credentials", "true"))
