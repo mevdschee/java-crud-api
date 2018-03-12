@@ -26,8 +26,7 @@ These features match features in PHP-CRUD-API.
   - [x] Combined requests with support for multiple table names
   - [x] Search support on multiple criteria
   - [x] Pagination, seeking, sorting and column selection
-  - [x] Relation detection and filtering on foreign keys (hasMany)
-  - [x] Foreign keys are turned into objects on demand (belongsTo)
+  - [x] Relation detection nested results (belongsTo, hasMany and HABTM)
   - [x] Atomic increment support via PATCH (for counters)
   - [x] Binary fields supported with base64 encoding
   - [x] Spatial/GIS fields and filters supported with WKT
