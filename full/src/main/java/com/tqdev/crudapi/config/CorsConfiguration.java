@@ -18,7 +18,8 @@ public class CorsConfiguration {
 			@Override
 			public void addCorsMappings(CorsRegistry registry) {
 				registry.addMapping("/**").allowedMethods("OPTIONS", "GET", "PUT", "POST", "DELETE", "PATCH")
-						.allowedHeaders("Content-Type", "X-XSRF-TOKEN").allowedOrigins(allowedOrigins);
+						.allowedHeaders("Content-Type", "X-XSRF-TOKEN").allowedOrigins(allowedOrigins)
+						.allowCredentials(true);
 			}
 		};
 	}
