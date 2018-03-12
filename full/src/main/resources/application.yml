@@ -1,10 +1,11 @@
 server:
   port: 8080
-  contextPath: /
+  servlet:
+    context-path: /
 
-#rest:
-#  cors:
-#    allowed-origins: "*"
+rest:
+  cors:
+    allowed-origins: "*"
 
 #spring:
 #  jooq:
