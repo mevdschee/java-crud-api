@@ -328,12 +328,22 @@ public class SampleTests {
 	}
 
 	@Test
-	public void test041OptionsRequest() throws Exception {
-		mockMvc.perform(options("/data/posts/2")).andExpect(status().isOk())
-				.andExpect(header().string("Access-Control-Allow-Headers", "Content-Type, X-XSRF-TOKEN"))
-				.andExpect(header().string("Access-Control-Allow-Methods", "OPTIONS, GET, PUT, POST, DELETE, PATCH"))
+	public void test041CorsPreFlight() throws Exception {
+		mockMvc.perform(options("/data/posts").header("Origin", "http://example.com")
+				.header("Access-Control-Request-Method", "POST")
+				.header("Access-Control-Request-Headers", "X-XSRF-TOKEN, X-Requested-With")).andExpect(status().isOk())
+				.andExpect(header().string("Access-Control-Allow-Origin", "http://example.com"))
+				.andExpect(header().string("Access-Control-Allow-Headers", "X-XSRF-TOKEN, X-Requested-With"))
+				.andExpect(header().string("Access-Control-Allow-Methods", "POST"))
 				.andExpect(header().string("Access-Control-Allow-Credentials", "true"))
 				.andExpect(header().string("Access-Control-Max-Age", "1728000"));
+	}
+
+	@Test
+	public void test042CorsHeaders() throws Exception {
+		mockMvc.perform(get("/data/posts").header("Origin", "http://example.com")).andExpect(status().isOk())
+				.andExpect(header().string("Access-Control-Allow-Origin", "http://example.com"))
+				.andExpect(header().string("Access-Control-Allow-Credentials", "true"));
 	}
 
 }

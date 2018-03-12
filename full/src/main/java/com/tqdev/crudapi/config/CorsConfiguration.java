@@ -19,7 +19,7 @@ public class CorsConfiguration {
 			public void addCorsMappings(CorsRegistry registry) {
 				registry.addMapping("/**").allowedMethods("OPTIONS", "GET", "PUT", "POST", "DELETE", "PATCH")
 						.allowedHeaders("Content-Type", "X-XSRF-TOKEN").allowedOrigins(allowedOrigins)
-						.allowCredentials(true);
+						.allowCredentials(true).maxAge(1728000);
 			}
 		};
 	}
