@@ -29,7 +29,7 @@ public class ReflectedTable extends CustomTable {
 
 	@SuppressWarnings("unchecked")
 	public ReflectedTable(Table<?> table) {
-		super(table.getName());
+		super(table.getQualifiedName());
 		this.table = table;
 		for (Field<?> field : table.fields()) {
 			String name = field.getName();
