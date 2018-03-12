@@ -257,14 +257,21 @@ public class SampleTests {
 	}
 
 	@Test
-	public void test031ListExampleFromReadme() throws Exception {
+	public void test031ListExampleFromReadmeTagsWithIncludePath() throws Exception {
 		mockMvc.perform(get("/data/posts?include=categories&include=post_tags,tags&include=comments&filter=id,eq,1"))
 				.andExpect(status().isOk()).andExpect(content().string(
 						"{\"records\":[{\"id\":1,\"user_id\":1,\"category_id\":{\"id\":1,\"name\":\"announcement\",\"icon\":null},\"content\":\"blog started\",\"post_tags\":[{\"id\":1,\"post_id\":1,\"tag_id\":{\"id\":1,\"name\":\"funny\",\"is_important\":false}},{\"id\":2,\"post_id\":1,\"tag_id\":{\"id\":2,\"name\":\"important\",\"is_important\":true}}],\"comments\":[{\"id\":1,\"post_id\":1,\"message\":\"great\"},{\"id\":2,\"post_id\":1,\"message\":\"fantastic\"}]}]}"));
 	}
 
 	@Test
-	public void test032ListExampleFromReadmeTagNameOnly() throws Exception {
+	public void test032ListExampleFromReadme() throws Exception {
+		mockMvc.perform(get("/data/posts?include=categories&include=tags&include=comments&filter=id,eq,1"))
+				.andExpect(status().isOk()).andExpect(content().string(
+						"{\"records\":[{\"id\":1,\"user_id\":1,\"category_id\":{\"id\":1,\"name\":\"announcement\",\"icon\":null},\"content\":\"blog started\",\"post_tags\":[{\"id\":1,\"name\":\"funny\",\"is_important\":false},{\"id\":2,\"name\":\"important\",\"is_important\":true}],\"comments\":[{\"id\":1,\"post_id\":1,\"message\":\"great\"},{\"id\":2,\"post_id\":1,\"message\":\"fantastic\"}]}]}"));
+	}
+
+	@Test
+	public void test033ListExampleFromReadmeTagNameOnly() throws Exception {
 		mockMvc.perform(
 				get("/data/posts?columns=tags.name&include=categories&include=post_tags,tags&include=comments&filter=id,eq,1"))
 				.andExpect(status().isOk()).andExpect(content().string(
@@ -272,7 +279,7 @@ public class SampleTests {
 	}
 
 	@Test
-	public void test033ListExampleFromReadmeWithTransformWithExclude() throws Exception {
+	public void test034ListExampleFromReadmeWithTransformWithExclude() throws Exception {
 		mockMvc.perform(
 				get("/data/posts?include=categories&include=post_tags,tags&include=comments&exclude=comments.message&filter=id,eq,1"))
 				.andExpect(status().isOk()).andExpect(content().string(
@@ -280,7 +287,7 @@ public class SampleTests {
 	}
 
 	@Test
-	public void test034EditCategoryWithBinaryContent() throws Exception {
+	public void test035EditCategoryWithBinaryContent() throws Exception {
 		String string = "€ \000abc\000\n\r\\b\000";
 		String binary = Base64.encodeBase64String(string.getBytes("UTF-8"));
 		String b64url = Base64.encodeBase64URLSafeString(string.getBytes("UTF-8"));
@@ -292,7 +299,7 @@ public class SampleTests {
 	}
 
 	@Test
-	public void test035EditCategoryWithNull() throws Exception {
+	public void test036EditCategoryWithNull() throws Exception {
 
 		mockMvc.perform(put("/data/categories/2").contentType("application/json").content("{\"icon\":null}"))
 				.andExpect(status().isOk()).andExpect(content().string("1"));
@@ -301,7 +308,7 @@ public class SampleTests {
 	}
 
 	@Test
-	public void test036EditCategoryWithBinaryContentWithPost() throws Exception {
+	public void test037EditCategoryWithBinaryContentWithPost() throws Exception {
 		String string = "€ \000abc\000\n\r\\b\000";
 		String binary = Base64.encodeBase64String(string.getBytes("UTF-8"));
 		String b64url = Base64.encodeBase64URLSafeString(string.getBytes("UTF-8"));
@@ -313,13 +320,13 @@ public class SampleTests {
 	}
 
 	@Test
-	public void test037ListCategoriesWithBinaryContent() throws Exception {
+	public void test038ListCategoriesWithBinaryContent() throws Exception {
 		mockMvc.perform(get("/data/categories")).andExpect(status().isOk()).andExpect(content().string(
 				"{\"records\":[{\"id\":1,\"name\":\"announcement\",\"icon\":null},{\"id\":2,\"name\":\"article\",\"icon\":\"4oKsIABhYmMACg1cYgA=\"}]}"));
 	}
 
 	@Test
-	public void test038EditCategoryWithNullWithPost() throws Exception {
+	public void test039EditCategoryWithNullWithPost() throws Exception {
 		mockMvc.perform(
 				put("/data/categories/2").contentType("application/x-www-form-urlencoded").content("icon__is_null"))
 				.andExpect(status().isOk()).andExpect(content().string("1"));
@@ -328,13 +335,13 @@ public class SampleTests {
 	}
 
 	@Test
-	public void test039AddPostFailure() throws Exception {
+	public void test040AddPostFailure() throws Exception {
 		mockMvc.perform(post("/data/posts").contentType("application/json")).andExpect(status().isBadRequest())
 				.andExpect(content().string("null"));
 	}
 
 	@Test
-	public void test040OptionsRequest() throws Exception {
+	public void test041OptionsRequest() throws Exception {
 		mockMvc.perform(options("data/posts/2")).andExpect(status().isOk())
 				.andExpect(header().string("Access-Control-Allow-Headers", "Content-Type, X-XSRF-TOKEN"))
 				.andExpect(header().string("Access-Control-Allow-Methods", "OPTIONS, GET, PUT, POST, DELETE, PATCH"))
