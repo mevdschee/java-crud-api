@@ -251,9 +251,8 @@ public class SampleTests {
 
 	@Test
 	public void test030ListExampleFromReadmeTagsOnly() throws Exception {
-		mockMvc.perform(get("/data/posts?include=post_tags,tags&include=comments&filter=id,eq,1"))
-				.andExpect(status().isOk()).andExpect(content().string(
-						"{\"records\":[{\"id\":1,\"user_id\":1,\"category_id\":1,\"content\":\"blog started\",\"post_tags\":[{\"id\":1,\"post_id\":1,\"tag_id\":{\"id\":1,\"name\":\"funny\",\"is_important\":false}},{\"id\":2,\"post_id\":1,\"tag_id\":{\"id\":2,\"name\":\"important\",\"is_important\":true}}],\"comments\":[{\"id\":1,\"post_id\":1,\"message\":\"great\"},{\"id\":2,\"post_id\":1,\"message\":\"fantastic\"}]}]}"));
+		mockMvc.perform(get("/data/posts?include=tags&filter=id,eq,1")).andExpect(status().isOk()).andExpect(content()
+				.string("{\"records\":[{\"id\":1,\"user_id\":1,\"category_id\":1,\"content\":\"blog started\",\"post_tags\":[{\"id\":1,\"name\":\"funny\",\"is_important\":false},{\"id\":2,\"name\":\"important\",\"is_important\":true}]}]}"));
 	}
 
 	@Test
