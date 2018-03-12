@@ -8,7 +8,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -25,7 +24,6 @@ import com.tqdev.crudapi.core.record.Record;
 
 @RestController
 @RequestMapping("/data")
-@CrossOrigin(origins = "${rest.cors.allowed-origins:*}")
 public class CrudApiController extends BaseController {
 
 	public static final Logger logger = LoggerFactory.getLogger(CrudApiController.class);
