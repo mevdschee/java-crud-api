@@ -30,7 +30,7 @@ These features match features in PHP-CRUD-API.
   - [x] Atomic increment support via PATCH (for counters)
   - [x] Binary fields supported with base64 encoding
   - [x] Spatial/GIS fields and filters supported with WKT
-  - [ ] Unstructured data support through JSON/JSONB/XML
+  - [ ] Unstructured data support through JSON/JSONB
   - [ ] Generate API documentation using Swagger tools
   - [ ] Authentication via JWT token or username/password
 
@@ -52,12 +52,6 @@ By default all cross-origin requests are allowed. Use the key "rest.cors.allowed
 set it to one or multiple hosts in a comma separated list (e.g. "http://localhost:8080,http://localhost:9090").
 
 ## Extra Features
-
-### Support for output in JSON or XML
-
-By sending the "Accept: application/json" header you are specifying you want to receive JSON.
-By sending the "Accept: application/xml" header you are specifying you want to receive XML. 
-Alternatively you may also end your URL in ".json" or ".xml" to specify the output format. 
 
 ### Input and output of database structure and records
 
