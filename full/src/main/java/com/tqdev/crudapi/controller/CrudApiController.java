@@ -19,7 +19,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tqdev.crudapi.core.CrudApiService;
 import com.tqdev.crudapi.core.ErrorCode;
 import com.tqdev.crudapi.core.Params;
-import com.tqdev.crudapi.core.record.ListResponse;
 import com.tqdev.crudapi.core.record.Record;
 
 @RestController
@@ -38,11 +37,7 @@ public class CrudApiController extends BaseController {
 		if (!service.exists(table)) {
 			return error(ErrorCode.TABLE_NOT_FOUND, table);
 		}
-		ListResponse response = service.list(table, new Params(params));
-		if (response == null) {
-			return error(ErrorCode.CANNOT_LIST_TABLE, table);
-		}
-		return success(response);
+		return success(service.list(table, new Params(params)));
 	}
 
 	@RequestMapping(value = "/{table}/{id}", method = RequestMethod.GET)
@@ -53,9 +48,10 @@ public class CrudApiController extends BaseController {
 			return error(ErrorCode.TABLE_NOT_FOUND, table);
 		}
 		if (id.indexOf(',') >= 0) {
+			String[] ids = id.split(",");
 			ArrayList<Object> result = new ArrayList<>();
-			for (String s : id.split(",")) {
-				result.add(service.read(table, s, new Params(params)));
+			for (int i = 0; i < ids.length; i++) {
+				result.add(service.read(table, ids[i], new Params(params)));
 			}
 			return success(result);
 		} else {
@@ -84,17 +80,14 @@ public class CrudApiController extends BaseController {
 			return error(ErrorCode.TABLE_NOT_FOUND, table);
 		}
 		if (record instanceof ArrayList<?>) {
+			ArrayList<?> records = (ArrayList<?>) record;
 			ArrayList<Object> result = new ArrayList<>();
-			for (Object o : (ArrayList<?>) record) {
-				result.add(service.create(table, Record.valueOf(o), new Params(params)));
+			for (int i = 0; i < records.size(); i++) {
+				result.add(service.create(table, Record.valueOf(records.get(i)), new Params(params)));
 			}
 			return success(result);
 		} else {
-			String response = service.create(table, Record.valueOf(record), new Params(params));
-			if (response == null) {
-				return error(ErrorCode.CANNOT_CREATE_RECORD, record.toString());
-			}
-			return success(response);
+			return success(service.create(table, Record.valueOf(record), new Params(params)));
 		}
 	}
 
@@ -126,7 +119,7 @@ public class CrudApiController extends BaseController {
 	}
 
 	@RequestMapping(value = "/{table}/{id}", method = RequestMethod.PUT, headers = "Content-Type=application/x-www-form-urlencoded")
-	public ResponseEntity<?> increment(@PathVariable("table") String table, @PathVariable("id") String id,
+	public ResponseEntity<?> update(@PathVariable("table") String table, @PathVariable("id") String id,
 			@RequestBody LinkedMultiValueMap<String, String> record,
 			@RequestParam LinkedMultiValueMap<String, String> params) {
 		ObjectMapper mapper = new ObjectMapper();
@@ -135,34 +128,30 @@ public class CrudApiController extends BaseController {
 	}
 
 	@RequestMapping(value = "/{table}/{id}", method = RequestMethod.PUT, headers = "Content-Type=application/json")
-	public ResponseEntity<?> increment(@PathVariable("table") String table, @PathVariable("id") String id,
+	public ResponseEntity<?> update(@PathVariable("table") String table, @PathVariable("id") String id,
 			@RequestBody Object record, @RequestParam LinkedMultiValueMap<String, String> params) {
 		logger.info("Inrementing record in {} with id {} and properties {}", table, id, record);
 		if (!service.exists(table)) {
 			return error(ErrorCode.TABLE_NOT_FOUND, table);
 		}
 		if (id.indexOf(',') >= 0 && record instanceof ArrayList<?>) {
-			ArrayList<Object> result = new ArrayList<>();
 			String[] ids = id.split(",");
-			ArrayList<?> records = new ArrayList<>();
+			ArrayList<?> records = (ArrayList<?>) record;
 			if (ids.length != records.size()) {
 				return error(ErrorCode.ARGUMENT_COUNT_MISMATCH, id);
 			}
+			ArrayList<Object> result = new ArrayList<>();
 			for (int i = 0; i < ids.length; i++) {
-				result.add(service.increment(table, ids[i], Record.valueOf(records.get(i)), new Params(params)));
+				result.add(service.update(table, ids[i], Record.valueOf(records.get(i)), new Params(params)));
 			}
 			return success(result);
 		} else {
-			Integer response = service.increment(table, id, Record.valueOf(record), new Params(params));
-			if (response == null) {
-				return error(ErrorCode.CANNOT_UPDATE_RECORD, record.toString());
-			}
-			return success(response);
+			return success(service.update(table, id, Record.valueOf(record), new Params(params)));
 		}
 	}
 
 	@RequestMapping(value = "/{table}/{id}", method = RequestMethod.PATCH, headers = "Content-Type=application/x-www-form-urlencoded")
-	public ResponseEntity<?> update(@PathVariable("table") String table, @PathVariable("id") String id,
+	public ResponseEntity<?> increment(@PathVariable("table") String table, @PathVariable("id") String id,
 			@RequestBody LinkedMultiValueMap<String, String> record,
 			@RequestParam LinkedMultiValueMap<String, String> params) {
 		ObjectMapper mapper = new ObjectMapper();
@@ -171,29 +160,25 @@ public class CrudApiController extends BaseController {
 	}
 
 	@RequestMapping(value = "/{table}/{id}", method = RequestMethod.PATCH, headers = "Content-Type=application/json")
-	public ResponseEntity<?> update(@PathVariable("table") String table, @PathVariable("id") String id,
+	public ResponseEntity<?> increment(@PathVariable("table") String table, @PathVariable("id") String id,
 			@RequestBody Object record, @RequestParam LinkedMultiValueMap<String, String> params) {
 		logger.info("Updating record in {} with id {} and properties {}", table, id, record);
 		if (!service.exists(table)) {
 			return error(ErrorCode.TABLE_NOT_FOUND, table);
 		}
 		if (id.indexOf(',') >= 0 && record instanceof ArrayList<?>) {
-			ArrayList<Object> result = new ArrayList<>();
 			String[] ids = id.split(",");
-			ArrayList<?> records = new ArrayList<>();
+			ArrayList<?> records = (ArrayList<?>) record;
 			if (ids.length != records.size()) {
 				return error(ErrorCode.ARGUMENT_COUNT_MISMATCH, id);
 			}
+			ArrayList<Object> result = new ArrayList<>();
 			for (int i = 0; i < ids.length; i++) {
-				result.add(service.update(table, ids[i], Record.valueOf(records.get(i)), new Params(params)));
+				result.add(service.increment(table, ids[i], Record.valueOf(records.get(i)), new Params(params)));
 			}
 			return success(result);
 		} else {
-			Integer response = service.update(table, id, Record.valueOf(record), new Params(params));
-			if (response == null) {
-				return error(ErrorCode.CANNOT_UPDATE_RECORD, record.toString());
-			}
-			return success(response);
+			return success(service.increment(table, id, Record.valueOf(record), new Params(params)));
 		}
 	}
 
@@ -205,17 +190,14 @@ public class CrudApiController extends BaseController {
 			return error(ErrorCode.TABLE_NOT_FOUND, table);
 		}
 		if (id.indexOf(',') >= 0) {
+			String[] ids = id.split(",");
 			ArrayList<Object> result = new ArrayList<>();
-			for (String s : id.split(",")) {
-				result.add(service.delete(table, s, new Params(params)));
+			for (int i = 0; i < ids.length; i++) {
+				result.add(service.delete(table, ids[i], new Params(params)));
 			}
 			return success(result);
 		} else {
-			Integer response = service.delete(table, id, new Params(params));
-			if (response == null) {
-				return error(ErrorCode.CANNOT_DELETE_RECORD, id);
-			}
-			return success(response);
+			return success(service.delete(table, id, new Params(params)));
 		}
 	}
 

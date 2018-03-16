@@ -323,8 +323,8 @@ public class SampleTests {
 
 	@Test
 	public void test040AddPostFailure() throws Exception {
-		mockMvc.perform(post("/data/posts").contentType("application/json")).andExpect(status().isBadRequest())
-				.andExpect(content().string("null"));
+		mockMvc.perform(post("/data/posts").contentType("application/json")).andExpect(status().isNotAcceptable())
+				.andExpect(content().string("{\"code\":1008,\"message\":\"Cannot read HTTP message\"}"));
 	}
 
 	@Test
@@ -346,4 +346,73 @@ public class SampleTests {
 				.andExpect(header().string("Access-Control-Allow-Credentials", "true"));
 	}
 
+	@Test
+	public void test43ErrorOnInvalidJson() throws Exception {
+		mockMvc.perform(post("/data/posts").contentType("application/json").content("{\"}"))
+				.andExpect(status().isNotAcceptable())
+				.andExpect(content().string("{\"code\":1008,\"message\":\"Cannot read HTTP message\"}"));
+	}
+
+	@Test
+	public void test44ErrorOnDuplicatePrimaryKey() throws Exception {
+		mockMvc.perform(post("/data/posts").contentType("application/json")
+				.content("{\"id\":1,\"user_id\":1,\"category_id\":1,\"content\":\"blog started (duplicate)\"}"))
+				.andExpect(status().isNotAcceptable())
+				.andExpect(content().string("{\"code\":1009,\"message\":\"Duplicate key exception\"}"));
+	}
+
+	@Test
+	public void test45ErrorOnFailingForeignKeyConstraint() throws Exception {
+		mockMvc.perform(post("/data/posts").contentType("application/json")
+				.content("{\"user_id\":3,\"category_id\":1,\"content\":\"fk constraint\"}"))
+				.andExpect(status().isNotAcceptable())
+				.andExpect(content().string("{\"code\":1010,\"message\":\"Data integrity violation\"}"));
+	}
+
+	@Test
+	public void test46ErrorOnNonExistingTable() throws Exception {
+		mockMvc.perform(get("/data/postzzz")).andExpect(status().isNotFound())
+				.andExpect(content().string("{\"code\":1001,\"message\":\"Table 'postzzz' not found\"}"));
+	}
+
+	@Test
+	public void test47ErrorOnInvalidPath() throws Exception {
+		mockMvc.perform(get("/postzzz")).andExpect(status().isNotFound())
+				.andExpect(content().string("{\"code\":1000,\"message\":\"Route '/postzzz' not found\"}"));
+	}
+
+	@Test
+	public void test050EditUserLocation() throws Exception {
+		mockMvc.perform(put("/data/users/1").contentType("application/json").content("{\"location\":\"POINT(30 20)\"}"))
+				.andExpect(status().isOk()).andExpect(content().string("1"));
+		mockMvc.perform(get("/data/users/1?columns=id,location")).andExpect(status().isOk())
+				.andExpect(content().string("{\"id\":1,\"location\":\"POINT(30 20)\"}"));
+	}
+
+	@Test
+	public void test051ListUserLocations() throws Exception {
+		mockMvc.perform(get("/data/users?columns=id,location")).andExpect(status().isOk()).andExpect(content()
+				.string("{\"records\":[{\"id\":1,\"location\":\"POINT(30 20)\"},{\"id\":2,\"location\":null}]}"));
+	}
+
+	@Test
+	public void test052EditUserWithId() throws Exception {
+		mockMvc.perform(
+				put("/data/users/1").contentType("application/json").content("{\"id\":2,\"password\":\"testtest2\"}"))
+				.andExpect(status().isOk()).andExpect(content().string("1"));
+		mockMvc.perform(get("/data/users/1?columns=id,username,password")).andExpect(status().isOk())
+				.andExpect(content().string("{\"id\":1,\"username\":\"user1\",\"password\":\"testtest2\"}"));
+	}
+
+	@Test
+	public void test54FilterCategoryOnNullIcon() throws Exception {
+		mockMvc.perform(get("/data/categories?filter=icon,is,null")).andExpect(status().isOk()).andExpect(content()
+				.string("{\"records\":[{\"id\":1,\"name\":\"announcement\",\"icon\":null},{\"id\":2,\"name\":\"article\",\"icon\":null}]}"));
+	}
+
+	@Test
+	public void test55FilterCategoryOnNotNullIcon() throws Exception {
+		mockMvc.perform(get("/data/categories?filter=icon,nis,null")).andExpect(status().isOk())
+				.andExpect(content().string("{\"records\":[]}"));
+	}
 }

@@ -13,10 +13,15 @@ public interface JooqConditions {
 
 	default public ArrayList<Condition> conditions(ReflectedTable table, Params params) {
 		ArrayList<Condition> conditions = new ArrayList<>();
+		if (params.containsKey("filter[]")) {
+			for (String value : params.get("filter[]")) {
+				params.add("filter", value);
+			}
+		}
 		if (params.containsKey("filter")) {
-			for (String key : params.get("filter")) {
+			for (String value : params.get("filter")) {
 				String[] parts2;
-				String[] parts = key.split(",", 3);
+				String[] parts = value.split(",", 3);
 				if (parts.length >= 2) {
 					Condition condition = null;
 					String command = parts[1];
@@ -113,7 +118,7 @@ public interface JooqConditions {
 					}
 					if (condition != null) {
 						if (negate) {
-							condition = condition.not();
+							condition = DSL.not(condition);
 						}
 						conditions.add(condition);
 					}

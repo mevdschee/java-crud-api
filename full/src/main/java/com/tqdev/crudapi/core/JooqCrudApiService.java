@@ -40,14 +40,11 @@ public class JooqCrudApiService extends BaseCrudApiService
 	@SuppressWarnings("unchecked")
 	@Override
 	public String create(String table, Record record, Params params) {
-		sanitizeRecord(table, record);
+		sanitizeRecord(table, record, null);
 		ReflectedTable t = tables.get(table);
 		LinkedHashMap<Field<?>, Object> columns = columnValues(t, true, record, params);
 		Field<Object> pk = tables.get(table).getPk();
 		org.jooq.Record result = dsl.insertInto(t).set(columns).returning(pk).fetchOne();
-		if (result == null) {
-			return null;
-		}
 		return String.valueOf(result.get(0));
 	}
 
@@ -68,8 +65,8 @@ public class JooqCrudApiService extends BaseCrudApiService
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public Integer update(String table, String id, Record record, Params params) {
-		sanitizeRecord(table, record);
+	public int update(String table, String id, Record record, Params params) {
+		sanitizeRecord(table, record, id);
 		ReflectedTable t = tables.get(table);
 		LinkedHashMap<Field<?>, Object> columns = columnValues(t, true, record, params);
 		Field<Object> pk = tables.get(table).getPk();
@@ -78,8 +75,8 @@ public class JooqCrudApiService extends BaseCrudApiService
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public Integer increment(String table, String id, Record record, Params params) {
-		sanitizeRecord(table, record);
+	public int increment(String table, String id, Record record, Params params) {
+		sanitizeRecord(table, record, id);
 		ReflectedTable t = tables.get(table);
 		LinkedHashMap<Field<?>, Object> columns = columnValues(t, true, record, params);
 		Field<Object> pk = tables.get(table).getPk();
@@ -87,7 +84,7 @@ public class JooqCrudApiService extends BaseCrudApiService
 	}
 
 	@Override
-	public Integer delete(String table, String id, Params params) {
+	public int delete(String table, String id, Params params) {
 		Table<?> t = tables.get(table);
 		Field<Object> pk = tables.get(table).getPk();
 		return dsl.deleteFrom(t).where(pk.eq(id)).execute();

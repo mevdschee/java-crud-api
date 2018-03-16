@@ -12,18 +12,20 @@ abstract class BaseCrudApiService implements CrudApiService {
 
 	protected DatabaseReflection tables;
 
-	protected void sanitizeRecord(String table, Record record) {
+	protected void sanitizeRecord(String table, Record record, String id) {
 		String[] keyset = record.keySet().toArray(new String[] {});
 		for (String key : keyset) {
 			if (!tables.get(table).exists(key)) {
 				record.remove(key);
 			}
 		}
-		Field<?> pk = tables.get(table).getPk();
-		for (String key : tables.get(table).fieldNames()) {
-			Field<?> field = tables.get(table).get(key);
-			if (field.getName().equals(pk.getName())) {
-				record.remove(key);
+		if (id != null) {
+			Field<?> pk = tables.get(table).getPk();
+			for (String key : tables.get(table).fieldNames()) {
+				Field<?> field = tables.get(table).get(key);
+				if (field.getName().equals(pk.getName())) {
+					record.remove(key);
+				}
 			}
 		}
 	}

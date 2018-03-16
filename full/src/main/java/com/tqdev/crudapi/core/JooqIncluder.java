@@ -19,6 +19,11 @@ import com.tqdev.crudapi.meta.reflection.ReflectedTable;
 public interface JooqIncluder extends JooqColumnSelector {
 
 	default public void addMandatoryColumns(String tableName, DatabaseReflection tables, Params params) {
+		if (params.containsKey("include[]")) {
+			for (String value : params.get("include[]")) {
+				params.add("include", value);
+			}
+		}
 		if (!params.containsKey("include") || !params.containsKey("columns")) {
 			return;
 		}

@@ -4,19 +4,21 @@ import org.springframework.http.HttpStatus;
 
 public enum ErrorCode {
 
+	ERROR_NOT_FOUND(9999, "Error for '%s' not found", HttpStatus.INTERNAL_SERVER_ERROR),
+
+	ROUTE_NOT_FOUND(1000, "Route '%s' not found", HttpStatus.NOT_FOUND),
+
 	TABLE_NOT_FOUND(1001, "Table '%s' not found", HttpStatus.NOT_FOUND),
 
 	ARGUMENT_COUNT_MISMATCH(1002, "Argument count mismatch in '%s'", HttpStatus.NOT_ACCEPTABLE),
 
 	RECORD_NOT_FOUND(1003, "Record '%s' not found", HttpStatus.NOT_FOUND),
 
-	CANNOT_LIST_TABLE(1004, "Cannot list table '%s'", HttpStatus.NOT_ACCEPTABLE),
+	HTTP_MESSAGE_NOT_READABLE(1008, "Cannot read HTTP message", HttpStatus.NOT_ACCEPTABLE),
 
-	CANNOT_CREATE_RECORD(1005, "Cannot create record '%s'", HttpStatus.NOT_ACCEPTABLE),
+	DUPLICATE_KEY_EXCEPTION(1009, "Duplicate key exception", HttpStatus.NOT_ACCEPTABLE),
 
-	CANNOT_UPDATE_RECORD(1006, "Cannot update record '%s'", HttpStatus.NOT_ACCEPTABLE),
-
-	CANNOT_DELETE_RECORD(1007, "Cannot delete record '%s'", HttpStatus.NOT_ACCEPTABLE);
+	DATA_INTEGRITY_VIOLATION(1010, "Data integrity violation", HttpStatus.NOT_ACCEPTABLE);
 
 	private final int code;
 
