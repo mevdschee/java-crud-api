@@ -3,6 +3,7 @@ package com.tqdev.crudapi.core.record;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.LinkedHashMap;
 
 import org.springframework.core.io.ClassPathResource;
@@ -11,14 +12,21 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tqdev.crudapi.core.CrudApiService;
-import com.tqdev.crudapi.core.Params;
 
-public class DatabaseRecords extends LinkedHashMap<String, ArrayList<Record>> {
+public class DatabaseRecords {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
+	protected LinkedHashMap<String, TableRecords> tables = new LinkedHashMap<>();
+
+	public Collection<TableRecords> getTables() {
+		return tables.values();
+	}
+
+	public void setTables(Collection<TableRecords> tables) {
+		this.tables = new LinkedHashMap<>();
+		for (TableRecords table : tables) {
+			this.tables.put(table.getName(), table);
+		}
+	}
 
 	public static DatabaseRecords fromFile(String filename)
 			throws JsonParseException, JsonMappingException, IOException {
@@ -34,14 +42,12 @@ public class DatabaseRecords extends LinkedHashMap<String, ArrayList<Record>> {
 	}
 
 	public void create(CrudApiService service) throws DatabaseRecordsException {
-		for (String table : keySet()) {
-			for (Record record : get(table)) {
-				if (!service.exists(table)) {
-					throw new DatabaseRecordsException(
-							String.format("Cannot insert into table '%s': Table does not exist", table));
-				}
-				service.create(table, record, new Params());
-			}
+		for (String table : tables.keySet()) {
+			tables.get(table).create(service);
 		}
+	}
+
+	public void put(String table, ArrayList<Record> records) {
+		tables.put(table, new TableRecords(table, records));
 	}
 }

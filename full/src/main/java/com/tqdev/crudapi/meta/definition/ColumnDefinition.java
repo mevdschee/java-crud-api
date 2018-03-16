@@ -11,20 +11,21 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
 public class ColumnDefinition {
 
-	private boolean pk = false;
-	private String type;
-	private int length = -1;
-	private int precision = -1;
-	private int scale = -1;
-	private boolean nullable = false;
-	private String fk = null;
+	protected String name = null;
+	protected String type;
+	protected int length = -1;
+	protected int precision = -1;
+	protected int scale = -1;
+	protected boolean nullable = false;
+	protected boolean pk = false;
+	protected String fk = null;
 
-	public boolean getPk() {
-		return pk;
+	public String getName() {
+		return name;
 	}
 
-	public void setPk(Boolean pk) {
-		this.pk = pk;
+	public void setName(String name) {
+		this.name = name;
 	}
 
 	public String getType() {
@@ -67,6 +68,14 @@ public class ColumnDefinition {
 		this.nullable = nullable;
 	}
 
+	public boolean getPk() {
+		return pk;
+	}
+
+	public void setPk(Boolean pk) {
+		this.pk = pk;
+	}
+
 	public String getFk() {
 		return fk;
 	}
@@ -76,7 +85,7 @@ public class ColumnDefinition {
 	}
 
 	// hackety hack
-	private void override(DSLContext dsl) {
+	protected void override(DSLContext dsl) {
 		if (dsl.dialect() == SQLDialect.H2) {
 			if (type.equals("geometry")) {
 				type = "nclob";
@@ -101,26 +110,28 @@ public class ColumnDefinition {
 		return result;
 	}
 
-	public static ColumnDefinition fromValue(Field<?> field) {
-		ColumnDefinition definition = new ColumnDefinition();
+	public ColumnDefinition() {
+		// nothing
+	}
+
+	public ColumnDefinition(Field<?> field) {
 		DataType<?> dataType = field.getDataType();
-		definition.setPk(dataType.identity());
+		setPk(dataType.identity());
 		DataType<?> defaultType = dataType.getSQLDataType();
 		if (defaultType == null) {
 			defaultType = DefaultDataType.getDefaultDataType(dataType.getTypeName());
 		}
-		definition.setType(defaultType.getTypeName());
+		setType(defaultType.getTypeName());
 		if (dataType.hasLength()) {
-			definition.setLength(dataType.length());
+			setLength(dataType.length());
 		}
 		if (dataType.hasPrecision()) {
-			definition.setPrecision(dataType.precision());
+			setPrecision(dataType.precision());
 		}
 		if (dataType.hasScale()) {
-			definition.setScale(dataType.scale());
+			setScale(dataType.scale());
 		}
-		definition.setNullable(dataType.nullable());
-		return definition;
+		setNullable(dataType.nullable());
 	}
 
 }

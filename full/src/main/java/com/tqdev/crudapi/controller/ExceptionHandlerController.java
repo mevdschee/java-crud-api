@@ -32,6 +32,8 @@ public class ExceptionHandlerController extends BaseController {
 			error = ErrorCode.DATA_INTEGRITY_VIOLATION;
 			argument = null;
 			break;
+		default:
+			ex.printStackTrace();
 		}
 		return error(error, argument);
 	}

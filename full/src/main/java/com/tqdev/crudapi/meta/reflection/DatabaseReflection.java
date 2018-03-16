@@ -2,7 +2,7 @@ package com.tqdev.crudapi.meta.reflection;
 
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Set;
 
 import org.jooq.DSLContext;
@@ -12,7 +12,7 @@ public class DatabaseReflection {
 
 	protected DSLContext dsl;
 
-	protected HashMap<String, ReflectedTable> tables;
+	protected LinkedHashMap<String, ReflectedTable> tables;
 
 	public DatabaseReflection(DSLContext dsl) {
 		this.dsl = dsl;
@@ -55,7 +55,7 @@ public class DatabaseReflection {
 	}
 
 	public void update() {
-		tables = new HashMap<>();
+		tables = new LinkedHashMap<>();
 		String prefix = findTablePrefix();
 		for (Table<?> table : dsl.meta().getTables()) {
 			if (!(table.toString().startsWith(prefix))) {

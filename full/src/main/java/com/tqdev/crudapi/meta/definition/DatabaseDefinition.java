@@ -3,6 +3,7 @@ package com.tqdev.crudapi.meta.definition;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.LinkedHashMap;
 
 import org.jooq.AlterTableUsingIndexStep;
@@ -21,19 +22,31 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tqdev.crudapi.meta.reflection.DatabaseReflection;
 import com.tqdev.crudapi.meta.reflection.ReflectedTable;
 
-public class DatabaseDefinition extends LinkedHashMap<String, TableDefinition> {
+public class DatabaseDefinition {
 
 	public static final Logger logger = LoggerFactory.getLogger(DatabaseDefinition.class);
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
+	protected LinkedHashMap<String, TableDefinition> tables;
+
+	public Collection<TableDefinition> getTables() {
+		return tables.values();
+	}
+
+	public void setTables(Collection<TableDefinition> tables) {
+		this.tables = new LinkedHashMap<>();
+		for (TableDefinition table : tables) {
+			this.tables.put(table.getName(), table);
+		}
+	}
+
+	public TableDefinition get(String tableName) {
+		return tables.get(tableName);
+	}
 
 	public void create(DSLContext dsl) throws DatabaseDefinitionException {
 		ArrayList<String> created = new ArrayList<>();
-		for (String tableName : keySet()) {
-			TableDefinition table = get(tableName);
+		for (String tableName : tables.keySet()) {
+			TableDefinition table = tables.get(tableName);
 			ArrayList<Field<?>> fields = table.getFields(dsl);
 			ArrayList<Constraint> constraints = table.getPkConstraints(dsl, tableName);
 			CreateTableConstraintStep query = dsl.createTable(DSL.name(tableName)).columns(fields)
@@ -43,7 +56,7 @@ public class DatabaseDefinition extends LinkedHashMap<String, TableDefinition> {
 			created.add(tableName);
 		}
 		for (String tableName : created) {
-			TableDefinition table = get(tableName);
+			TableDefinition table = tables.get(tableName);
 			for (Constraint constraint : table.getFkConstraints(dsl, tableName, this)) {
 				AlterTableUsingIndexStep query = dsl.alterTable(DSL.name(tableName)).add(constraint);
 				logger.info("Executing SQL: " + query.getSQL());
@@ -52,13 +65,16 @@ public class DatabaseDefinition extends LinkedHashMap<String, TableDefinition> {
 		}
 	}
 
-	public static DatabaseDefinition fromValue(DatabaseReflection tables) {
-		DatabaseDefinition definition = new DatabaseDefinition();
-		for (String tableName : tables.tableNames()) {
-			ReflectedTable table = tables.get(tableName);
-			definition.put(tableName, TableDefinition.fromValue(table));
+	public DatabaseDefinition() {
+		tables = new LinkedHashMap<>();
+	}
+
+	public DatabaseDefinition(DatabaseReflection database) {
+		tables = new LinkedHashMap<>();
+		for (String tableName : database.tableNames()) {
+			ReflectedTable table = database.get(tableName);
+			tables.put(tableName, new TableDefinition(table));
 		}
-		return definition;
 	}
 
 	public static DatabaseDefinition fromFile(String filename)

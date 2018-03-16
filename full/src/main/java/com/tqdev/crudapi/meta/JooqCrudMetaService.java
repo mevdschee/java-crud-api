@@ -24,7 +24,7 @@ public class JooqCrudMetaService implements CrudMetaService {
 
 	@Override
 	public DatabaseDefinition getDatabaseDefinition() {
-		return DatabaseDefinition.fromValue(tables);
+		return new DatabaseDefinition(tables);
 	}
 
 	@Override

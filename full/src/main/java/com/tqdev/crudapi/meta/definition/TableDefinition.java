@@ -1,6 +1,7 @@
 package com.tqdev.crudapi.meta.definition;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.LinkedHashMap;
 
 import org.jooq.Constraint;
@@ -8,18 +9,37 @@ import org.jooq.DSLContext;
 import org.jooq.Field;
 import org.jooq.impl.DSL;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.tqdev.crudapi.meta.reflection.ReflectedTable;
 
-public class TableDefinition extends LinkedHashMap<String, ColumnDefinition> {
+public class TableDefinition {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
+	protected String name = null;
+	protected LinkedHashMap<String, ColumnDefinition> columns = new LinkedHashMap<>();
 
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public Collection<ColumnDefinition> getColumns() {
+		return columns.values();
+	}
+
+	public void setColumns(Collection<ColumnDefinition> columns) {
+		this.columns = new LinkedHashMap<>();
+		for (ColumnDefinition column : columns) {
+			this.columns.put(column.getName(), column);
+		}
+	}
+
+	@JsonIgnore
 	public String getPk() {
-		for (String key : keySet()) {
-			if (get(key).getPk() == true) {
+		for (String key : columns.keySet()) {
+			if (columns.get(key).getPk() == true) {
 				return key;
 			}
 		}
@@ -28,8 +48,8 @@ public class TableDefinition extends LinkedHashMap<String, ColumnDefinition> {
 
 	public ArrayList<Field<?>> getFields(DSLContext dsl) {
 		ArrayList<Field<?>> fields = new ArrayList<>();
-		for (String columnName : keySet()) {
-			ColumnDefinition column = get(columnName);
+		for (String columnName : columns.keySet()) {
+			ColumnDefinition column = columns.get(columnName);
 			fields.add(DSL.field(DSL.name(columnName), column.getDataType(dsl)));
 		}
 		return fields;
@@ -47,8 +67,8 @@ public class TableDefinition extends LinkedHashMap<String, ColumnDefinition> {
 	public ArrayList<Constraint> getFkConstraints(DSLContext dsl, String tableName, DatabaseDefinition definition)
 			throws DatabaseDefinitionException {
 		ArrayList<Constraint> constraints = new ArrayList<>();
-		for (String columnName : keySet()) {
-			ColumnDefinition column = get(columnName);
+		for (String columnName : columns.keySet()) {
+			ColumnDefinition column = columns.get(columnName);
 			String fk = column.getFk();
 			if (fk != null) {
 				String pk = definition.get(fk).getPk();
@@ -65,17 +85,23 @@ public class TableDefinition extends LinkedHashMap<String, ColumnDefinition> {
 		return constraints;
 	}
 
-	public static TableDefinition fromValue(ReflectedTable table) {
-		TableDefinition definition = new TableDefinition();
+	public TableDefinition() {
+		// nothing
+	}
+
+	public TableDefinition(ReflectedTable table) {
+		setName(table.getName());
 		for (Field<?> field : table.fields()) {
-			definition.put(field.getName(), ColumnDefinition.fromValue(field));
-			definition.get(field.getName()).setFk(table.getFk(field.getName()));
+			String name = field.getName();
+			ColumnDefinition column = new ColumnDefinition(field);
+			column.setName(name);
+			column.setFk(table.getFk(name));
+			columns.put(name, column);
 		}
 		Field<?> pk = table.getPk();
 		if (pk != null) {
-			definition.get(pk.getName()).setPk(true);
+			columns.get(pk.getName()).setPk(true);
 		}
-		return definition;
 	}
 
 }
