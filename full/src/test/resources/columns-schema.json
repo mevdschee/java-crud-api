@@ -1,0 +1,80 @@
+{
+	"title": "The Simple Data Model Schema",
+	"type": "object",
+	"properties": {
+		"tables": {
+			"type": "array",
+			"items": {
+				"type": "object",
+				"properties": {
+					"name": {
+						"type": "string"
+					},
+					"columns": {
+						"type": "array",
+						"items": {
+							"type": "object",
+							"properties": {
+								"name": {
+									"type": "string"
+								},
+								"type": {
+									"type": "string",
+									"enum": [
+										"varchar",
+										"char",
+										"longvarchar",
+										"bit",
+										"numeric",
+										"tinyint",
+										"smallint",
+										"integer",
+										"bigint",
+										"real",
+										"float",
+										"double",
+										"varbinary",
+										"binary",
+										"date",
+										"time",
+										"timestamp",
+										"clob",
+										"blob",
+										"array",
+										"ref",
+										"struct",
+										"geometry"
+									]
+								},
+								"length": {
+									"type": "integer"
+								},
+								"precision": {
+									"type": "integer"
+								},
+								"scale": {
+									"type": "integer"
+								},
+								"nullable": {
+									"type": "boolean"
+								},
+								"pk": {
+									"type": "boolean"
+								},
+								"fk": {
+									"type": "string"
+								}
+							},
+							"required": ["name","type"],
+							"additionalProperties":false
+						}
+					}
+				},
+				"required": ["name","columns"],
+				"additionalProperties":false
+			}
+		}
+	},
+	"required": ["tables"],
+	"additionalProperties":false
+}

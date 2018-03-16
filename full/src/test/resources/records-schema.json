@@ -1,0 +1,27 @@
+{
+	"title": "The Simple Data Dump Schema",
+	"type": "object",
+	"properties": {
+		"tables": {
+			"type": "array",
+			"items": {
+				"type": "object",
+				"properties": {
+					"name": {
+						"type": "string"
+					},
+					"records": {
+						"type": "array",
+						"items": {
+							"type": "object"
+						}
+					}
+				},
+				"required": ["name","records"],
+				"additionalProperties":false
+			}
+		}
+	},
+	"required": ["tables"],
+	"additionalProperties":false
+}
