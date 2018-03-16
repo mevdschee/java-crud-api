@@ -398,7 +398,24 @@ public class SampleTests {
 	}
 
 	@Test
-	public void test050EditUserLocation() throws Exception {
+	public void test50NoErrorOnArgumentCountOne() throws Exception {
+		mockMvc.perform(put("/data/posts/1").contentType("application/json")
+				.content("[{\"id\":1,\"user_id\":1,\"category_id\":1,\"content\":\"blog started\"}]"))
+				.andExpect(status().isOk()).andExpect(content().string("[1]"));
+		mockMvc.perform(put("/data/posts/1").contentType("application/json")
+				.content("[{\"id\":1,\"user_id\":1,\"category_id\":1,\"content\":\"blog started\"}]"))
+				.andExpect(status().isOk()).andExpect(content().string("[0]"));
+	}
+
+	@Test
+	public void test51ErrorOnInvalidArgumentCount() throws Exception {
+		mockMvc.perform(put("/data/posts/1").contentType("application/json").content("[{\"id\":1},{\"id\":2}]"))
+				.andExpect(status().isNotAcceptable())
+				.andExpect(content().string("{\"code\":1002,\"message\":\"Argument count mismatch in '1'\"}"));
+	}
+
+	@Test
+	public void test052EditUserLocation() throws Exception {
 		mockMvc.perform(put("/data/users/1").contentType("application/json").content("{\"location\":\"POINT(30 20)\"}"))
 				.andExpect(status().isOk()).andExpect(content().string("1"));
 		mockMvc.perform(get("/data/users/1?columns=id,location")).andExpect(status().isOk())
@@ -406,13 +423,13 @@ public class SampleTests {
 	}
 
 	@Test
-	public void test051ListUserLocations() throws Exception {
+	public void test053ListUserLocations() throws Exception {
 		mockMvc.perform(get("/data/users?columns=id,location")).andExpect(status().isOk()).andExpect(content()
 				.string("{\"records\":[{\"id\":1,\"location\":\"POINT(30 20)\"},{\"id\":2,\"location\":null}]}"));
 	}
 
 	@Test
-	public void test052EditUserWithId() throws Exception {
+	public void test054EditUserWithId() throws Exception {
 		mockMvc.perform(
 				put("/data/users/1").contentType("application/json").content("{\"id\":2,\"password\":\"testtest2\"}"))
 				.andExpect(status().isOk()).andExpect(content().string("1"));
@@ -421,13 +438,13 @@ public class SampleTests {
 	}
 
 	@Test
-	public void test54FilterCategoryOnNullIcon() throws Exception {
+	public void test55FilterCategoryOnNullIcon() throws Exception {
 		mockMvc.perform(get("/data/categories?filter=icon,is,null")).andExpect(status().isOk()).andExpect(content()
 				.string("{\"records\":[{\"id\":1,\"name\":\"announcement\",\"icon\":null},{\"id\":2,\"name\":\"article\",\"icon\":null}]}"));
 	}
 
 	@Test
-	public void test55FilterCategoryOnNotNullIcon() throws Exception {
+	public void test56FilterCategoryOnNotNullIcon() throws Exception {
 		mockMvc.perform(get("/data/categories?filter=icon,nis,null")).andExpect(status().isOk())
 				.andExpect(content().string("{\"records\":[]}"));
 	}
