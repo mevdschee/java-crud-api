@@ -134,8 +134,8 @@ public class CrudApiController extends BaseController {
 		if (!service.exists(table)) {
 			return error(ErrorCode.TABLE_NOT_FOUND, table);
 		}
-		if (id.indexOf(',') >= 0 && record instanceof ArrayList<?>) {
-			String[] ids = id.split(",");
+		String[] ids = id.split(",");
+		if (ids.length > 1 && record instanceof ArrayList<?>) {
 			ArrayList<?> records = (ArrayList<?>) record;
 			if (ids.length != records.size()) {
 				return error(ErrorCode.ARGUMENT_COUNT_MISMATCH, id);
@@ -146,6 +146,9 @@ public class CrudApiController extends BaseController {
 			}
 			return success(result);
 		} else {
+			if (ids.length > 1) {
+				return error(ErrorCode.ARGUMENT_COUNT_MISMATCH, id);
+			}
 			return success(service.update(table, id, Record.valueOf(record), new Params(params)));
 		}
 	}
@@ -166,8 +169,8 @@ public class CrudApiController extends BaseController {
 		if (!service.exists(table)) {
 			return error(ErrorCode.TABLE_NOT_FOUND, table);
 		}
-		if (id.indexOf(',') >= 0 && record instanceof ArrayList<?>) {
-			String[] ids = id.split(",");
+		String[] ids = id.split(",");
+		if (ids.length > 1 && record instanceof ArrayList<?>) {
 			ArrayList<?> records = (ArrayList<?>) record;
 			if (ids.length != records.size()) {
 				return error(ErrorCode.ARGUMENT_COUNT_MISMATCH, id);
@@ -178,6 +181,9 @@ public class CrudApiController extends BaseController {
 			}
 			return success(result);
 		} else {
+			if (ids.length > 1) {
+				return error(ErrorCode.ARGUMENT_COUNT_MISMATCH, id);
+			}
 			return success(service.increment(table, id, Record.valueOf(record), new Params(params)));
 		}
 	}
@@ -189,8 +195,8 @@ public class CrudApiController extends BaseController {
 		if (!service.exists(table)) {
 			return error(ErrorCode.TABLE_NOT_FOUND, table);
 		}
-		if (id.indexOf(',') >= 0) {
-			String[] ids = id.split(",");
+		String[] ids = id.split(",");
+		if (ids.length > 1) {
 			ArrayList<Object> result = new ArrayList<>();
 			for (int i = 0; i < ids.length; i++) {
 				result.add(service.delete(table, ids[i], new Params(params)));

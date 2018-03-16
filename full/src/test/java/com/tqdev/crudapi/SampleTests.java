@@ -382,6 +382,22 @@ public class SampleTests {
 	}
 
 	@Test
+	public void test48ErrorOnInvalidArgumentCount() throws Exception {
+		mockMvc.perform(put("/data/posts/1,2").contentType("application/json")
+				.content("{\"id\":1,\"user_id\":1,\"category_id\":1,\"content\":\"blog started\"}"))
+				.andExpect(status().isNotAcceptable())
+				.andExpect(content().string("{\"code\":1002,\"message\":\"Argument count mismatch in '1,2'\"}"));
+	}
+
+	@Test
+	public void test49ErrorOnInvalidArgumentCount() throws Exception {
+		mockMvc.perform(put("/data/posts/1,2").contentType("application/json")
+				.content("[{\"id\":1,\"user_id\":1,\"category_id\":1,\"content\":\"blog started\"}]"))
+				.andExpect(status().isNotAcceptable())
+				.andExpect(content().string("{\"code\":1002,\"message\":\"Argument count mismatch in '1,2'\"}"));
+	}
+
+	@Test
 	public void test050EditUserLocation() throws Exception {
 		mockMvc.perform(put("/data/users/1").contentType("application/json").content("{\"location\":\"POINT(30 20)\"}"))
 				.andExpect(status().isOk()).andExpect(content().string("1"));
