@@ -31,7 +31,7 @@ These features match features in PHP-CRUD-API.
   - [x] Binary fields supported with base64 encoding
   - [x] Spatial/GIS fields and filters supported with WKT
   - [ ] Unstructured data support through JSON/JSONB
-  - [ ] Generate API documentation using Swagger tools
+  - [ ] Generate API documentation using OpenAPI tools
   - [ ] Authentication via JWT token or username/password
 
 ### Extra Features
