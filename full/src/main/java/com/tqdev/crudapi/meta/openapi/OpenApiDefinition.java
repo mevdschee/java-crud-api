@@ -19,7 +19,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.tqdev.crudapi.meta.definition.DatabaseDefinition;
 import com.tqdev.crudapi.meta.definition.TableDefinition;
 
-public class SimpleOpenApiDefinition {
+public class OpenApiDefinition {
 
 	protected ObjectNode root;
 
@@ -39,12 +39,12 @@ public class SimpleOpenApiDefinition {
 		root.set(name, value);
 	}
 
-	public SimpleOpenApiDefinition() {
+	public OpenApiDefinition() {
 		ObjectMapper mapper = new ObjectMapper();
 		root = mapper.createObjectNode();
 	}
 
-	public SimpleOpenApiDefinition(SimpleOpenApiDefinition copy) {
+	public OpenApiDefinition(OpenApiDefinition copy) {
 		root = copy.root.deepCopy();
 	}
 
@@ -60,13 +60,13 @@ public class SimpleOpenApiDefinition {
 		}
 	}
 
-	public static SimpleOpenApiDefinition fromFile(String filename)
+	public static OpenApiDefinition fromFile(String filename)
 			throws JsonParseException, JsonMappingException, IOException {
 		ObjectMapper mapper = new ObjectMapper();
 		ClassPathResource resource = new ClassPathResource(filename);
-		SimpleOpenApiDefinition result;
+		OpenApiDefinition result;
 		try {
-			result = mapper.readValue(resource.getInputStream(), SimpleOpenApiDefinition.class);
+			result = mapper.readValue(resource.getInputStream(), OpenApiDefinition.class);
 		} catch (FileNotFoundException e) {
 			result = null;
 		}

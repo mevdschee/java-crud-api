@@ -7,7 +7,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.tqdev.crudapi.core.record.DatabaseRecordsException;
 import com.tqdev.crudapi.meta.definition.DatabaseDefinition;
 import com.tqdev.crudapi.meta.definition.DatabaseDefinitionException;
-import com.tqdev.crudapi.meta.openapi.SimpleOpenApiDefinition;
+import com.tqdev.crudapi.meta.openapi.OpenApiDefinition;
 import com.tqdev.crudapi.meta.reflection.DatabaseReflection;
 
 public interface CrudMetaService {
@@ -18,7 +18,7 @@ public interface CrudMetaService {
 
 	DatabaseDefinition getDatabaseDefinition();
 
-	SimpleOpenApiDefinition getOpenApiDefinition();
+	OpenApiDefinition getOpenApiDefinition();
 
 	// initialization
 

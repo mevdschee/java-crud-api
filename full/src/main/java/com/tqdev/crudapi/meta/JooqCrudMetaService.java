@@ -9,7 +9,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.tqdev.crudapi.core.record.DatabaseRecordsException;
 import com.tqdev.crudapi.meta.definition.DatabaseDefinition;
 import com.tqdev.crudapi.meta.definition.DatabaseDefinitionException;
-import com.tqdev.crudapi.meta.openapi.SimpleOpenApiDefinition;
+import com.tqdev.crudapi.meta.openapi.OpenApiDefinition;
 import com.tqdev.crudapi.meta.reflection.DatabaseReflection;
 
 public class JooqCrudMetaService implements CrudMetaService {
@@ -18,7 +18,7 @@ public class JooqCrudMetaService implements CrudMetaService {
 
 	protected DatabaseReflection tables;
 
-	protected SimpleOpenApiDefinition baseOpenApiDefinition;
+	protected OpenApiDefinition baseOpenApiDefinition;
 
 	public JooqCrudMetaService(DSLContext dsl) {
 		this.dsl = dsl;
@@ -36,8 +36,8 @@ public class JooqCrudMetaService implements CrudMetaService {
 	}
 
 	@Override
-	public SimpleOpenApiDefinition getOpenApiDefinition() {
-		SimpleOpenApiDefinition copy = new SimpleOpenApiDefinition(baseOpenApiDefinition);
+	public OpenApiDefinition getOpenApiDefinition() {
+		OpenApiDefinition copy = new OpenApiDefinition(baseOpenApiDefinition);
 		copy.inject(getDatabaseDefinition());
 		return copy;
 	}
@@ -47,7 +47,7 @@ public class JooqCrudMetaService implements CrudMetaService {
 			JsonMappingException, IOException, DatabaseDefinitionException, DatabaseRecordsException {
 		DatabaseDefinition.fromFile(columnsFilename).create(dsl);
 		tables.update();
-		baseOpenApiDefinition = SimpleOpenApiDefinition.fromFile(openApiFilename);
+		baseOpenApiDefinition = OpenApiDefinition.fromFile(openApiFilename);
 	}
 
 }
