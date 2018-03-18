@@ -1,14 +1,12 @@
 package com.tqdev.crudapi.core;
 
-import java.io.IOException;
-
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.tqdev.crudapi.core.record.DatabaseRecords;
 import com.tqdev.crudapi.core.record.DatabaseRecordsException;
 import com.tqdev.crudapi.core.record.ListResponse;
 import com.tqdev.crudapi.core.record.Record;
 import com.tqdev.crudapi.meta.definition.DatabaseDefinitionException;
+
+import java.io.IOException;
 
 public interface CrudApiService {
 
@@ -36,7 +34,7 @@ public interface CrudApiService {
 
 	// initialization
 
-	void initialize(String recordsFilename) throws JsonParseException, JsonMappingException, IOException,
+	void initialize(String recordsFilename) throws IOException,
 			DatabaseDefinitionException, DatabaseRecordsException;
 
 }
