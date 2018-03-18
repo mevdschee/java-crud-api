@@ -1,6 +1,6 @@
 ### Limitations
 
-These limitation were also present in PHP-CRUD-API.
+These limitation were also present in [PHP-CRUD-API](https://github.com/mevdschee/php-crud-api).
 
   - Primary keys should either be auto-increment (from 1 to 2^53) or UUID
   - Composite primary or foreign keys are not supported
