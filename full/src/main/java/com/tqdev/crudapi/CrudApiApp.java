@@ -34,7 +34,7 @@ public class CrudApiApp {
 		CrudMetaService result;
 		SpatialDSL.registerDataTypes(dsl);
 		result = new JooqCrudMetaService(dsl);
-		result.initialize("columns.json");
+		result.initialize("columns.json", "openapi.json");
 		return result;
 	}
 

@@ -37,4 +37,9 @@ public class MetadataController extends BaseController {
 		return success(crudService.getDatabaseRecords());
 	}
 
+	@RequestMapping(value = "/openapi", method = RequestMethod.GET)
+	public ResponseEntity<?> openapi() {
+		logger.info("Requesting openapi meta data");
+		return success(metaService.getOpenApiDefinition());
+	}
 }

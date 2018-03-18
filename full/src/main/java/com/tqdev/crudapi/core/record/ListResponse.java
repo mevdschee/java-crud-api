@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
 public class ListResponse {
 
-	private Record[] records;
+	protected Record[] records;
 
 	@JsonInclude(Include.NON_DEFAULT)
 	private int results;
