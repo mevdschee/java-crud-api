@@ -3,6 +3,7 @@ package com.tqdev.crudapi.core;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -58,6 +59,28 @@ public class JooqIncluder {
 		ArrayList<Record> records = new ArrayList<>();
 		records.add(record);
 		addIncludes(tableName, records, tables, params, dsl);
+	}
+
+	private static class TreeMap<T> extends LinkedHashMap<T, TreeMap<T>> {
+
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 7895438196186643617L;
+
+		public void put(LinkedList<T> path) {
+			if (path.isEmpty()) {
+				return;
+			}
+			T key = path.removeFirst();
+			TreeMap<T> val = get(key);
+			if (val == null) {
+				val = new TreeMap<>();
+				put(key, val);
+			}
+			val.put(path);
+		}
+
 	}
 
 	private static TreeMap<ReflectedTable> getIncludesAsTreeMap(DatabaseReflection tables, Params params) {
