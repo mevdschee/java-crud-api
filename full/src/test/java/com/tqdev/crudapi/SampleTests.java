@@ -448,4 +448,23 @@ public class SampleTests {
 		mockMvc.perform(get("/data/categories?filter=icon,nis,null")).andExpect(status().isOk())
 				.andExpect(content().string("{\"records\":[]}"));
 	}
+
+	@Test
+	public void test57FilterOnAnd() throws Exception {
+		mockMvc.perform(get("/data/posts?columns=id&filter=id,ge,1&filter=id,le,2")).andExpect(status().isOk())
+				.andExpect(content().string("{\"records\":[{\"id\":1},{\"id\":2}]}"));
+	}
+
+	@Test
+	public void test58FilterOnOr() throws Exception {
+		mockMvc.perform(get("/data/posts?columns=id&filter1=id,eq,1&filter2=id,eq,2")).andExpect(status().isOk())
+				.andExpect(content().string("{\"records\":[{\"id\":1},{\"id\":2}]}"));
+	}
+
+	@Test
+	public void test59FilterOnAndPlusOr() throws Exception {
+		mockMvc.perform(get("/data/posts?columns=id&filter1=id,eq,1&filter2=id,gt,1&filter2=id,lt,3"))
+				.andExpect(status().isOk()).andExpect(content().string("{\"records\":[{\"id\":1},{\"id\":2}]}"));
+	}
+
 }

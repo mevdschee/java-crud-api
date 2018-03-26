@@ -1,19 +1,26 @@
 package com.tqdev.crudapi.core;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+
+import org.jooq.Condition;
+import org.jooq.DSLContext;
+import org.jooq.Field;
+import org.jooq.ResultQuery;
+import org.jooq.SelectLimitStep;
+import org.jooq.SortField;
+import org.jooq.Table;
+import org.jooq.impl.DSL;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.tqdev.crudapi.core.record.DatabaseRecords;
 import com.tqdev.crudapi.core.record.DatabaseRecordsException;
 import com.tqdev.crudapi.core.record.ListResponse;
 import com.tqdev.crudapi.core.record.Record;
 import com.tqdev.crudapi.meta.CrudMetaService;
 import com.tqdev.crudapi.meta.reflection.ReflectedTable;
-import org.jooq.*;
-import org.jooq.impl.DSL;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
 
 public class JooqCrudApiService extends BaseCrudApiService implements CrudApiService {
 
@@ -114,8 +121,7 @@ public class JooqCrudApiService extends BaseCrudApiService implements CrudApiSer
 	}
 
 	@Override
-	public void initialize(String recordsFilename) throws IOException,
-			DatabaseRecordsException {
+	public void initialize(String recordsFilename) throws IOException, DatabaseRecordsException {
 		DatabaseRecords.fromFile(recordsFilename).create(this);
 	}
 

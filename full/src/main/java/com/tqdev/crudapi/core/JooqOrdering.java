@@ -9,11 +9,6 @@ import com.tqdev.crudapi.meta.reflection.ReflectedTable;
 public class JooqOrdering {
 
 	public static ArrayList<SortField<?>> ordering(ReflectedTable table, Params params) {
-		if (params.containsKey("order[]")) {
-			for (String value : params.get("order[]")) {
-				params.add("order", value);
-			}
-		}
 		ArrayList<SortField<?>> fields = new ArrayList<>();
 		if (params.containsKey("order")) {
 			for (String key : params.get("order")) {
