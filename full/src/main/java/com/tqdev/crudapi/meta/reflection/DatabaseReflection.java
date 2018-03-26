@@ -14,9 +14,11 @@ public class DatabaseReflection {
 
 	protected LinkedHashMap<String, ReflectedTable> tables;
 
+	protected String tablePrefix;
+
 	public DatabaseReflection(DSLContext dsl) {
 		this.dsl = dsl;
-		update();
+		this.tablePrefix = findTablePrefix();
 	}
 
 	public boolean exists(String name) {
@@ -56,9 +58,8 @@ public class DatabaseReflection {
 
 	public void update() {
 		tables = new LinkedHashMap<>();
-		String prefix = findTablePrefix();
 		for (Table<?> table : dsl.meta().getTables()) {
-			if (!(table.toString().startsWith(prefix))) {
+			if (!(table.toString().startsWith(tablePrefix))) {
 				// table not in current catalog or schema
 				continue;
 			}

@@ -6,6 +6,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Set;
 
+import org.jooq.DataType;
 import org.jooq.Field;
 import org.jooq.ForeignKey;
 import org.jooq.Identity;
@@ -21,11 +22,11 @@ public class ReflectedTable extends CustomTable {
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = 1L;
-	private Table<?> table;
-	private HashMap<String, TableField<?, ?>> fields = new LinkedHashMap<>();
-	private HashMap<String, String> fks = new LinkedHashMap<>();
-	private TableField<?, ?> pk = null;
+	private static final long serialVersionUID = -3688698737591901523L;
+	protected Table<?> table;
+	protected HashMap<String, TableField<?, ?>> fields = new LinkedHashMap<>();
+	protected HashMap<String, String> fks = new LinkedHashMap<>();
+	protected TableField<?, ?> pk = null;
 
 	@SuppressWarnings("unchecked")
 	public ReflectedTable(Table<?> table) {
@@ -33,7 +34,9 @@ public class ReflectedTable extends CustomTable {
 		this.table = table;
 		for (Field<?> field : table.fields()) {
 			String name = field.getName();
-			fields.put(name, createField(name, field.getDataType()));
+			DataType<Object> dataType = (DataType<Object>) field.getDataType();
+			TableField newField = createField(name, dataType);
+			fields.put(name, newField);
 		}
 		UniqueKey<?> primaryKey = table.getPrimaryKey();
 		if (primaryKey != null) {

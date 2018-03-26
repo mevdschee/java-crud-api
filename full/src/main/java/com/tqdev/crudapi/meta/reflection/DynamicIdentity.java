@@ -6,11 +6,11 @@ import org.jooq.TableField;
 
 @SuppressWarnings("rawtypes")
 class DynamicIdentity implements Identity {
+
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = 1L;
-
+	private static final long serialVersionUID = 59304360964854237L;
 	private Table<?> table;
 	private TableField<?, ?> pk;
 
