@@ -1,14 +1,14 @@
 package com.tqdev.crudapi.core;
 
-public interface JooqPagination {
+public class JooqPagination {
 
 	public static final int DEFAULT_PAGE_SIZE = 20;
 
-	default public boolean hasPage(Params params) {
+	public static boolean hasPage(Params params) {
 		return params.containsKey("page");
 	}
 
-	default public int pageOffset(Params params) {
+	public static int pageOffset(Params params) {
 		int offset = 0;
 		int pageSize = pageSize(params);
 		if (params.containsKey("page")) {
@@ -21,7 +21,7 @@ public interface JooqPagination {
 		return offset;
 	}
 
-	default public int pageSize(Params params) {
+	public static int pageSize(Params params) {
 		int pageSize = DEFAULT_PAGE_SIZE;
 		if (params.containsKey("page")) {
 			for (String key : params.get("page")) {
@@ -34,7 +34,7 @@ public interface JooqPagination {
 		return pageSize;
 	}
 
-	default public int resultSize(Params params) {
+	public static int resultSize(Params params) {
 		int numberOfRows = -1;
 		if (params.containsKey("size")) {
 			for (String key : params.get("size")) {

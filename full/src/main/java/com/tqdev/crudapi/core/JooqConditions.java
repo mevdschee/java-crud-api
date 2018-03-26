@@ -9,9 +9,9 @@ import org.jooq.impl.DSL;
 import com.tqdev.crudapi.meta.reflection.ReflectedTable;
 import com.tqdev.crudapi.spatial.SpatialDSL;
 
-public interface JooqConditions {
+public class JooqConditions {
 
-	default public ArrayList<Condition> conditions(ReflectedTable table, Params params) {
+	public static ArrayList<Condition> conditions(ReflectedTable table, Params params) {
 		ArrayList<Condition> conditions = new ArrayList<>();
 		if (params.containsKey("filter[]")) {
 			for (String value : params.get("filter[]")) {

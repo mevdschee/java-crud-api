@@ -6,9 +6,9 @@ import org.jooq.SortField;
 
 import com.tqdev.crudapi.meta.reflection.ReflectedTable;
 
-public interface JooqOrdering {
+public class JooqOrdering {
 
-	default public ArrayList<SortField<?>> ordering(ReflectedTable table, Params params) {
+	public static ArrayList<SortField<?>> ordering(ReflectedTable table, Params params) {
 		if (params.containsKey("order[]")) {
 			for (String value : params.get("order[]")) {
 				params.add("order", value);
