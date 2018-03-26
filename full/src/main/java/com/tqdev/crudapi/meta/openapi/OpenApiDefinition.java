@@ -93,7 +93,7 @@ public class OpenApiDefinition {
 	private void fillResponseParameters(TableDefinition table, ObjectNode operation) {
 		ArrayNode parameters = operation.putArray("parameters");
 
-		// TODO: replace with repeated objects with references
+		// TODO: replace repeated objects with references
 		ObjectNode node = JsonNodeFactory.instance.objectNode();
 		node.put("name", table.getPk().getName());
 		node.put("in", "path");
