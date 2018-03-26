@@ -1,26 +1,19 @@
 package com.tqdev.crudapi.meta.definition;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.LinkedHashMap;
-
-import org.jooq.AlterTableUsingIndexStep;
-import org.jooq.Constraint;
-import org.jooq.CreateTableConstraintStep;
-import org.jooq.DSLContext;
-import org.jooq.Field;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.tqdev.crudapi.meta.reflection.DatabaseReflection;
+import com.tqdev.crudapi.meta.reflection.ReflectedTable;
+import org.jooq.*;
 import org.jooq.impl.DSL;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.ClassPathResource;
 
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.tqdev.crudapi.meta.reflection.DatabaseReflection;
-import com.tqdev.crudapi.meta.reflection.ReflectedTable;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.LinkedHashMap;
 
 public class DatabaseDefinition {
 
@@ -78,7 +71,7 @@ public class DatabaseDefinition {
 	}
 
 	public static DatabaseDefinition fromFile(String filename)
-			throws JsonParseException, JsonMappingException, IOException {
+			throws IOException {
 		ObjectMapper mapper = new ObjectMapper();
 		ClassPathResource resource = new ClassPathResource(filename);
 		DatabaseDefinition result;

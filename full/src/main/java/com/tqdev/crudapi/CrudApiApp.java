@@ -1,16 +1,5 @@
 package com.tqdev.crudapi;
 
-import java.io.IOException;
-
-import org.jooq.DSLContext;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.PropertySource;
-
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.tqdev.crudapi.core.CrudApiService;
 import com.tqdev.crudapi.core.JooqCrudApiService;
 import com.tqdev.crudapi.core.record.DatabaseRecordsException;
@@ -18,6 +7,14 @@ import com.tqdev.crudapi.meta.CrudMetaService;
 import com.tqdev.crudapi.meta.JooqCrudMetaService;
 import com.tqdev.crudapi.meta.definition.DatabaseDefinitionException;
 import com.tqdev.crudapi.spatial.SpatialDSL;
+import org.jooq.DSLContext;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.PropertySource;
+
+import java.io.IOException;
 
 @SpringBootApplication(scanBasePackages = { "com.tqdev.crudapi" })
 @PropertySource("classpath:application.yml")
@@ -29,7 +26,7 @@ public class CrudApiApp {
 
 	@Bean
 	@Autowired
-	public CrudMetaService crudMetaService(DSLContext dsl) throws JsonParseException, JsonMappingException, IOException,
+	public CrudMetaService crudMetaService(DSLContext dsl) throws IOException,
 			DatabaseDefinitionException, DatabaseRecordsException {
 		CrudMetaService result;
 		SpatialDSL.registerDataTypes(dsl);
@@ -40,8 +37,8 @@ public class CrudApiApp {
 
 	@Bean
 	@Autowired
-	public CrudApiService crudApiService(DSLContext dsl, CrudMetaService meta) throws JsonParseException,
-			JsonMappingException, IOException, DatabaseDefinitionException, DatabaseRecordsException {
+	public CrudApiService crudApiService(DSLContext dsl, CrudMetaService meta) throws
+			IOException, DatabaseDefinitionException, DatabaseRecordsException {
 		CrudApiService result;
 		result = new JooqCrudApiService(dsl, meta);
 		result.initialize("records.json");

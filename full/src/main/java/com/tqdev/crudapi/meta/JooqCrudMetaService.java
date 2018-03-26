@@ -1,16 +1,12 @@
 package com.tqdev.crudapi.meta;
 
-import java.io.IOException;
-
-import org.jooq.DSLContext;
-
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.tqdev.crudapi.core.record.DatabaseRecordsException;
 import com.tqdev.crudapi.meta.definition.DatabaseDefinition;
 import com.tqdev.crudapi.meta.definition.DatabaseDefinitionException;
 import com.tqdev.crudapi.meta.openapi.OpenApiDefinition;
 import com.tqdev.crudapi.meta.reflection.DatabaseReflection;
+import org.jooq.DSLContext;
+
+import java.io.IOException;
 
 public class JooqCrudMetaService implements CrudMetaService {
 
@@ -43,8 +39,8 @@ public class JooqCrudMetaService implements CrudMetaService {
 	}
 
 	@Override
-	public void initialize(String columnsFilename, String openApiFilename) throws JsonParseException,
-			JsonMappingException, IOException, DatabaseDefinitionException, DatabaseRecordsException {
+	public void initialize(String columnsFilename, String openApiFilename) throws
+			IOException, DatabaseDefinitionException {
 		DatabaseDefinition.fromFile(columnsFilename).create(dsl);
 		tables.update();
 		baseOpenApiDefinition = OpenApiDefinition.fromFile(openApiFilename);

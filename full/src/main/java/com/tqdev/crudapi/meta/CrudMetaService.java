@@ -22,7 +22,7 @@ public interface CrudMetaService {
 
 	// initialization
 
-	void initialize(String columnsFilename, String openApiFilename) throws JsonParseException, JsonMappingException,
+	void initialize(String columnsFilename, String openApiFilename) throws
 			IOException, DatabaseDefinitionException, DatabaseRecordsException;
 
 }

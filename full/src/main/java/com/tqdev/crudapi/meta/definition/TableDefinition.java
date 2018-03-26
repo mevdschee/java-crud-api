@@ -46,6 +46,17 @@ public class TableDefinition {
 		return null;
 	}
 
+	public ColumnDefinition getPkColumnDefinition() {
+		String pk = getPk();
+		for (ColumnDefinition col : getColumns()) {
+			if (col.getName().equals(pk)) {
+				return col;
+			}
+		}
+		return null;
+	}
+
+
 	public ArrayList<Field<?>> getFields(DSLContext dsl) {
 		ArrayList<Field<?>> fields = new ArrayList<>();
 		for (String columnName : columns.keySet()) {
