@@ -9,7 +9,6 @@ import org.jooq.DSLContext;
 import org.jooq.Field;
 import org.jooq.impl.DSL;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.tqdev.crudapi.meta.reflection.ReflectedTable;
 
 public class TableDefinition {
@@ -36,26 +35,15 @@ public class TableDefinition {
 		}
 	}
 
-	@JsonIgnore
-	public String getPk() {
+	public ColumnDefinition getPk() {
 		for (String key : columns.keySet()) {
-			if (columns.get(key).getPk() == true) {
-				return key;
+			ColumnDefinition column = columns.get(key);
+			if (column.getPk() == true) {
+				return column;
 			}
 		}
 		return null;
 	}
-
-	public ColumnDefinition getPkColumnDefinition() {
-		String pk = getPk();
-		for (ColumnDefinition col : getColumns()) {
-			if (col.getName().equals(pk)) {
-				return col;
-			}
-		}
-		return null;
-	}
-
 
 	public ArrayList<Field<?>> getFields(DSLContext dsl) {
 		ArrayList<Field<?>> fields = new ArrayList<>();
@@ -68,9 +56,9 @@ public class TableDefinition {
 
 	public ArrayList<Constraint> getPkConstraints(DSLContext dsl, String tableName) {
 		ArrayList<Constraint> constraints = new ArrayList<>();
-		String pk = getPk();
+		ColumnDefinition pk = getPk();
 		if (pk != null) {
-			constraints.add(DSL.constraint(DSL.name("pk_" + tableName)).primaryKey(DSL.field(DSL.name(pk))));
+			constraints.add(DSL.constraint(DSL.name("pk_" + tableName)).primaryKey(DSL.field(DSL.name(pk.getName()))));
 		}
 		return constraints;
 	}
@@ -82,7 +70,7 @@ public class TableDefinition {
 			ColumnDefinition column = columns.get(columnName);
 			String fk = column.getFk();
 			if (fk != null) {
-				String pk = definition.get(fk).getPk();
+				String pk = definition.get(fk).getPk().getName();
 				if (pk == null) {
 					throw new DatabaseDefinitionException(String.format(
 							"Illegal 'fk' value for field '%s' of table '%s': Referenced table '%s' does not have a single field primary key",
