@@ -467,4 +467,9 @@ public class SampleTests {
 				.andExpect(status().isOk()).andExpect(content().string("{\"records\":[{\"id\":1},{\"id\":2}]}"));
 	}
 
+	@Test
+	public void test60FilterOnOrPlusAnd() throws Exception {
+		mockMvc.perform(get("/data/posts?columns=id&filter1=id,eq,1&filter2=id,eq,2&filter=user_id,eq,1"))
+				.andExpect(status().isOk()).andExpect(content().string("{\"records\":[{\"id\":1},{\"id\":2}]}"));
+	}
 }
