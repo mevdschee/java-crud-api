@@ -4,7 +4,6 @@ These limitation were also present in [PHP-CRUD-API](https://github.com/mevdsche
 
   - Primary keys should either be auto-increment (from 1 to 2^53) or UUID
   - Composite primary or foreign keys are not supported
-  - Complex filters (with both "and" & "or") are not supported
   - Complex writes (transactions) are not supported
   - Complex queries calling functions (like "concat" or "sum") are not supported
   - MySQL storage engine must be either InnoDB or XtraDB
@@ -39,6 +38,7 @@ These features match features in PHP-CRUD-API.
 These features are new and where not included in PHP-CRUD-API.
 
   - [x] Does not reflect on every request (better performance)
+  - [x] Complex filters (with both "and" & "or") are supported
   - [x] Support for input and output of database structure and records
   - [x] Support for all major database systems (thanks to jOOQ)
   - [x] Support for boolean and binary data in all database engines
