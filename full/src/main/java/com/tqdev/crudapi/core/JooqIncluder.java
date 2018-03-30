@@ -31,7 +31,8 @@ public class JooqIncluder {
 					continue;
 				}
 				List<Field<Object>> fks1 = t1.getFksTo(t2.getName());
-				if (!fks1.isEmpty()) {
+				ReflectedTable t3 = hasAndBelongsToMany(t1, t2, tables);
+				if (t3 != null || !fks1.isEmpty()) {
 					params.add("mandatory", t2.getName() + "." + t2.getPk().getName());
 				}
 				for (Field<Object> fk : fks1) {

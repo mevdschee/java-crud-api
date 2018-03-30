@@ -259,16 +259,16 @@ public class SampleTests {
 
 	@Test
 	public void test033ListExampleFromReadmeTagNameOnly() throws Exception {
-		mockMvc.perform(
-				get("/data/posts?columns=tags.name&include=categories&include=post_tags,tags&include=comments&filter=id,eq,1"))
+		mockMvc.perform(get(
+				"/data/posts?columns=tags.name&include=categories&include=post_tags,tags&include=comments&filter=id,eq,1"))
 				.andExpect(status().isOk()).andExpect(content().string(
 						"{\"records\":[{\"id\":1,\"category_id\":{\"id\":1},\"post_tags\":[{\"id\":1,\"post_id\":1,\"tag_id\":{\"id\":1,\"name\":\"funny\"}},{\"id\":2,\"post_id\":1,\"tag_id\":{\"id\":2,\"name\":\"important\"}}],\"comments\":[{\"post_id\":1},{\"post_id\":1}]}]}"));
 	}
 
 	@Test
 	public void test034ListExampleFromReadmeWithTransformWithExclude() throws Exception {
-		mockMvc.perform(
-				get("/data/posts?include=categories&include=post_tags,tags&include=comments&exclude=comments.message&filter=id,eq,1"))
+		mockMvc.perform(get(
+				"/data/posts?include=categories&include=post_tags,tags&include=comments&exclude=comments.message&filter=id,eq,1"))
 				.andExpect(status().isOk()).andExpect(content().string(
 						"{\"records\":[{\"id\":1,\"user_id\":1,\"category_id\":{\"id\":1,\"name\":\"announcement\",\"icon\":null},\"content\":\"blog started\",\"post_tags\":[{\"id\":1,\"post_id\":1,\"tag_id\":{\"id\":1,\"name\":\"funny\",\"is_important\":false}},{\"id\":2,\"post_id\":1,\"tag_id\":{\"id\":2,\"name\":\"important\",\"is_important\":true}}],\"comments\":[{\"id\":1,\"post_id\":1},{\"id\":2,\"post_id\":1}]}]}"));
 	}
@@ -402,9 +402,6 @@ public class SampleTests {
 		mockMvc.perform(put("/data/posts/1").contentType("application/json")
 				.content("[{\"id\":1,\"user_id\":1,\"category_id\":1,\"content\":\"blog started\"}]"))
 				.andExpect(status().isOk()).andExpect(content().string("[1]"));
-		mockMvc.perform(put("/data/posts/1").contentType("application/json")
-				.content("[{\"id\":1,\"user_id\":1,\"category_id\":1,\"content\":\"blog started\"}]"))
-				.andExpect(status().isOk()).andExpect(content().string("[0]"));
 	}
 
 	@Test
@@ -471,5 +468,12 @@ public class SampleTests {
 	public void test60FilterOnOrPlusAnd() throws Exception {
 		mockMvc.perform(get("/data/posts?columns=id&filter1=id,eq,1&filter2=id,eq,2&filter=user_id,eq,1"))
 				.andExpect(status().isOk()).andExpect(content().string("{\"records\":[{\"id\":1},{\"id\":2}]}"));
+	}
+
+	@Test
+	public void test60GetPostNameWithIncludedTagNames() throws Exception {
+		mockMvc.perform(get("/data/posts/1?columns=id,tags.name&include=tags")).andExpect(status().isOk())
+				.andExpect(content().string(
+						"{\"id\":1,\"post_tags\":[{\"id\":1,\"name\":\"funny\"},{\"id\":2,\"name\":\"important\"}]}"));
 	}
 }
