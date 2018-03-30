@@ -39,7 +39,7 @@ public class JooqIncluder {
 					params.add("mandatory", t1.getName() + "." + fk.getName());
 				}
 				List<Field<Object>> fks2 = t2.getFksTo(t1.getName());
-				if (!fks1.isEmpty()) {
+				if (t3 != null || !fks1.isEmpty()) {
 					params.add("mandatory", t1.getName() + "." + t1.getPk().getName());
 				}
 				for (Field<Object> fk : fks2) {

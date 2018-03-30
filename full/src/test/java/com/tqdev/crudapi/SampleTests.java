@@ -259,16 +259,16 @@ public class SampleTests {
 
 	@Test
 	public void test033ListExampleFromReadmeTagNameOnly() throws Exception {
-		mockMvc.perform(get(
-				"/data/posts?columns=tags.name&include=categories&include=post_tags,tags&include=comments&filter=id,eq,1"))
+		mockMvc.perform(
+				get("/data/posts?columns=tags.name&include=categories&include=post_tags,tags&include=comments&filter=id,eq,1"))
 				.andExpect(status().isOk()).andExpect(content().string(
 						"{\"records\":[{\"id\":1,\"category_id\":{\"id\":1},\"post_tags\":[{\"id\":1,\"post_id\":1,\"tag_id\":{\"id\":1,\"name\":\"funny\"}},{\"id\":2,\"post_id\":1,\"tag_id\":{\"id\":2,\"name\":\"important\"}}],\"comments\":[{\"post_id\":1},{\"post_id\":1}]}]}"));
 	}
 
 	@Test
 	public void test034ListExampleFromReadmeWithTransformWithExclude() throws Exception {
-		mockMvc.perform(get(
-				"/data/posts?include=categories&include=post_tags,tags&include=comments&exclude=comments.message&filter=id,eq,1"))
+		mockMvc.perform(
+				get("/data/posts?include=categories&include=post_tags,tags&include=comments&exclude=comments.message&filter=id,eq,1"))
 				.andExpect(status().isOk()).andExpect(content().string(
 						"{\"records\":[{\"id\":1,\"user_id\":1,\"category_id\":{\"id\":1,\"name\":\"announcement\",\"icon\":null},\"content\":\"blog started\",\"post_tags\":[{\"id\":1,\"post_id\":1,\"tag_id\":{\"id\":1,\"name\":\"funny\",\"is_important\":false}},{\"id\":2,\"post_id\":1,\"tag_id\":{\"id\":2,\"name\":\"important\",\"is_important\":true}}],\"comments\":[{\"id\":1,\"post_id\":1},{\"id\":2,\"post_id\":1}]}]}"));
 	}
@@ -471,9 +471,9 @@ public class SampleTests {
 	}
 
 	@Test
-	public void test60GetPostNameWithIncludedTagNames() throws Exception {
-		mockMvc.perform(get("/data/posts/1?columns=id,tags.name&include=tags")).andExpect(status().isOk())
+	public void test60GetPostContentWithIncludedTagNames() throws Exception {
+		mockMvc.perform(get("/data/posts/1?columns=content,tags.name&include=tags")).andExpect(status().isOk())
 				.andExpect(content().string(
-						"{\"id\":1,\"post_tags\":[{\"id\":1,\"name\":\"funny\"},{\"id\":2,\"name\":\"important\"}]}"));
+						"{\"id\":1,\"content\":\"blog started\",\"post_tags\":[{\"id\":1,\"name\":\"funny\"},{\"id\":2,\"name\":\"important\"}]}"));
 	}
 }
