@@ -79,7 +79,7 @@ public class OpenApiDefinition {
 
 	private void fillParametersWithPrimaryKey(String method, TableDefinition table, ObjectNode paths) {
 		if (table.getPk() != null) {
-			String pathWithId = String.format("/data/%s/{%s}", table.getName(), table.getPk());
+			String pathWithId = String.format("/data/%s/{%s}", table.getName(), table.getPk().getName());
 			ObjectNode pathItemId = paths.with(pathWithId);
 			ObjectNode operation = pathItemId.with(method);
 
