@@ -1,4 +1,4 @@
-package com.tqdev.crudapi.core.record;
+package com.tqdev.crudapi.service.record;
 
 import java.util.LinkedHashMap;
 import java.util.Map;

@@ -1,4 +1,4 @@
-package com.tqdev.crudapi.core;
+package com.tqdev.crudapi.service;
 
 import java.util.ArrayList;
 import java.util.Base64;
@@ -10,8 +10,8 @@ import java.util.Set;
 import org.jooq.Field;
 import org.jooq.impl.DSL;
 
-import com.tqdev.crudapi.core.record.Record;
 import com.tqdev.crudapi.meta.reflection.ReflectedTable;
+import com.tqdev.crudapi.service.record.Record;
 import com.tqdev.crudapi.spatial.SpatialDSL;
 
 public class JooqColumnSelector {

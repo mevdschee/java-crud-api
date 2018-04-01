@@ -3,8 +3,8 @@ package com.tqdev.crudapi.controller;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-import com.tqdev.crudapi.core.ErrorCode;
-import com.tqdev.crudapi.core.record.ErrorDocument;
+import com.tqdev.crudapi.service.ErrorCode;
+import com.tqdev.crudapi.service.record.ErrorDocument;
 
 public class BaseController {
 

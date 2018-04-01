@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.HandlerMapping;
 
-import com.tqdev.crudapi.core.ErrorCode;
+import com.tqdev.crudapi.service.ErrorCode;
 
 @RestController
 @RestControllerAdvice

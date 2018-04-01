@@ -1,12 +1,12 @@
-package com.tqdev.crudapi.core;
+package com.tqdev.crudapi.service;
 
 import java.util.ArrayList;
 
 import org.jooq.Field;
 
-import com.tqdev.crudapi.core.record.DatabaseRecords;
-import com.tqdev.crudapi.core.record.Record;
 import com.tqdev.crudapi.meta.reflection.DatabaseReflection;
+import com.tqdev.crudapi.service.record.DatabaseRecords;
+import com.tqdev.crudapi.service.record.Record;
 
 abstract class BaseCrudApiService implements CrudApiService {
 

@@ -1,4 +1,4 @@
-package com.tqdev.crudapi.core;
+package com.tqdev.crudapi.service;
 
 import org.springframework.util.LinkedMultiValueMap;
 

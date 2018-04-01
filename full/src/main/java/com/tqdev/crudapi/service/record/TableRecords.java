@@ -1,9 +1,9 @@
-package com.tqdev.crudapi.core.record;
+package com.tqdev.crudapi.service.record;
 
 import java.util.ArrayList;
 
-import com.tqdev.crudapi.core.CrudApiService;
-import com.tqdev.crudapi.core.Params;
+import com.tqdev.crudapi.service.CrudApiService;
+import com.tqdev.crudapi.service.Params;
 
 public class TableRecords {
 

@@ -1,4 +1,4 @@
-package com.tqdev.crudapi.core;
+package com.tqdev.crudapi.service;
 
 public class JooqPagination {
 

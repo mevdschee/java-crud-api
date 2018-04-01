@@ -1,4 +1,4 @@
-package com.tqdev.crudapi.core.record;
+package com.tqdev.crudapi.service.record;
 
 public class DatabaseRecordsException extends Exception {
 

@@ -1,6 +1,6 @@
-package com.tqdev.crudapi.core.record;
+package com.tqdev.crudapi.service.record;
 
-import com.tqdev.crudapi.core.ErrorCode;
+import com.tqdev.crudapi.service.ErrorCode;
 
 public class ErrorDocument {
 

@@ -1,4 +1,4 @@
-package com.tqdev.crudapi.core.record;
+package com.tqdev.crudapi.service.record;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -11,7 +11,7 @@ import org.springframework.core.io.ClassPathResource;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.tqdev.crudapi.core.CrudApiService;
+import com.tqdev.crudapi.service.CrudApiService;
 
 public class DatabaseRecords {
 
