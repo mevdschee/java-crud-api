@@ -1,4 +1,4 @@
-package com.tqdev.crudapi.service;
+package com.tqdev.crudapi.crud;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -15,12 +15,12 @@ import org.jooq.impl.DSL;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.tqdev.crudapi.crud.record.DatabaseRecords;
+import com.tqdev.crudapi.crud.record.DatabaseRecordsException;
+import com.tqdev.crudapi.crud.record.ListResponse;
+import com.tqdev.crudapi.crud.record.Record;
 import com.tqdev.crudapi.meta.CrudMetaService;
 import com.tqdev.crudapi.meta.reflection.ReflectedTable;
-import com.tqdev.crudapi.service.record.DatabaseRecords;
-import com.tqdev.crudapi.service.record.DatabaseRecordsException;
-import com.tqdev.crudapi.service.record.ListResponse;
-import com.tqdev.crudapi.service.record.Record;
 
 public class JooqCrudApiService extends BaseCrudApiService implements CrudApiService {
 

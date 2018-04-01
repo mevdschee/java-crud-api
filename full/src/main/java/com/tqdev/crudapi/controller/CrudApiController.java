@@ -16,10 +16,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.tqdev.crudapi.service.CrudApiService;
-import com.tqdev.crudapi.service.ErrorCode;
-import com.tqdev.crudapi.service.Params;
-import com.tqdev.crudapi.service.record.Record;
+import com.tqdev.crudapi.crud.CrudApiService;
+import com.tqdev.crudapi.crud.ErrorCode;
+import com.tqdev.crudapi.crud.Params;
+import com.tqdev.crudapi.crud.record.Record;
 
 @RestController
 @RequestMapping("/data")

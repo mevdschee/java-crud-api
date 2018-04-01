@@ -1,4 +1,4 @@
-package com.tqdev.crudapi.service;
+package com.tqdev.crudapi.crud;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;

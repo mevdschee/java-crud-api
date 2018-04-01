@@ -1,4 +1,4 @@
-package com.tqdev.crudapi.service.record;
+package com.tqdev.crudapi.crud.record;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;

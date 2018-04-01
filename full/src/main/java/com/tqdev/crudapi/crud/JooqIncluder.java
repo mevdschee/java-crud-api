@@ -1,4 +1,4 @@
-package com.tqdev.crudapi.service;
+package com.tqdev.crudapi.crud;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -13,9 +13,9 @@ import org.jooq.Field;
 import org.jooq.ResultQuery;
 import org.jooq.impl.DSL;
 
+import com.tqdev.crudapi.crud.record.Record;
 import com.tqdev.crudapi.meta.reflection.DatabaseReflection;
 import com.tqdev.crudapi.meta.reflection.ReflectedTable;
-import com.tqdev.crudapi.service.record.Record;
 
 public class JooqIncluder {
 

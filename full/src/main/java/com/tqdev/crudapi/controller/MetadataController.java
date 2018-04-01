@@ -8,8 +8,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.tqdev.crudapi.crud.CrudApiService;
 import com.tqdev.crudapi.meta.CrudMetaService;
-import com.tqdev.crudapi.service.CrudApiService;
 
 @RestController
 @RequestMapping("/meta")

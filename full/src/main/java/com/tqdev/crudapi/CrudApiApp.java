@@ -1,11 +1,11 @@
 package com.tqdev.crudapi;
 
+import com.tqdev.crudapi.crud.CrudApiService;
+import com.tqdev.crudapi.crud.JooqCrudApiService;
+import com.tqdev.crudapi.crud.record.DatabaseRecordsException;
 import com.tqdev.crudapi.meta.CrudMetaService;
 import com.tqdev.crudapi.meta.JooqCrudMetaService;
 import com.tqdev.crudapi.meta.definition.DatabaseDefinitionException;
-import com.tqdev.crudapi.service.CrudApiService;
-import com.tqdev.crudapi.service.JooqCrudApiService;
-import com.tqdev.crudapi.service.record.DatabaseRecordsException;
 import com.tqdev.crudapi.spatial.SpatialDSL;
 import org.jooq.DSLContext;
 import org.springframework.beans.factory.annotation.Autowired;

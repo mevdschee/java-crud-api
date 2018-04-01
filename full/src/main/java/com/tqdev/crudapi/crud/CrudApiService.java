@@ -1,10 +1,10 @@
-package com.tqdev.crudapi.service;
+package com.tqdev.crudapi.crud;
 
+import com.tqdev.crudapi.crud.record.DatabaseRecords;
+import com.tqdev.crudapi.crud.record.DatabaseRecordsException;
+import com.tqdev.crudapi.crud.record.ListResponse;
+import com.tqdev.crudapi.crud.record.Record;
 import com.tqdev.crudapi.meta.definition.DatabaseDefinitionException;
-import com.tqdev.crudapi.service.record.DatabaseRecords;
-import com.tqdev.crudapi.service.record.DatabaseRecordsException;
-import com.tqdev.crudapi.service.record.ListResponse;
-import com.tqdev.crudapi.service.record.Record;
 
 import java.io.IOException;
 
