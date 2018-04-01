@@ -1,4 +1,4 @@
-package com.tqdev.crudapi.spatial;
+package com.tqdev.crudapi.crud.spatial;
 
 import org.jooq.Configuration;
 import org.jooq.Context;
@@ -7,20 +7,18 @@ import org.jooq.QueryPart;
 import org.jooq.impl.CustomCondition;
 import org.jooq.impl.DSL;
 
-public class Contains extends CustomCondition {
+public class IsSimple extends CustomCondition {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
 
-	final Field<?> field1;
-	final Field<?> field2;
+	final Field<?> field;
 
-	Contains(Field<?> field1, Field<?> field2) {
+	IsSimple(Field<?> field) {
 		super();
-		this.field1 = field1;
-		this.field2 = field2;
+		this.field = field;
 	}
 
 	@Override
@@ -32,9 +30,9 @@ public class Contains extends CustomCondition {
 		switch (configuration.dialect().family().toString()) {
 		case "MYSQL":
 		case "POSTGRES":
-			return DSL.field("ST_Contains({0}, {1})", Boolean.class, field1, field2);
+			return DSL.field("ST_IsSimple({0})", Boolean.class, field);
 		case "SQLSERVER":
-			return DSL.field("{0}.STContains({1})", Boolean.class, field1, field2);
+			return DSL.field("{0}.STIsSimple()", Boolean.class, field);
 		default:
 			throw new UnsupportedOperationException("Dialect not supported");
 		}

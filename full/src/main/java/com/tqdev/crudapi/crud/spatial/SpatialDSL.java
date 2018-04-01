@@ -1,4 +1,4 @@
-package com.tqdev.crudapi.spatial;
+package com.tqdev.crudapi.crud.spatial;
 
 import org.jooq.Condition;
 import org.jooq.DSLContext;

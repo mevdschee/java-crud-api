@@ -11,8 +11,8 @@ import org.jooq.Field;
 import org.jooq.impl.DSL;
 
 import com.tqdev.crudapi.crud.record.Record;
+import com.tqdev.crudapi.crud.spatial.SpatialDSL;
 import com.tqdev.crudapi.meta.reflection.ReflectedTable;
-import com.tqdev.crudapi.spatial.SpatialDSL;
 
 public class JooqColumnSelector {
 

@@ -1,14 +1,13 @@
-package com.tqdev.crudapi.spatial;
+package com.tqdev.crudapi.crud.spatial;
 
 import org.jooq.Configuration;
 import org.jooq.Context;
 import org.jooq.Field;
 import org.jooq.QueryPart;
-import org.jooq.impl.CustomField;
+import org.jooq.impl.CustomCondition;
 import org.jooq.impl.DSL;
-import org.jooq.impl.SQLDataType;
 
-class GeomFromText extends CustomField<byte[]> {
+public class IsClosed extends CustomCondition {
 
 	/**
 	 * 
@@ -17,8 +16,8 @@ class GeomFromText extends CustomField<byte[]> {
 
 	final Field<?> field;
 
-	GeomFromText(Field<?> field) {
-		super("st_geomfromtext", SQLDataType.VARBINARY);
+	IsClosed(Field<?> field) {
+		super();
 		this.field = field;
 	}
 
@@ -31,12 +30,11 @@ class GeomFromText extends CustomField<byte[]> {
 		switch (configuration.dialect().family().toString()) {
 		case "MYSQL":
 		case "POSTGRES":
-			return DSL.field("ST_GeomFromText({0})", byte[].class, field);
+			return DSL.field("ST_IsClosed({0})", Boolean.class, field);
 		case "SQLSERVER":
-			return DSL.field("{0}.STGeomFromText(0)", byte[].class, field);
+			return DSL.field("{0}.STIsClosed()", Boolean.class, field);
 		default:
 			throw new UnsupportedOperationException("Dialect not supported");
 		}
 	}
-
 }

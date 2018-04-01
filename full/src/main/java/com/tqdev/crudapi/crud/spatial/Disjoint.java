@@ -1,4 +1,4 @@
-package com.tqdev.crudapi.spatial;
+package com.tqdev.crudapi.crud.spatial;
 
 import org.jooq.Configuration;
 import org.jooq.Context;
@@ -7,18 +7,20 @@ import org.jooq.QueryPart;
 import org.jooq.impl.CustomCondition;
 import org.jooq.impl.DSL;
 
-public class IsValid extends CustomCondition {
+public class Disjoint extends CustomCondition {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
 
-	final Field<?> field;
+	final Field<?> field1;
+	final Field<?> field2;
 
-	IsValid(Field<?> field) {
+	Disjoint(Field<?> field1, Field<?> field2) {
 		super();
-		this.field = field;
+		this.field1 = field1;
+		this.field2 = field2;
 	}
 
 	@Override
@@ -30,9 +32,9 @@ public class IsValid extends CustomCondition {
 		switch (configuration.dialect().family().toString()) {
 		case "MYSQL":
 		case "POSTGRES":
-			return DSL.field("ST_IsValid({0})", Boolean.class, field);
+			return DSL.field("ST_Disjoint({0}, {1})", Boolean.class, field1, field2);
 		case "SQLSERVER":
-			return DSL.field("{0}.STIsValid()", Boolean.class, field);
+			return DSL.field("{0}.STDisjoint({1})", Boolean.class, field1, field2);
 		default:
 			throw new UnsupportedOperationException("Dialect not supported");
 		}

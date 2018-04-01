@@ -1,26 +1,25 @@
-package com.tqdev.crudapi.spatial;
+package com.tqdev.crudapi.crud.spatial;
 
 import org.jooq.Configuration;
 import org.jooq.Context;
 import org.jooq.Field;
 import org.jooq.QueryPart;
-import org.jooq.impl.CustomCondition;
+import org.jooq.impl.CustomField;
 import org.jooq.impl.DSL;
+import org.jooq.impl.SQLDataType;
 
-public class Intersects extends CustomCondition {
+class GeomFromText extends CustomField<byte[]> {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
 
-	final Field<?> field1;
-	final Field<?> field2;
+	final Field<?> field;
 
-	Intersects(Field<?> field1, Field<?> field2) {
-		super();
-		this.field1 = field1;
-		this.field2 = field2;
+	GeomFromText(Field<?> field) {
+		super("st_geomfromtext", SQLDataType.VARBINARY);
+		this.field = field;
 	}
 
 	@Override
@@ -32,11 +31,12 @@ public class Intersects extends CustomCondition {
 		switch (configuration.dialect().family().toString()) {
 		case "MYSQL":
 		case "POSTGRES":
-			return DSL.field("ST_Intersects({0}, {1})", Boolean.class, field1, field2);
+			return DSL.field("ST_GeomFromText({0})", byte[].class, field);
 		case "SQLSERVER":
-			return DSL.field("{0}.STIntersects({1})", Boolean.class, field1, field2);
+			return DSL.field("{0}.STGeomFromText(0)", byte[].class, field);
 		default:
 			throw new UnsupportedOperationException("Dialect not supported");
 		}
 	}
+
 }
