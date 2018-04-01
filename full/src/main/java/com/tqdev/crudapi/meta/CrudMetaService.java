@@ -2,7 +2,7 @@ package com.tqdev.crudapi.meta;
 
 import java.io.IOException;
 
-import com.tqdev.crudapi.crud.record.DatabaseRecordsException;
+import com.tqdev.crudapi.api.record.DatabaseRecordsException;
 import com.tqdev.crudapi.meta.definition.DatabaseDefinition;
 import com.tqdev.crudapi.meta.definition.DatabaseDefinitionException;
 import com.tqdev.crudapi.meta.openapi.OpenApiDefinition;

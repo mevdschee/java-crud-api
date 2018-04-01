@@ -1,9 +1,9 @@
 package com.tqdev.crudapi;
 
-import com.tqdev.crudapi.crud.CrudApiService;
-import com.tqdev.crudapi.crud.JooqCrudApiService;
-import com.tqdev.crudapi.crud.record.DatabaseRecordsException;
-import com.tqdev.crudapi.crud.spatial.SpatialDSL;
+import com.tqdev.crudapi.api.CrudApiService;
+import com.tqdev.crudapi.api.JooqCrudApiService;
+import com.tqdev.crudapi.api.record.DatabaseRecordsException;
+import com.tqdev.crudapi.api.spatial.SpatialDSL;
 import com.tqdev.crudapi.meta.CrudMetaService;
 import com.tqdev.crudapi.meta.JooqCrudMetaService;
 import com.tqdev.crudapi.meta.definition.DatabaseDefinitionException;
