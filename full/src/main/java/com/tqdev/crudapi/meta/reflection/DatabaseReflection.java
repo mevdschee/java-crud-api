@@ -21,12 +21,12 @@ public class DatabaseReflection {
 		this.tablePrefix = findTablePrefix();
 	}
 
-	public boolean exists(String name) {
-		return tables.containsKey(name);
+	public boolean exists(String tableName) {
+		return tables.containsKey(tableName);
 	}
 
-	public ReflectedTable get(String name) {
-		return tables.get(name);
+	public ReflectedTable get(String tableName) {
+		return tables.get(tableName);
 	}
 
 	private String findTablePrefix() {
