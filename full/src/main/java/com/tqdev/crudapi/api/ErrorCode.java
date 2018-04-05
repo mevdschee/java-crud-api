@@ -4,7 +4,7 @@ import org.springframework.http.HttpStatus;
 
 public enum ErrorCode {
 
-	ERROR_NOT_FOUND(9999, "Error for '%s' not found", HttpStatus.INTERNAL_SERVER_ERROR),
+	ERROR_NOT_FOUND(9999, "%s", HttpStatus.INTERNAL_SERVER_ERROR),
 
 	ROUTE_NOT_FOUND(1000, "Route '%s' not found", HttpStatus.NOT_FOUND),
 
