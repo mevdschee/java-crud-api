@@ -150,7 +150,7 @@ public class SampleTests {
 	}
 
 	@Test
-	public void test015DeletePostWithPostIgnoreColumns() throws Exception {
+	public void test015DeletePostIgnoreColumns() throws Exception {
 		mockMvc.perform(delete("/data/posts/4?columns=id,content")).andExpect(status().isOk())
 				.andExpect(content().string("1"));
 		mockMvc.perform(get("/data/posts/4")).andExpect(status().isNotFound())
