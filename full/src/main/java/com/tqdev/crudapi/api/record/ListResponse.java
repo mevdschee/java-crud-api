@@ -8,7 +8,7 @@ public class ListResponse {
 	protected Record[] records;
 
 	@JsonInclude(Include.NON_DEFAULT)
-	private int results;
+	protected int results;
 
 	public ListResponse(Record[] records, int results) {
 		this.records = records;
