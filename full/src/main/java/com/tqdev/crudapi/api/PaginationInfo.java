@@ -1,16 +1,16 @@
 package com.tqdev.crudapi.api;
 
-public class JooqPagination {
+public class PaginationInfo {
 
-	public static final int DEFAULT_PAGE_SIZE = 20;
+	public final int DEFAULT_PAGE_SIZE = 20;
 
-	public static boolean hasPage(Params params) {
+	public boolean hasPage(Params params) {
 		return params.containsKey("page");
 	}
 
-	public static int pageOffset(Params params) {
+	public int getPageOffset(Params params) {
 		int offset = 0;
-		int pageSize = pageSize(params);
+		int pageSize = getPageSize(params);
 		if (params.containsKey("page")) {
 			for (String key : params.get("page")) {
 				String[] parts = key.split(",", 2);
@@ -21,7 +21,7 @@ public class JooqPagination {
 		return offset;
 	}
 
-	public static int pageSize(Params params) {
+	public int getPageSize(Params params) {
 		int pageSize = DEFAULT_PAGE_SIZE;
 		if (params.containsKey("page")) {
 			for (String key : params.get("page")) {
@@ -34,7 +34,7 @@ public class JooqPagination {
 		return pageSize;
 	}
 
-	public static int resultSize(Params params) {
+	public int getResultSize(Params params) {
 		int numberOfRows = -1;
 		if (params.containsKey("size")) {
 			for (String key : params.get("size")) {

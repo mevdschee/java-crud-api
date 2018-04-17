@@ -14,13 +14,13 @@ import com.tqdev.crudapi.api.record.Record;
 import com.tqdev.crudapi.api.spatial.SpatialDSL;
 import com.tqdev.crudapi.meta.reflection.ReflectedTable;
 
-public class JooqColumnSelector {
+public class ColumnSelector {
 
-	private static boolean isMandatoryField(String tableName, String fieldName, Params params) {
+	private boolean isMandatoryField(String tableName, String fieldName, Params params) {
 		return params.containsKey("mandatory") && params.get("mandatory").contains(tableName + "." + fieldName);
 	}
 
-	private static Set<String> select(String tableName, boolean primaryTable, Params params, String paramName,
+	private Set<String> select(String tableName, boolean primaryTable, Params params, String paramName,
 			Set<String> fieldNames, boolean include) {
 		if (!params.containsKey(paramName)) {
 			return fieldNames;
@@ -51,7 +51,7 @@ public class JooqColumnSelector {
 		return result;
 	}
 
-	private static Set<String> columns(ReflectedTable table, boolean primaryTable, Params params) {
+	private Set<String> columns(ReflectedTable table, boolean primaryTable, Params params) {
 		String tableName = table.getName();
 		Set<String> results = table.fieldNames();
 		results = select(tableName, primaryTable, params, "columns", results, true);
@@ -59,8 +59,8 @@ public class JooqColumnSelector {
 		return results;
 	}
 
-	public static LinkedHashMap<Field<?>, Object> columnValues(ReflectedTable table, boolean primaryTable,
-			Record record, Params params) {
+	public LinkedHashMap<Field<?>, Object> getColumnValues(ReflectedTable table, boolean primaryTable, Record record,
+			Params params) {
 		LinkedHashMap<Field<?>, Object> columns = new LinkedHashMap<>();
 		Set<String> cols = columns(table, primaryTable, params);
 		for (String key : cols) {
@@ -78,7 +78,7 @@ public class JooqColumnSelector {
 		return columns;
 	}
 
-	public static LinkedHashMap<Field<?>, Object> columnIncrements(ReflectedTable table, boolean primaryTable,
+	public LinkedHashMap<Field<?>, Object> getColumnIncrements(ReflectedTable table, boolean primaryTable,
 			Record record, Params params) {
 		LinkedHashMap<Field<?>, Object> columns = new LinkedHashMap<>();
 		Set<String> cols = columns(table, primaryTable, params);
@@ -94,7 +94,7 @@ public class JooqColumnSelector {
 		return columns;
 	}
 
-	public static ArrayList<Field<?>> columnNames(ReflectedTable table, boolean primaryTable, Params params) {
+	public ArrayList<Field<?>> getColumnNames(ReflectedTable table, boolean primaryTable, Params params) {
 		ArrayList<Field<?>> columns = new ArrayList<>();
 		for (String key : columns(table, primaryTable, params)) {
 			Field<?> field = table.get(key);

@@ -28,9 +28,20 @@ public class JooqCrudApiService extends BaseCrudApiService implements CrudApiSer
 
 	protected DSLContext dsl;
 
+	protected ColumnSelector columns;
+	protected RelationIncluder includer;
+	protected FilterInfo filters;
+	protected OrderingInfo ordering;
+	protected PaginationInfo pagination;
+
 	public JooqCrudApiService(DSLContext dsl, CrudMetaService meta) {
 		this.dsl = dsl;
-		this.tables = meta.getDatabaseReflection();
+		tables = meta.getDatabaseReflection();
+		columns = new ColumnSelector();
+		includer = new RelationIncluder(columns);
+		filters = new FilterInfo();
+		ordering = new OrderingInfo();
+		pagination = new PaginationInfo();
 	}
 
 	@SuppressWarnings("unchecked")
@@ -38,24 +49,24 @@ public class JooqCrudApiService extends BaseCrudApiService implements CrudApiSer
 	public String create(String table, Record record, Params params) {
 		sanitizeRecord(table, record, null);
 		ReflectedTable t = tables.get(table);
-		LinkedHashMap<Field<?>, Object> columns = JooqColumnSelector.columnValues(t, true, record, params);
+		LinkedHashMap<Field<?>, Object> columnValues = columns.getColumnValues(t, true, record, params);
 		Field<Object> pk = tables.get(table).getPk();
-		org.jooq.Record result = dsl.insertInto(t).set(columns).returning(pk).fetchOne();
+		org.jooq.Record result = dsl.insertInto(t).set(columnValues).returning(pk).fetchOne();
 		return String.valueOf(result.get(0));
 	}
 
 	@Override
 	public Record read(String table, String id, Params params) {
 		ReflectedTable t = tables.get(table);
-		JooqIncluder.addMandatoryColumns(table, tables, params);
-		ArrayList<Field<?>> columns = JooqColumnSelector.columnNames(t, true, params);
+		includer.addMandatoryColumns(table, tables, params);
+		ArrayList<Field<?>> columnNames = columns.getColumnNames(t, true, params);
 		Field<Object> pk = tables.get(table).getPk();
-		org.jooq.Record record = dsl.select(columns).from(t).where(pk.eq(id)).fetchOne();
+		org.jooq.Record record = dsl.select(columnNames).from(t).where(pk.eq(id)).fetchOne();
 		if (record == null) {
 			return null;
 		}
 		Record r = Record.valueOf(record.intoMap());
-		JooqIncluder.addIncludes(table, r, tables, params, dsl);
+		includer.addIncludes(table, r, tables, params, dsl);
 		return r;
 	}
 
@@ -64,9 +75,9 @@ public class JooqCrudApiService extends BaseCrudApiService implements CrudApiSer
 	public int update(String table, String id, Record record, Params params) {
 		sanitizeRecord(table, record, id);
 		ReflectedTable t = tables.get(table);
-		LinkedHashMap<Field<?>, Object> columns = JooqColumnSelector.columnValues(t, true, record, params);
+		LinkedHashMap<Field<?>, Object> columnValues = columns.getColumnValues(t, true, record, params);
 		Field<Object> pk = tables.get(table).getPk();
-		return dsl.update(t).set(columns).where(pk.eq(id)).execute();
+		return dsl.update(t).set(columnValues).where(pk.eq(id)).execute();
 	}
 
 	@SuppressWarnings("unchecked")
@@ -74,9 +85,9 @@ public class JooqCrudApiService extends BaseCrudApiService implements CrudApiSer
 	public int increment(String table, String id, Record record, Params params) {
 		sanitizeRecord(table, record, id);
 		ReflectedTable t = tables.get(table);
-		LinkedHashMap<Field<?>, Object> columns = JooqColumnSelector.columnValues(t, true, record, params);
+		LinkedHashMap<Field<?>, Object> columnValues = columns.getColumnValues(t, true, record, params);
 		Field<Object> pk = tables.get(table).getPk();
-		return dsl.update(t).set(columns).where(pk.eq(id)).execute();
+		return dsl.update(t).set(columnValues).where(pk.eq(id)).execute();
 	}
 
 	@Override
@@ -90,28 +101,28 @@ public class JooqCrudApiService extends BaseCrudApiService implements CrudApiSer
 	public ListResponse list(String table, Params params) {
 		ArrayList<Record> records = new ArrayList<>();
 		ReflectedTable t = tables.get(table);
-		JooqIncluder.addMandatoryColumns(table, tables, params);
-		ArrayList<Field<?>> columns = JooqColumnSelector.columnNames(t, true, params);
-		ArrayList<Condition> conditions = JooqConditions.conditions(t, params);
-		ArrayList<SortField<?>> ordering = JooqOrdering.ordering(t, params);
+		includer.addMandatoryColumns(table, tables, params);
+		ArrayList<Field<?>> columnNames = columns.getColumnNames(t, true, params);
+		ArrayList<Condition> conditions = filters.conditions(t, params);
+		ArrayList<SortField<?>> sortFields = ordering.getSortFields(t, params);
 		int count = 0;
 		ResultQuery<org.jooq.Record> query;
-		if (!JooqPagination.hasPage(params)) {
-			int size = JooqPagination.resultSize(params);
-			query = dsl.select(columns).from(t).where(conditions).orderBy(ordering);
+		if (!pagination.hasPage(params)) {
+			int size = pagination.getResultSize(params);
+			query = dsl.select(columnNames).from(t).where(conditions).orderBy(sortFields);
 			if (size != -1) {
 				query = ((SelectLimitStep<org.jooq.Record>) query).limit(size);
 			}
 		} else {
-			int offset = JooqPagination.pageOffset(params);
-			int limit = JooqPagination.pageSize(params);
+			int offset = pagination.getPageOffset(params);
+			int limit = pagination.getPageSize(params);
 			count = (int) dsl.select(DSL.count()).from(t).where(conditions).fetchOne(0);
-			query = dsl.select(columns).from(t).where(conditions).orderBy(ordering).limit(offset, limit);
+			query = dsl.select(columnNames).from(t).where(conditions).orderBy(sortFields).limit(offset, limit);
 		}
 		for (org.jooq.Record record : query.fetch()) {
 			records.add(Record.valueOf(record.intoMap()));
 		}
-		JooqIncluder.addIncludes(table, records, tables, params, dsl);
+		includer.addIncludes(table, records, tables, params, dsl);
 		return new ListResponse(records.toArray(new Record[records.size()]), count);
 	}
 

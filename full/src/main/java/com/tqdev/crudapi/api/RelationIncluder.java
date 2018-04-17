@@ -17,9 +17,15 @@ import com.tqdev.crudapi.api.record.Record;
 import com.tqdev.crudapi.meta.reflection.DatabaseReflection;
 import com.tqdev.crudapi.meta.reflection.ReflectedTable;
 
-public class JooqIncluder {
+public class RelationIncluder {
 
-	public static void addMandatoryColumns(String tableName, DatabaseReflection tables, Params params) {
+	protected ColumnSelector columns;
+
+	public RelationIncluder(ColumnSelector columns) {
+		this.columns = columns;
+	}
+
+	public void addMandatoryColumns(String tableName, DatabaseReflection tables, Params params) {
 		if (!params.containsKey("include") || !params.containsKey("columns")) {
 			return;
 		}
@@ -50,14 +56,13 @@ public class JooqIncluder {
 		}
 	}
 
-	public static void addIncludes(String tableName, Record record, DatabaseReflection tables, Params params,
-			DSLContext dsl) {
+	public void addIncludes(String tableName, Record record, DatabaseReflection tables, Params params, DSLContext dsl) {
 		ArrayList<Record> records = new ArrayList<>();
 		records.add(record);
 		addIncludes(tableName, records, tables, params, dsl);
 	}
 
-	private static class TreeMap<T> extends LinkedHashMap<T, TreeMap<T>> {
+	private class TreeMap<T> extends LinkedHashMap<T, TreeMap<T>> {
 
 		/**
 		 * 
@@ -79,7 +84,7 @@ public class JooqIncluder {
 
 	}
 
-	private static TreeMap<ReflectedTable> getIncludesAsTreeMap(DatabaseReflection tables, Params params) {
+	private TreeMap<ReflectedTable> getIncludesAsTreeMap(DatabaseReflection tables, Params params) {
 		if (params.containsKey("include")) {
 			TreeMap<ReflectedTable> includes = new TreeMap<>();
 			for (String includedTableNames : params.get("include")) {
@@ -97,8 +102,8 @@ public class JooqIncluder {
 		return null;
 	}
 
-	public static void addIncludes(String tableName, ArrayList<Record> records, DatabaseReflection tables,
-			Params params, DSLContext dsl) {
+	public void addIncludes(String tableName, ArrayList<Record> records, DatabaseReflection tables, Params params,
+			DSLContext dsl) {
 
 		TreeMap<ReflectedTable> includes = getIncludesAsTreeMap(tables, params);
 
@@ -107,7 +112,7 @@ public class JooqIncluder {
 		}
 	}
 
-	private static ReflectedTable hasAndBelongsToMany(ReflectedTable t1, ReflectedTable t2, DatabaseReflection tables) {
+	private ReflectedTable hasAndBelongsToMany(ReflectedTable t1, ReflectedTable t2, DatabaseReflection tables) {
 		for (String tableName : tables.tableNames()) {
 			ReflectedTable t3 = tables.get(tableName);
 			if (!t3.getFksTo(t1.getName()).isEmpty() && !t3.getFksTo(t2.getName()).isEmpty()) {
@@ -117,13 +122,13 @@ public class JooqIncluder {
 		return null;
 	}
 
-	private static class HabtmValues {
+	private class HabtmValues {
 		protected HashMap<Object, ArrayList<Object>> pkValues = new HashMap<>();
 		protected HashMap<Object, Object> fkValues = new HashMap<>();
 	}
 
-	private static void addIncludesForTables(ReflectedTable t1, TreeMap<ReflectedTable> includes,
-			ArrayList<Record> records, DatabaseReflection tables, Params params, DSLContext dsl) {
+	private void addIncludesForTables(ReflectedTable t1, TreeMap<ReflectedTable> includes, ArrayList<Record> records,
+			DatabaseReflection tables, Params params, DSLContext dsl) {
 		if (includes == null) {
 			return;
 		}
@@ -170,8 +175,7 @@ public class JooqIncluder {
 		}
 	}
 
-	private static HashMap<Object, Object> getFkEmptyValues(ReflectedTable t1, ReflectedTable t2,
-			ArrayList<Record> records) {
+	private HashMap<Object, Object> getFkEmptyValues(ReflectedTable t1, ReflectedTable t2, ArrayList<Record> records) {
 		HashMap<Object, Object> fkValues = new HashMap<>();
 		List<Field<Object>> fks = t1.getFksTo(t2.getName());
 		for (Field<Object> fk : fks) {
@@ -186,17 +190,17 @@ public class JooqIncluder {
 		return fkValues;
 	}
 
-	private static void addFkRecords(ReflectedTable t2, HashMap<Object, Object> fkValues, Params params, DSLContext dsl,
+	private void addFkRecords(ReflectedTable t2, HashMap<Object, Object> fkValues, Params params, DSLContext dsl,
 			ArrayList<Record> records) {
 		Field<Object> pk = t2.getPk();
-		ArrayList<Field<?>> fields = JooqColumnSelector.columnNames(t2, false, params);
+		ArrayList<Field<?>> fields = columns.getColumnNames(t2, false, params);
 		ResultQuery<org.jooq.Record> query = dsl.select(fields).from(t2).where(pk.in(fkValues.keySet()));
 		for (org.jooq.Record record : query.fetch()) {
 			records.add(Record.valueOf(record.intoMap()));
 		}
 	}
 
-	private static void fillFkValues(ReflectedTable t2, ArrayList<Record> fkRecords, HashMap<Object, Object> fkValues) {
+	private void fillFkValues(ReflectedTable t2, ArrayList<Record> fkRecords, HashMap<Object, Object> fkValues) {
 		Field<Object> pk = t2.getPk();
 		for (Record fkRecord : fkRecords) {
 			Object pkValue = fkRecord.get(pk.getName());
@@ -204,7 +208,7 @@ public class JooqIncluder {
 		}
 	}
 
-	private static void setFkValues(ReflectedTable t1, ReflectedTable t2, ArrayList<Record> records,
+	private void setFkValues(ReflectedTable t1, ReflectedTable t2, ArrayList<Record> records,
 			HashMap<Object, Object> fkValues) {
 		List<Field<Object>> fks = t1.getFksTo(t2.getName());
 		for (Field<Object> fk : fks) {
@@ -218,7 +222,7 @@ public class JooqIncluder {
 		}
 	}
 
-	private static HashMap<Object, ArrayList<Object>> getPkEmptyValues(ReflectedTable t1, ArrayList<Record> records) {
+	private HashMap<Object, ArrayList<Object>> getPkEmptyValues(ReflectedTable t1, ArrayList<Record> records) {
 		HashMap<Object, ArrayList<Object>> pkValues = new HashMap<>();
 		for (Record record : records) {
 			Object key = record.get(t1.getPk().getName());
@@ -227,10 +231,10 @@ public class JooqIncluder {
 		return pkValues;
 	}
 
-	private static void addPkRecords(ReflectedTable t1, ReflectedTable t2, HashMap<Object, ArrayList<Object>> pkValues,
+	private void addPkRecords(ReflectedTable t1, ReflectedTable t2, HashMap<Object, ArrayList<Object>> pkValues,
 			Params params, DSLContext dsl, ArrayList<Record> records) {
 		List<Field<Object>> fks = t2.getFksTo(t1.getName());
-		ArrayList<Field<?>> fields = JooqColumnSelector.columnNames(t2, false, params);
+		ArrayList<Field<?>> fields = columns.getColumnNames(t2, false, params);
 		Condition condition = DSL.falseCondition();
 		for (Field<Object> fk : fks) {
 			condition = condition.or(fk.in(pkValues.keySet()));
@@ -241,7 +245,7 @@ public class JooqIncluder {
 		}
 	}
 
-	private static void fillPkValues(ReflectedTable t1, ReflectedTable t2, ArrayList<Record> pkRecords,
+	private void fillPkValues(ReflectedTable t1, ReflectedTable t2, ArrayList<Record> pkRecords,
 			HashMap<Object, ArrayList<Object>> pkValues) {
 		List<Field<Object>> fks = t2.getFksTo(t1.getName());
 		for (Field<Object> fk : fks) {
@@ -255,7 +259,7 @@ public class JooqIncluder {
 		}
 	}
 
-	private static void setPkValues(ReflectedTable t1, ReflectedTable t2, ArrayList<Record> records,
+	private void setPkValues(ReflectedTable t1, ReflectedTable t2, ArrayList<Record> records,
 			HashMap<Object, ArrayList<Object>> pkValues) {
 		for (Record record : records) {
 			Object key = record.get(t1.getPk().getName());
@@ -263,8 +267,8 @@ public class JooqIncluder {
 		}
 	}
 
-	private static HabtmValues getHabtmEmptyValues(ReflectedTable t1, ReflectedTable t2, ReflectedTable t3,
-			DSLContext dsl, ArrayList<Record> records) {
+	private HabtmValues getHabtmEmptyValues(ReflectedTable t1, ReflectedTable t2, ReflectedTable t3, DSLContext dsl,
+			ArrayList<Record> records) {
 		HashMap<Object, ArrayList<Object>> pkValues = getPkEmptyValues(t1, records);
 		HashMap<Object, Object> fkValues = new HashMap<>();
 
@@ -286,7 +290,7 @@ public class JooqIncluder {
 		return habtmValues;
 	}
 
-	private static void setHabtmValues(ReflectedTable t1, ReflectedTable t3, ArrayList<Record> records,
+	private void setHabtmValues(ReflectedTable t1, ReflectedTable t3, ArrayList<Record> records,
 			HabtmValues habtmValues) {
 		for (Record record : records) {
 			Object key = record.get(t1.getPk().getName());

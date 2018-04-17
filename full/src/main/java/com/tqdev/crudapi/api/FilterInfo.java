@@ -11,9 +11,9 @@ import org.jooq.impl.DSL;
 import com.tqdev.crudapi.api.spatial.SpatialDSL;
 import com.tqdev.crudapi.meta.reflection.ReflectedTable;
 
-public class JooqConditions {
+public class FilterInfo {
 
-	private static class PathTree<P, T> extends LinkedHashMap<P, PathTree<P, T>> {
+	private class PathTree<P, T> extends LinkedHashMap<P, PathTree<P, T>> {
 
 		/**
 		 * 
@@ -42,7 +42,7 @@ public class JooqConditions {
 
 	}
 
-	private static PathTree<Character, Condition> getConditionsAsPathTree(ReflectedTable table, Params params) {
+	private PathTree<Character, Condition> getConditionsAsPathTree(ReflectedTable table, Params params) {
 		PathTree<Character, Condition> conditions = new PathTree<>();
 		if (params.containsKey("filter")) {
 			for (String value : params.get("filter")) {
@@ -81,7 +81,7 @@ public class JooqConditions {
 		return conditions;
 	}
 
-	private static Condition combinePathTreeOfConditions(PathTree<Character, Condition> tree) {
+	private Condition combinePathTreeOfConditions(PathTree<Character, Condition> tree) {
 		ArrayList<Condition> conditions = tree.getValues();
 		Condition and = null;
 		for (Condition condition : conditions) {
@@ -111,7 +111,7 @@ public class JooqConditions {
 		return and;
 	}
 
-	public static ArrayList<Condition> conditions(ReflectedTable table, Params params) {
+	public ArrayList<Condition> conditions(ReflectedTable table, Params params) {
 		ArrayList<Condition> conditions = new ArrayList<>();
 		Condition condition = combinePathTreeOfConditions(getConditionsAsPathTree(table, params));
 		if (condition != null) {
@@ -120,7 +120,7 @@ public class JooqConditions {
 		return conditions;
 	}
 
-	private static Condition getConditionFromString(ReflectedTable table, String value) {
+	private Condition getConditionFromString(ReflectedTable table, String value) {
 		Condition condition = null;
 		String[] parts2;
 		String[] parts = value.split(",", 3);
