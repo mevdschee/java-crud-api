@@ -8,7 +8,7 @@ import com.tqdev.crudapi.meta.reflection.ReflectedTable;
 
 public class OrderingInfo {
 
-	public ArrayList<SortField<?>> getSortFields(ReflectedTable table, Params params) {
+	public ArrayList<SortField<?>> getColumnOrdering(ReflectedTable table, Params params) {
 		ArrayList<SortField<?>> fields = new ArrayList<>();
 		if (params.containsKey("order")) {
 			for (String key : params.get("order")) {
