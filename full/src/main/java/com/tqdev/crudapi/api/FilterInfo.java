@@ -12,46 +12,41 @@ import com.tqdev.crudapi.meta.reflection.ReflectedTable;
 
 public class FilterInfo {
 
-	private PathTree<Character, Condition> getConditionsAsPathTree(ReflectedTable table, Params params) {
-		PathTree<Character, Condition> conditions = new PathTree<>();
-		if (params.containsKey("filter")) {
-			for (String value : params.get("filter")) {
+	protected void addConditionFromFilteraPath(PathTree<Character, Condition> conditions, LinkedList<Character> path,
+			ReflectedTable table, Params params) {
+		String key = "filter";
+		for (Character c : path) {
+			key += c;
+		}
+		if (params.containsKey(key)) {
+			for (String value : params.get(key)) {
 				Condition condition = getConditionFromString(table, value);
 				if (condition != null) {
-					LinkedList<Character> path = new LinkedList<Character>();
 					conditions.put(path, condition);
 				}
 			}
 		}
+	}
+
+	protected PathTree<Character, Condition> getConditionsAsPathTree(ReflectedTable table, Params params) {
+		PathTree<Character, Condition> conditions = new PathTree<>();
+		LinkedList<Character> path0 = new LinkedList<>();
+		addConditionFromFilteraPath(conditions, path0, table, params);
 		for (char n = '0'; n <= '9'; n++) {
-			if (params.containsKey("filter" + n)) {
-				for (String value : params.get("filter" + n)) {
-					Condition condition = getConditionFromString(table, value);
-					if (condition != null) {
-						LinkedList<Character> path = new LinkedList<Character>();
-						path.add(n);
-						conditions.put(path, condition);
-					}
-				}
-			}
+			LinkedList<Character> path1 = new LinkedList<>();
+			path1.add(n);
+			addConditionFromFilteraPath(conditions, path1, table, params);
 			for (char l = 'a'; l <= 'f'; l++) {
-				if (params.containsKey("filter" + n + l)) {
-					for (String value : params.get("filter" + n + l)) {
-						Condition condition = getConditionFromString(table, value);
-						if (condition != null) {
-							LinkedList<Character> path = new LinkedList<Character>();
-							path.add(n);
-							path.add(l);
-							conditions.put(path, condition);
-						}
-					}
-				}
+				LinkedList<Character> path2 = new LinkedList<>();
+				path2.add(n);
+				path2.add(l);
+				addConditionFromFilteraPath(conditions, path2, table, params);
 			}
 		}
 		return conditions;
 	}
 
-	private Condition combinePathTreeOfConditions(PathTree<Character, Condition> tree) {
+	protected Condition combinePathTreeOfConditions(PathTree<Character, Condition> tree) {
 		ArrayList<Condition> conditions = tree.getValues();
 		Condition and = null;
 		for (Condition condition : conditions) {
@@ -61,11 +56,11 @@ public class FilterInfo {
 				and = and.and(condition);
 			}
 		}
-		if (tree.keySet().size() == 0) {
+		if (tree.getKeys().size() == 0) {
 			return and;
 		}
 		Condition or = null;
-		for (Character p : tree.keySet()) {
+		for (Character p : tree.getKeys()) {
 			Condition condition = combinePathTreeOfConditions(tree.get(p));
 			if (or == null) {
 				or = condition;
@@ -90,7 +85,7 @@ public class FilterInfo {
 		return conditions;
 	}
 
-	private Condition getConditionFromString(ReflectedTable table, String value) {
+	protected Condition getConditionFromString(ReflectedTable table, String value) {
 		Condition condition = null;
 		String[] parts2;
 		String[] parts = value.split(",", 3);
