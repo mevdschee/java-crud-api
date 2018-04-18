@@ -3,6 +3,7 @@ package com.tqdev.crudapi.api;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
+import java.util.Set;
 
 import org.jooq.Condition;
 import org.jooq.Field;
@@ -13,14 +14,11 @@ import com.tqdev.crudapi.meta.reflection.ReflectedTable;
 
 public class FilterInfo {
 
-	private class PathTree<P, T> extends LinkedHashMap<P, PathTree<P, T>> {
-
-		/**
-		 * 
-		 */
-		private static final long serialVersionUID = -1426969425705646921L;
+	private class PathTree<P, T> {
 
 		private ArrayList<T> values = new ArrayList<>();
+
+		private LinkedHashMap<P, PathTree<P, T>> leaves = new LinkedHashMap<>();
 
 		public ArrayList<T> getValues() {
 			return values;
@@ -32,12 +30,20 @@ public class FilterInfo {
 				return;
 			}
 			P key = path.removeFirst();
-			PathTree<P, T> val = get(key);
+			PathTree<P, T> val = leaves.get(key);
 			if (val == null) {
 				val = new PathTree<>();
-				put(key, val);
+				leaves.put(key, val);
 			}
 			val.put(path, value);
+		}
+
+		public Set<P> keySet() {
+			return leaves.keySet();
+		}
+
+		public PathTree<P, T> get(P p) {
+			return leaves.get(p);
 		}
 
 	}
