@@ -9,7 +9,7 @@ public class PathTree<P, T> {
 
 	private ArrayList<T> values = new ArrayList<>();
 
-	private LinkedHashMap<P, PathTree<P, T>> leaves = new LinkedHashMap<>();
+	private LinkedHashMap<P, PathTree<P, T>> branches = new LinkedHashMap<>();
 
 	public ArrayList<T> getValues() {
 		return values;
@@ -21,20 +21,20 @@ public class PathTree<P, T> {
 			return;
 		}
 		P key = path.removeFirst();
-		PathTree<P, T> val = leaves.get(key);
+		PathTree<P, T> val = branches.get(key);
 		if (val == null) {
 			val = new PathTree<>();
-			leaves.put(key, val);
+			branches.put(key, val);
 		}
 		val.put(path, value);
 	}
 
 	public Set<P> getKeys() {
-		return leaves.keySet();
+		return branches.keySet();
 	}
 
 	public PathTree<P, T> get(P p) {
-		return leaves.get(p);
+		return branches.get(p);
 	}
 
 }
