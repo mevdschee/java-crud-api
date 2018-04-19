@@ -103,7 +103,7 @@ public class JooqCrudApiService extends BaseCrudApiService implements CrudApiSer
 		ReflectedTable t = tables.get(table);
 		includer.addMandatoryColumns(table, tables, params);
 		ArrayList<Field<?>> columnNames = columns.getColumnNames(t, true, params);
-		ArrayList<Condition> conditions = filters.conditions(t, params);
+		ArrayList<Condition> conditions = filters.getConditions(t, params);
 		ArrayList<SortField<?>> columnOrdering = ordering.getColumnOrdering(t, params);
 		int count = 0;
 		ResultQuery<org.jooq.Record> query;

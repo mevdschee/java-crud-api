@@ -71,12 +71,14 @@ public class FilterInfo {
 		if (and == null) {
 			and = or;
 		} else {
-			and = and.and(or);
+			if (or != null) {
+				and = and.and(or);
+			}
 		}
 		return and;
 	}
 
-	public ArrayList<Condition> conditions(ReflectedTable table, Params params) {
+	public ArrayList<Condition> getConditions(ReflectedTable table, Params params) {
 		ArrayList<Condition> conditions = new ArrayList<>();
 		Condition condition = combinePathTreeOfConditions(getConditionsAsPathTree(table, params));
 		if (condition != null) {
