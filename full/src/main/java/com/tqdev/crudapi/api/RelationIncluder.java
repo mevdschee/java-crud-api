@@ -3,7 +3,6 @@ package com.tqdev.crudapi.api;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -62,28 +61,6 @@ public class RelationIncluder {
 		addIncludes(tableName, records, tables, params, dsl);
 	}
 
-	private class TreeMap<T> extends LinkedHashMap<T, TreeMap<T>> {
-
-		/**
-		 * 
-		 */
-		private static final long serialVersionUID = 7895438196186643617L;
-
-		public void put(LinkedList<T> path) {
-			if (path.isEmpty()) {
-				return;
-			}
-			T key = path.removeFirst();
-			TreeMap<T> val = get(key);
-			if (val == null) {
-				val = new TreeMap<>();
-				put(key, val);
-			}
-			val.put(path);
-		}
-
-	}
-
 	private TreeMap<ReflectedTable> getIncludesAsTreeMap(DatabaseReflection tables, Params params) {
 		if (params.containsKey("include")) {
 			TreeMap<ReflectedTable> includes = new TreeMap<>();
@@ -133,7 +110,7 @@ public class RelationIncluder {
 			return;
 		}
 
-		for (ReflectedTable t2 : includes.keySet()) {
+		for (ReflectedTable t2 : includes.getKeys()) {
 
 			boolean belongsTo = !t1.getFksTo(t2.getName()).isEmpty();
 			boolean hasMany = !t2.getFksTo(t1.getName()).isEmpty();
