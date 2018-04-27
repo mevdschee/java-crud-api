@@ -62,8 +62,8 @@ public class RelationIncluder {
 	}
 
 	private TreeMap<ReflectedTable> getIncludesAsTreeMap(DatabaseReflection tables, Params params) {
+		TreeMap<ReflectedTable> includes = new TreeMap<>();
 		if (params.containsKey("include")) {
-			TreeMap<ReflectedTable> includes = new TreeMap<>();
 			for (String includedTableNames : params.get("include")) {
 				LinkedList<ReflectedTable> path = new LinkedList<>();
 				for (String includedTableName : includedTableNames.split(",")) {
@@ -74,19 +74,15 @@ public class RelationIncluder {
 				}
 				includes.put(path);
 			}
-			return includes;
 		}
-		return null;
+		return includes;
 	}
 
 	public void addIncludes(String tableName, ArrayList<Record> records, DatabaseReflection tables, Params params,
 			DSLContext dsl) {
 
 		TreeMap<ReflectedTable> includes = getIncludesAsTreeMap(tables, params);
-
-		if (includes != null) {
-			addIncludesForTables(tables.get(tableName), includes, records, tables, params, dsl);
-		}
+		addIncludesForTables(tables.get(tableName), includes, records, tables, params, dsl);
 	}
 
 	private ReflectedTable hasAndBelongsToMany(ReflectedTable t1, ReflectedTable t2, DatabaseReflection tables) {
@@ -106,10 +102,6 @@ public class RelationIncluder {
 
 	private void addIncludesForTables(ReflectedTable t1, TreeMap<ReflectedTable> includes, ArrayList<Record> records,
 			DatabaseReflection tables, Params params, DSLContext dsl) {
-		if (includes == null) {
-			return;
-		}
-
 		for (ReflectedTable t2 : includes.getKeys()) {
 
 			boolean belongsTo = !t1.getFksTo(t2.getName()).isEmpty();
