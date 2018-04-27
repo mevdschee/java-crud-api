@@ -38,7 +38,7 @@ abstract class BaseCrudApiService implements CrudApiService {
 	@Override
 	public DatabaseRecords getDatabaseRecords() {
 		DatabaseRecords db = new DatabaseRecords();
-		for (String table : tables.tableNames()) {
+		for (String table : tables.getTableNames()) {
 			ArrayList<Record> records = new ArrayList<>();
 			for (Record record : list(table, new Params()).getRecords()) {
 				records.add(record);

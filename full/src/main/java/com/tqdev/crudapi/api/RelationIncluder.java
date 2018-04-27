@@ -86,7 +86,7 @@ public class RelationIncluder {
 	}
 
 	private ReflectedTable hasAndBelongsToMany(ReflectedTable t1, ReflectedTable t2, DatabaseReflection tables) {
-		for (String tableName : tables.tableNames()) {
+		for (String tableName : tables.getTableNames()) {
 			ReflectedTable t3 = tables.get(tableName);
 			if (!t3.getFksTo(t1.getName()).isEmpty() && !t3.getFksTo(t2.getName()).isEmpty()) {
 				return t3;

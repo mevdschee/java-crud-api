@@ -67,7 +67,7 @@ public class DatabaseReflection {
 		}
 	}
 
-	public Set<String> tableNames() {
+	public Set<String> getTableNames() {
 		return tables.keySet();
 	}
 }
