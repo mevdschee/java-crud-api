@@ -66,7 +66,7 @@ public class JooqCrudApiService extends BaseCrudApiService implements CrudApiSer
 			return null;
 		}
 		Record r = Record.valueOf(record.intoMap());
-		includer.addIncludes(table, r, tables, params, dsl);
+		includer.addIncludesToRecord(table, r, tables, params, dsl);
 		return r;
 	}
 
@@ -122,7 +122,7 @@ public class JooqCrudApiService extends BaseCrudApiService implements CrudApiSer
 		for (org.jooq.Record record : query.fetch()) {
 			records.add(Record.valueOf(record.intoMap()));
 		}
-		includer.addIncludes(table, records, tables, params, dsl);
+		includer.addIncludesToRecords(table, records, tables, params, dsl);
 		return new ListResponse(records.toArray(new Record[records.size()]), count);
 	}
 

@@ -55,10 +55,10 @@ public class RelationIncluder {
 		}
 	}
 
-	public void addIncludes(String tableName, Record record, DatabaseReflection tables, Params params, DSLContext dsl) {
+	public void addIncludesToRecord(String tableName, Record record, DatabaseReflection tables, Params params, DSLContext dsl) {
 		ArrayList<Record> records = new ArrayList<>();
 		records.add(record);
-		addIncludes(tableName, records, tables, params, dsl);
+		addIncludesToRecords(tableName, records, tables, params, dsl);
 	}
 
 	private TreeMap<ReflectedTable> getIncludesAsTreeMap(DatabaseReflection tables, Params params) {
@@ -78,7 +78,7 @@ public class RelationIncluder {
 		return includes;
 	}
 
-	public void addIncludes(String tableName, ArrayList<Record> records, DatabaseReflection tables, Params params,
+	public void addIncludesToRecords(String tableName, ArrayList<Record> records, DatabaseReflection tables, Params params,
 			DSLContext dsl) {
 
 		TreeMap<ReflectedTable> includes = getIncludesAsTreeMap(tables, params);
