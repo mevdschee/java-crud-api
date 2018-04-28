@@ -4,6 +4,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class HabtmValues {
-    protected HashMap<Object, ArrayList<Object>> pkValues = new HashMap<>();
-    protected HashMap<Object, Object> fkValues = new HashMap<>();
+
+    protected HashMap<Object, ArrayList<Object>> pkValues;
+    protected HashMap<Object, Object> fkValues;
+
+    public HabtmValues(HashMap<Object, ArrayList<Object>> pkValues, HashMap<Object, Object> fkValues) {
+        this.pkValues = pkValues;
+        this.fkValues = fkValues;
+    }
+
 }

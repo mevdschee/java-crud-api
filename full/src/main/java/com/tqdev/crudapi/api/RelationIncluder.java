@@ -248,10 +248,7 @@ public class RelationIncluder {
 			fkValues.put(val2, null);
 		}
 
-		HabtmValues habtmValues = new HabtmValues();
-		habtmValues.pkValues = pkValues;
-		habtmValues.fkValues = fkValues;
-		return habtmValues;
+		return new HabtmValues(pkValues, fkValues);
 	}
 
 	private void setHabtmValues(ReflectedTable t1, ReflectedTable t3, ArrayList<Record> records,
