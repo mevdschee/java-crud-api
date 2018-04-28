@@ -95,11 +95,6 @@ public class RelationIncluder {
 		return null;
 	}
 
-	private class HabtmValues {
-		protected HashMap<Object, ArrayList<Object>> pkValues = new HashMap<>();
-		protected HashMap<Object, Object> fkValues = new HashMap<>();
-	}
-
 	private void addIncludesForTables(ReflectedTable t1, TreeMap<ReflectedTable> includes, ArrayList<Record> records,
 			DatabaseReflection tables, Params params, DSLContext dsl) {
 		for (ReflectedTable t2 : includes.getKeys()) {
