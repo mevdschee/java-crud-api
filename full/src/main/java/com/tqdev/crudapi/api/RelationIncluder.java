@@ -55,12 +55,6 @@ public class RelationIncluder {
 		}
 	}
 
-	public void addIncludesToRecord(String tableName, Record record, DatabaseReflection tables, Params params, DSLContext dsl) {
-		ArrayList<Record> records = new ArrayList<>();
-		records.add(record);
-		addIncludesToRecords(tableName, records, tables, params, dsl);
-	}
-
 	private PathTree<String, Boolean> getIncludesAsPathTree(DatabaseReflection tables, Params params) {
 		PathTree<String, Boolean> includes = new PathTree<>();
 		if (params.containsKey("include")) {
@@ -78,8 +72,8 @@ public class RelationIncluder {
 		return includes;
 	}
 
-	public void addIncludesToRecords(String tableName, ArrayList<Record> records, DatabaseReflection tables, Params params,
-			DSLContext dsl) {
+	public void addIncludes(String tableName, ArrayList<Record> records, DatabaseReflection tables, Params params,
+							DSLContext dsl) {
 
 		PathTree<String, Boolean> includes = getIncludesAsPathTree(tables, params);
 		addIncludesForTables(tables.get(tableName), includes, records, tables, params, dsl);
