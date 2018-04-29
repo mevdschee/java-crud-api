@@ -13,8 +13,8 @@ import com.tqdev.crudapi.meta.reflection.ReflectedTable;
 
 public class TableDefinition {
 
-	protected String name = null;
-	protected LinkedHashMap<String, ColumnDefinition> columns = new LinkedHashMap<>();
+	private String name = null;
+	private LinkedHashMap<String, ColumnDefinition> columns = new LinkedHashMap<>();
 
 	public String getName() {
 		return name;

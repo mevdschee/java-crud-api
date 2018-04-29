@@ -4,9 +4,9 @@ import com.tqdev.crudapi.api.ErrorCode;
 
 public class ErrorDocument {
 
-	protected final int code;
+	private final int code;
 
-	protected final String message;
+	private final String message;
 
 	public ErrorDocument(ErrorCode error, String argument) {
 		this.code = error.value();

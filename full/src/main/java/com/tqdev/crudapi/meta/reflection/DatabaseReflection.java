@@ -10,11 +10,11 @@ import org.jooq.Table;
 
 public class DatabaseReflection {
 
-	protected DSLContext dsl;
+	private DSLContext dsl;
 
-	protected LinkedHashMap<String, ReflectedTable> tables;
+	private LinkedHashMap<String, ReflectedTable> tables;
 
-	protected String tablePrefix;
+	private String tablePrefix;
 
 	public DatabaseReflection(DSLContext dsl) {
 		this.dsl = dsl;

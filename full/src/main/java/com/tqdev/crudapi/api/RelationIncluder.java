@@ -18,7 +18,7 @@ import com.tqdev.crudapi.meta.reflection.ReflectedTable;
 
 public class RelationIncluder {
 
-	protected ColumnSelector columns;
+	private ColumnSelector columns;
 
 	public RelationIncluder(ColumnSelector columns) {
 		this.columns = columns;

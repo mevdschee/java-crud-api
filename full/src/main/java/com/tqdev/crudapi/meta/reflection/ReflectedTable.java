@@ -23,10 +23,10 @@ public class ReflectedTable extends CustomTable {
 	 * 
 	 */
 	private static final long serialVersionUID = -3688698737591901523L;
-	protected Table<?> table;
-	protected HashMap<String, TableField<?, ?>> fields = new LinkedHashMap<>();
-	protected HashMap<String, String> fks = new LinkedHashMap<>();
-	protected TableField<?, ?> pk = null;
+	private Table<?> table;
+	private HashMap<String, TableField<?, ?>> fields = new LinkedHashMap<>();
+	private HashMap<String, String> fks = new LinkedHashMap<>();
+	private TableField<?, ?> pk = null;
 
 	@SuppressWarnings("unchecked")
 	public ReflectedTable(Table<?> table) {

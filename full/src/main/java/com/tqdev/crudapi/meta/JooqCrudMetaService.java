@@ -10,11 +10,11 @@ import java.io.IOException;
 
 public class JooqCrudMetaService implements CrudMetaService {
 
-	protected DSLContext dsl;
+	private DSLContext dsl;
 
-	protected DatabaseReflection tables;
+	private DatabaseReflection tables;
 
-	protected OpenApiDefinition baseOpenApiDefinition;
+	private OpenApiDefinition baseOpenApiDefinition;
 
 	public JooqCrudMetaService(DSLContext dsl) {
 		this.dsl = dsl;

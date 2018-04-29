@@ -7,8 +7,8 @@ import com.tqdev.crudapi.api.Params;
 
 public class TableRecords {
 
-	protected String name = null;
-	protected ArrayList<Record> records = new ArrayList<>();
+	private String name = null;
+	private ArrayList<Record> records = new ArrayList<>();
 
 	public String getName() {
 		return name;

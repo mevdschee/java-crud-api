@@ -27,13 +27,13 @@ public class JooqCrudApiService extends BaseCrudApiService implements CrudApiSer
 
 	public static final Logger logger = LoggerFactory.getLogger(JooqCrudApiService.class);
 
-	protected DSLContext dsl;
+	private DSLContext dsl;
 
-	protected ColumnSelector columns;
-	protected RelationIncluder includer;
-	protected FilterInfo filters;
-	protected OrderingInfo ordering;
-	protected PaginationInfo pagination;
+	private ColumnSelector columns;
+	private RelationIncluder includer;
+	private FilterInfo filters;
+	private OrderingInfo ordering;
+	private PaginationInfo pagination;
 
 	public JooqCrudApiService(DSLContext dsl, CrudMetaService meta) {
 		this.dsl = dsl;

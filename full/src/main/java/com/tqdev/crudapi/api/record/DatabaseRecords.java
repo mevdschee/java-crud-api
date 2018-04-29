@@ -15,7 +15,7 @@ import com.tqdev.crudapi.api.CrudApiService;
 
 public class DatabaseRecords {
 
-	protected LinkedHashMap<String, TableRecords> tables = new LinkedHashMap<>();
+	private LinkedHashMap<String, TableRecords> tables = new LinkedHashMap<>();
 
 	public Collection<TableRecords> getTables() {
 		return tables.values();

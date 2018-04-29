@@ -23,7 +23,7 @@ import com.tqdev.crudapi.meta.definition.TableDefinition;
 
 public class OpenApiDefinition {
 
-	protected ObjectNode root;
+	private ObjectNode root;
 
 	public OpenApiDefinition() {
 		ObjectMapper mapper = new ObjectMapper();

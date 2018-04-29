@@ -5,8 +5,8 @@ import java.util.HashMap;
 
 public class HabtmValues {
 
-    protected HashMap<Object, ArrayList<Object>> pkValues;
-    protected HashMap<Object, Object> fkValues;
+    public HashMap<Object, ArrayList<Object>> pkValues;
+    public HashMap<Object, Object> fkValues;
 
     public HabtmValues(HashMap<Object, ArrayList<Object>> pkValues, HashMap<Object, Object> fkValues) {
         this.pkValues = pkValues;

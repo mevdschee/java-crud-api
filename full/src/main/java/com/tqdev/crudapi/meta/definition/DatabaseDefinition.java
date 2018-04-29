@@ -19,7 +19,7 @@ public class DatabaseDefinition {
 
 	public static final Logger logger = LoggerFactory.getLogger(DatabaseDefinition.class);
 
-	protected LinkedHashMap<String, TableDefinition> tables;
+	private LinkedHashMap<String, TableDefinition> tables;
 
 	public Collection<TableDefinition> getTables() {
 		return tables.values();

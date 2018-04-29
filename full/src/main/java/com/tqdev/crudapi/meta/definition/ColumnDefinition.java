@@ -11,14 +11,14 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
 public class ColumnDefinition {
 
-	protected String name = null;
-	protected String type;
-	protected int length = -1;
-	protected int precision = -1;
-	protected int scale = -1;
-	protected boolean nullable = false;
-	protected boolean pk = false;
-	protected String fk = null;
+	private String name = null;
+	private String type;
+	private int length = -1;
+	private int precision = -1;
+	private int scale = -1;
+	private boolean nullable = false;
+	private boolean pk = false;
+	private String fk = null;
 
 	public String getName() {
 		return name;
@@ -85,7 +85,7 @@ public class ColumnDefinition {
 	}
 
 	// hackety hack
-	protected void override(DSLContext dsl) {
+	private void override(DSLContext dsl) {
 		if (dsl.dialect() == SQLDialect.H2) {
 			if (type.equals("geometry")) {
 				type = "nclob";

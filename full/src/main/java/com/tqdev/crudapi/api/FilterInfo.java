@@ -12,7 +12,7 @@ import com.tqdev.crudapi.meta.reflection.ReflectedTable;
 
 public class FilterInfo {
 
-	protected void addConditionFromFilteraPath(PathTree<Character, Condition> conditions, LinkedList<Character> path,
+	private void addConditionFromFilteraPath(PathTree<Character, Condition> conditions, LinkedList<Character> path,
 			ReflectedTable table, Params params) {
 		String key = "filter";
 		for (Character c : path) {
@@ -28,7 +28,7 @@ public class FilterInfo {
 		}
 	}
 
-	protected PathTree<Character, Condition> getConditionsAsPathTree(ReflectedTable table, Params params) {
+	private PathTree<Character, Condition> getConditionsAsPathTree(ReflectedTable table, Params params) {
 		PathTree<Character, Condition> conditions = new PathTree<>();
 		LinkedList<Character> path0 = new LinkedList<>();
 		addConditionFromFilteraPath(conditions, path0, table, params);
@@ -46,7 +46,7 @@ public class FilterInfo {
 		return conditions;
 	}
 
-	protected Condition combinePathTreeOfConditions(PathTree<Character, Condition> tree) {
+	private Condition combinePathTreeOfConditions(PathTree<Character, Condition> tree) {
 		ArrayList<Condition> conditions = tree.getValues();
 		Condition and = null;
 		for (Condition condition : conditions) {
@@ -82,7 +82,7 @@ public class FilterInfo {
 		return combinePathTreeOfConditions(getConditionsAsPathTree(table, params));
 	}
 
-	protected Condition getConditionFromString(ReflectedTable table, String value) {
+	private Condition getConditionFromString(ReflectedTable table, String value) {
 		Condition condition = null;
 		String[] parts2;
 		String[] parts = value.split(",", 3);
