@@ -347,14 +347,14 @@ public class SampleTests {
 	}
 
 	@Test
-	public void test43ErrorOnInvalidJson() throws Exception {
+	public void test043ErrorOnInvalidJson() throws Exception {
 		mockMvc.perform(post("/data/posts").contentType("application/json").content("{\"}"))
 				.andExpect(status().isNotAcceptable())
 				.andExpect(content().string("{\"code\":1008,\"message\":\"Cannot read HTTP message\"}"));
 	}
 
 	@Test
-	public void test44ErrorOnDuplicatePrimaryKey() throws Exception {
+	public void test044ErrorOnDuplicatePrimaryKey() throws Exception {
 		mockMvc.perform(post("/data/posts").contentType("application/json")
 				.content("{\"id\":1,\"user_id\":1,\"category_id\":1,\"content\":\"blog started (duplicate)\"}"))
 				.andExpect(status().isNotAcceptable())
@@ -362,7 +362,7 @@ public class SampleTests {
 	}
 
 	@Test
-	public void test45ErrorOnFailingForeignKeyConstraint() throws Exception {
+	public void test045ErrorOnFailingForeignKeyConstraint() throws Exception {
 		mockMvc.perform(post("/data/posts").contentType("application/json")
 				.content("{\"user_id\":3,\"category_id\":1,\"content\":\"fk constraint\"}"))
 				.andExpect(status().isNotAcceptable())
@@ -370,19 +370,19 @@ public class SampleTests {
 	}
 
 	@Test
-	public void test46ErrorOnNonExistingTable() throws Exception {
+	public void test046ErrorOnNonExistingTable() throws Exception {
 		mockMvc.perform(get("/data/postzzz")).andExpect(status().isNotFound())
 				.andExpect(content().string("{\"code\":1001,\"message\":\"Table 'postzzz' not found\"}"));
 	}
 
 	@Test
-	public void test47ErrorOnInvalidPath() throws Exception {
+	public void test047ErrorOnInvalidPath() throws Exception {
 		mockMvc.perform(get("/postzzz")).andExpect(status().isNotFound())
 				.andExpect(content().string("{\"code\":1000,\"message\":\"Route '/postzzz' not found\"}"));
 	}
 
 	@Test
-	public void test48ErrorOnInvalidArgumentCount() throws Exception {
+	public void test048ErrorOnInvalidArgumentCount() throws Exception {
 		mockMvc.perform(put("/data/posts/1,2").contentType("application/json")
 				.content("{\"id\":1,\"user_id\":1,\"category_id\":1,\"content\":\"blog started\"}"))
 				.andExpect(status().isNotAcceptable())
@@ -390,7 +390,7 @@ public class SampleTests {
 	}
 
 	@Test
-	public void test49ErrorOnInvalidArgumentCount() throws Exception {
+	public void test049ErrorOnInvalidArgumentCount() throws Exception {
 		mockMvc.perform(put("/data/posts/1,2").contentType("application/json")
 				.content("[{\"id\":1,\"user_id\":1,\"category_id\":1,\"content\":\"blog started\"}]"))
 				.andExpect(status().isNotAcceptable())
@@ -398,14 +398,14 @@ public class SampleTests {
 	}
 
 	@Test
-	public void test50NoErrorOnArgumentCountOne() throws Exception {
+	public void test050NoErrorOnArgumentCountOne() throws Exception {
 		mockMvc.perform(put("/data/posts/1").contentType("application/json")
 				.content("[{\"id\":1,\"user_id\":1,\"category_id\":1,\"content\":\"blog started\"}]"))
 				.andExpect(status().isOk()).andExpect(content().string("[1]"));
 	}
 
 	@Test
-	public void test51ErrorOnInvalidArgumentCount() throws Exception {
+	public void test051ErrorOnInvalidArgumentCount() throws Exception {
 		mockMvc.perform(put("/data/posts/1").contentType("application/json").content("[{\"id\":1},{\"id\":2}]"))
 				.andExpect(status().isNotAcceptable())
 				.andExpect(content().string("{\"code\":1002,\"message\":\"Argument count mismatch in '1'\"}"));
@@ -435,43 +435,43 @@ public class SampleTests {
 	}
 
 	@Test
-	public void test55FilterCategoryOnNullIcon() throws Exception {
+	public void test055FilterCategoryOnNullIcon() throws Exception {
 		mockMvc.perform(get("/data/categories?filter=icon,is,null")).andExpect(status().isOk()).andExpect(content()
 				.string("{\"records\":[{\"id\":1,\"name\":\"announcement\",\"icon\":null},{\"id\":2,\"name\":\"article\",\"icon\":null}]}"));
 	}
 
 	@Test
-	public void test56FilterCategoryOnNotNullIcon() throws Exception {
+	public void test056FilterCategoryOnNotNullIcon() throws Exception {
 		mockMvc.perform(get("/data/categories?filter=icon,nis,null")).andExpect(status().isOk())
 				.andExpect(content().string("{\"records\":[]}"));
 	}
 
 	@Test
-	public void test57FilterOnAnd() throws Exception {
+	public void test057FilterOnAnd() throws Exception {
 		mockMvc.perform(get("/data/posts?columns=id&filter=id,ge,1&filter=id,le,2")).andExpect(status().isOk())
 				.andExpect(content().string("{\"records\":[{\"id\":1},{\"id\":2}]}"));
 	}
 
 	@Test
-	public void test58FilterOnOr() throws Exception {
+	public void test058FilterOnOr() throws Exception {
 		mockMvc.perform(get("/data/posts?columns=id&filter1=id,eq,1&filter2=id,eq,2")).andExpect(status().isOk())
 				.andExpect(content().string("{\"records\":[{\"id\":1},{\"id\":2}]}"));
 	}
 
 	@Test
-	public void test59FilterOnAndPlusOr() throws Exception {
+	public void test059FilterOnAndPlusOr() throws Exception {
 		mockMvc.perform(get("/data/posts?columns=id&filter1=id,eq,1&filter2=id,gt,1&filter2=id,lt,3"))
 				.andExpect(status().isOk()).andExpect(content().string("{\"records\":[{\"id\":1},{\"id\":2}]}"));
 	}
 
 	@Test
-	public void test60FilterOnOrPlusAnd() throws Exception {
+	public void test060FilterOnOrPlusAnd() throws Exception {
 		mockMvc.perform(get("/data/posts?columns=id&filter1=id,eq,1&filter2=id,eq,2&filter=user_id,eq,1"))
 				.andExpect(status().isOk()).andExpect(content().string("{\"records\":[{\"id\":1},{\"id\":2}]}"));
 	}
 
 	@Test
-	public void test60GetPostContentWithIncludedTagNames() throws Exception {
+	public void test060GetPostContentWithIncludedTagNames() throws Exception {
 		mockMvc.perform(get("/data/posts/1?columns=content,tags.name&include=tags")).andExpect(status().isOk())
 				.andExpect(content().string(
 						"{\"id\":1,\"content\":\"blog started\",\"post_tags\":[{\"id\":1,\"name\":\"funny\"},{\"id\":2,\"name\":\"important\"}]}"));
