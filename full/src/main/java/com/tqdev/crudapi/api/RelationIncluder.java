@@ -61,18 +61,19 @@ public class RelationIncluder {
 		addIncludesToRecords(tableName, records, tables, params, dsl);
 	}
 
-	private TreeMap<ReflectedTable> getIncludesAsTreeMap(DatabaseReflection tables, Params params) {
-		TreeMap<ReflectedTable> includes = new TreeMap<>();
+	private PathTree<String, ReflectedTable> getIncludesAsPathTree(DatabaseReflection tables, Params params) {
+		PathTree<String, ReflectedTable> includes = new PathTree<>();
 		if (params.containsKey("include")) {
 			for (String includedTableNames : params.get("include")) {
-				LinkedList<ReflectedTable> path = new LinkedList<>();
+				LinkedList<String> path = new LinkedList<>();
+				ReflectedTable t = null;
 				for (String includedTableName : includedTableNames.split(",")) {
-					ReflectedTable t = tables.get(includedTableName);
+					t = tables.get(includedTableName);
 					if (t != null) {
-						path.add(t);
+						path.add(t.getName());
 					}
 				}
-				includes.put(path);
+				includes.put(path, t);
 			}
 		}
 		return includes;
@@ -81,7 +82,7 @@ public class RelationIncluder {
 	public void addIncludesToRecords(String tableName, ArrayList<Record> records, DatabaseReflection tables, Params params,
 			DSLContext dsl) {
 
-		TreeMap<ReflectedTable> includes = getIncludesAsTreeMap(tables, params);
+		PathTree<String, ReflectedTable> includes = getIncludesAsPathTree(tables, params);
 		addIncludesForTables(tables.get(tableName), includes, records, tables, params, dsl);
 	}
 
@@ -95,9 +96,11 @@ public class RelationIncluder {
 		return null;
 	}
 
-	private void addIncludesForTables(ReflectedTable t1, TreeMap<ReflectedTable> includes, ArrayList<Record> records,
+	private void addIncludesForTables(ReflectedTable t1, PathTree<String, ReflectedTable> includes, ArrayList<Record> records,
 			DatabaseReflection tables, Params params, DSLContext dsl) {
-		for (ReflectedTable t2 : includes.getKeys()) {
+		for (String t2Name : includes.getKeys()) {
+
+			ReflectedTable t2 = tables.get(t2Name);
 
 			boolean belongsTo = !t1.getFksTo(t2.getName()).isEmpty();
 			boolean hasMany = !t2.getFksTo(t1.getName()).isEmpty();
@@ -122,7 +125,7 @@ public class RelationIncluder {
 				addFkRecords(t2, habtmValues.fkValues, params, dsl, newRecords);
 			}
 
-			addIncludesForTables(t2, includes.get(t2), newRecords, tables, params, dsl);
+			addIncludesForTables(t2, includes.get(t2Name), newRecords, tables, params, dsl);
 
 			if (fkValues != null) {
 				fillFkValues(t2, newRecords, fkValues);
@@ -157,7 +160,7 @@ public class RelationIncluder {
 	private void addFkRecords(ReflectedTable t2, HashMap<Object, Object> fkValues, Params params, DSLContext dsl,
 			ArrayList<Record> records) {
 		Field<Object> pk = t2.getPk();
-		ArrayList<Field<?>> fields = columns.getColumnNames(t2, false, params);
+		ArrayList<Field<?>> fields = columns.getNames(t2, false, params);
 		ResultQuery<org.jooq.Record> query = dsl.select(fields).from(t2).where(pk.in(fkValues.keySet()));
 		for (org.jooq.Record record : query.fetch()) {
 			records.add(Record.valueOf(record.intoMap()));
@@ -198,7 +201,7 @@ public class RelationIncluder {
 	private void addPkRecords(ReflectedTable t1, ReflectedTable t2, HashMap<Object, ArrayList<Object>> pkValues,
 			Params params, DSLContext dsl, ArrayList<Record> records) {
 		List<Field<Object>> fks = t2.getFksTo(t1.getName());
-		ArrayList<Field<?>> fields = columns.getColumnNames(t2, false, params);
+		ArrayList<Field<?>> fields = columns.getNames(t2, false, params);
 		Condition condition = DSL.falseCondition();
 		for (Field<Object> fk : fks) {
 			condition = condition.or(fk.in(pkValues.keySet()));

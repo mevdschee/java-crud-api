@@ -59,8 +59,8 @@ public class ColumnSelector {
 		return results;
 	}
 
-	public LinkedHashMap<Field<?>, Object> getColumnValues(ReflectedTable table, boolean primaryTable, Record record,
-			Params params) {
+	public LinkedHashMap<Field<?>, Object> getValues(ReflectedTable table, boolean primaryTable, Record record,
+													 Params params) {
 		LinkedHashMap<Field<?>, Object> columns = new LinkedHashMap<>();
 		Set<String> cols = columns(table, primaryTable, params);
 		for (String key : cols) {
@@ -78,8 +78,8 @@ public class ColumnSelector {
 		return columns;
 	}
 
-	public LinkedHashMap<Field<?>, Object> getColumnIncrements(ReflectedTable table, boolean primaryTable,
-			Record record, Params params) {
+	public LinkedHashMap<Field<?>, Object> getIncrements(ReflectedTable table, boolean primaryTable,
+														 Record record, Params params) {
 		LinkedHashMap<Field<?>, Object> columns = new LinkedHashMap<>();
 		Set<String> cols = columns(table, primaryTable, params);
 		for (String key : cols) {
@@ -94,7 +94,7 @@ public class ColumnSelector {
 		return columns;
 	}
 
-	public ArrayList<Field<?>> getColumnNames(ReflectedTable table, boolean primaryTable, Params params) {
+	public ArrayList<Field<?>> getNames(ReflectedTable table, boolean primaryTable, Params params) {
 		ArrayList<Field<?>> columns = new ArrayList<>();
 		for (String key : columns(table, primaryTable, params)) {
 			Field<?> field = table.get(key);
