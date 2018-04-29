@@ -78,13 +78,8 @@ public class FilterInfo {
 		return and;
 	}
 
-	public ArrayList<Condition> getConditions(ReflectedTable table, Params params) {
-		ArrayList<Condition> conditions = new ArrayList<>();
-		Condition condition = combinePathTreeOfConditions(getConditionsAsPathTree(table, params));
-		if (condition != null) {
-			conditions.add(condition);
-		}
-		return conditions;
+	public Condition getCombinedConditions(ReflectedTable table, Params params) {
+		return combinePathTreeOfConditions(getConditionsAsPathTree(table, params));
 	}
 
 	protected Condition getConditionFromString(ReflectedTable table, String value) {

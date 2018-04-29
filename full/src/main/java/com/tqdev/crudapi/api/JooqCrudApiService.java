@@ -105,21 +105,21 @@ public class JooqCrudApiService extends BaseCrudApiService implements CrudApiSer
 		ReflectedTable t = tables.get(table);
 		includer.addMandatoryColumns(table, tables, params);
 		ArrayList<Field<?>> columnNames = columns.getNames(t, true, params);
-		ArrayList<Condition> conditions = filters.getConditions(t, params);
+		Condition condition= filters.getCombinedConditions(t, params);
 		ArrayList<SortField<?>> columnOrdering = ordering.getColumnOrdering(t, params);
 		int count = 0;
 		ResultQuery<org.jooq.Record> query;
 		if (!pagination.hasPage(params)) {
 			int size = pagination.getResultSize(params);
-			query = dsl.select(columnNames).from(t).where(conditions).orderBy(columnOrdering);
+			query = dsl.select(columnNames).from(t).where(condition).orderBy(columnOrdering);
 			if (size != -1) {
 				query = ((SelectLimitStep<org.jooq.Record>) query).limit(size);
 			}
 		} else {
 			int offset = pagination.getPageOffset(params);
 			int limit = pagination.getPageSize(params);
-			count = (int) dsl.select(DSL.count()).from(t).where(conditions).fetchOne(0);
-			query = dsl.select(columnNames).from(t).where(conditions).orderBy(columnOrdering).limit(offset, limit);
+			count = (int) dsl.select(DSL.count()).from(t).where(condition).fetchOne(0);
+			query = dsl.select(columnNames).from(t).where(condition).orderBy(columnOrdering).limit(offset, limit);
 		}
 		for (org.jooq.Record record : query.fetch()) {
 			records.add(Record.valueOf(record.intoMap()));
