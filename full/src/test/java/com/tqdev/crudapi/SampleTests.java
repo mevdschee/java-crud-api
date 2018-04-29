@@ -262,7 +262,7 @@ public class SampleTests {
 		mockMvc.perform(
 				get("/data/posts?columns=tags.name&include=categories&include=post_tags,tags&include=comments&filter=id,eq,1"))
 				.andExpect(status().isOk()).andExpect(content().string(
-						"{\"records\":[{\"id\":1,\"category_id\":{\"id\":1},\"post_tags\":[{\"post_id\":1,\"tag_id\":{\"id\":1,\"name\":\"funny\"}},{\"post_id\":1,\"tag_id\":{\"id\":2,\"name\":\"important\"}}],\"comments\":[{\"post_id\":1},{\"post_id\":1}]}]}"));
+							"{\"records\":[{\"id\":1,\"category_id\":{\"id\":1},\"post_tags\":[{\"post_id\":1,\"tag_id\":{\"id\":1,\"name\":\"funny\"}},{\"post_id\":1,\"tag_id\":{\"id\":2,\"name\":\"important\"}}],\"comments\":[{\"post_id\":1},{\"post_id\":1}]}]}"));
 	}
 
 	@Test

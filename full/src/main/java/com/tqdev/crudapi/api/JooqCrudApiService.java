@@ -47,84 +47,84 @@ public class JooqCrudApiService extends BaseCrudApiService implements CrudApiSer
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public String create(String table, Record record, Params params) {
-		sanitizeRecord(table, record, null);
-		ReflectedTable t = tables.get(table);
-		LinkedHashMap<Field<?>, Object> columnValues = columns.getValues(t, true, record, params);
-		Field<Object> pk = tables.get(table).getPk();
-		org.jooq.Record result = dsl.insertInto(t).set(columnValues).returning(pk).fetchOne();
+	public String create(String tableName, Record record, Params params) {
+		sanitizeRecord(tableName, record, null);
+		ReflectedTable table = tables.get(tableName);
+		LinkedHashMap<Field<?>, Object> columnValues = columns.getValues(table, true, record, params);
+		Field<Object> pk = tables.get(tableName).getPk();
+		org.jooq.Record result = dsl.insertInto(table).set(columnValues).returning(pk).fetchOne();
 		return String.valueOf(result.get(0));
 	}
 
 	@Override
-	public Record read(String table, String id, Params params) {
-		ReflectedTable t = tables.get(table);
+	public Record read(String tableName, String id, Params params) {
+		ReflectedTable table = tables.get(tableName);
 		includer.addMandatoryColumns(table, tables, params);
-		ArrayList<Field<?>> columnNames = columns.getNames(t, true, params);
-		Field<Object> pk = tables.get(table).getPk();
-		org.jooq.Record record = dsl.select(columnNames).from(t).where(pk.eq(id)).fetchOne();
+		ArrayList<Field<?>> columnNames = columns.getNames(table, true, params);
+		Field<Object> pk = tables.get(tableName).getPk();
+		org.jooq.Record record = dsl.select(columnNames).from(table).where(pk.eq(id)).fetchOne();
 		if (record == null) {
 			return null;
 		}
 		Record r = Record.valueOf(record.intoMap());
 		ArrayList<Record> records = new ArrayList<>(Arrays.asList(r));
-		includer.addIncludes(table, records, tables, params, dsl);
+		includer.addIncludes(tableName, records, tables, params, dsl);
 		return r;
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public int update(String table, String id, Record record, Params params) {
-		sanitizeRecord(table, record, id);
-		ReflectedTable t = tables.get(table);
-		LinkedHashMap<Field<?>, Object> columnValues = columns.getValues(t, true, record, params);
-		Field<Object> pk = tables.get(table).getPk();
-		return dsl.update(t).set(columnValues).where(pk.eq(id)).execute();
+	public int update(String tableName, String id, Record record, Params params) {
+		sanitizeRecord(tableName, record, id);
+		ReflectedTable table = tables.get(tableName);
+		LinkedHashMap<Field<?>, Object> columnValues = columns.getValues(table, true, record, params);
+		Field<Object> pk = tables.get(tableName).getPk();
+		return dsl.update(table).set(columnValues).where(pk.eq(id)).execute();
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public int increment(String table, String id, Record record, Params params) {
-		sanitizeRecord(table, record, id);
-		ReflectedTable t = tables.get(table);
-		LinkedHashMap<Field<?>, Object> columnValues = columns.getValues(t, true, record, params);
-		Field<Object> pk = tables.get(table).getPk();
-		return dsl.update(t).set(columnValues).where(pk.eq(id)).execute();
+	public int increment(String tableName, String id, Record record, Params params) {
+		sanitizeRecord(tableName, record, id);
+		ReflectedTable table = tables.get(tableName);
+		LinkedHashMap<Field<?>, Object> columnValues = columns.getValues(table, true, record, params);
+		Field<Object> pk = tables.get(tableName).getPk();
+		return dsl.update(table).set(columnValues).where(pk.eq(id)).execute();
 	}
 
 	@Override
-	public int delete(String table, String id, Params params) {
-		Table<?> t = tables.get(table);
-		Field<Object> pk = tables.get(table).getPk();
-		return dsl.deleteFrom(t).where(pk.eq(id)).execute();
+	public int delete(String tableName, String id, Params params) {
+		Table<?> table = tables.get(tableName);
+		Field<Object> pk = tables.get(tableName).getPk();
+		return dsl.deleteFrom(table).where(pk.eq(id)).execute();
 	}
 
 	@Override
-	public ListResponse list(String table, Params params) {
+	public ListResponse list(String tableName, Params params) {
 		ArrayList<Record> records = new ArrayList<>();
-		ReflectedTable t = tables.get(table);
+		ReflectedTable table = tables.get(tableName);
 		includer.addMandatoryColumns(table, tables, params);
-		ArrayList<Field<?>> columnNames = columns.getNames(t, true, params);
-		Condition condition= filters.getCombinedConditions(t, params);
-		ArrayList<SortField<?>> columnOrdering = ordering.getColumnOrdering(t, params);
+		ArrayList<Field<?>> columnNames = columns.getNames(table, true, params);
+		Condition condition= filters.getCombinedConditions(table, params);
+		ArrayList<SortField<?>> columnOrdering = ordering.getColumnOrdering(table, params);
 		int count = 0;
 		ResultQuery<org.jooq.Record> query;
 		if (!pagination.hasPage(params)) {
 			int size = pagination.getResultSize(params);
-			query = dsl.select(columnNames).from(t).where(condition).orderBy(columnOrdering);
+			query = dsl.select(columnNames).from(table).where(condition).orderBy(columnOrdering);
 			if (size != -1) {
 				query = ((SelectLimitStep<org.jooq.Record>) query).limit(size);
 			}
 		} else {
 			int offset = pagination.getPageOffset(params);
 			int limit = pagination.getPageSize(params);
-			count = (int) dsl.select(DSL.count()).from(t).where(condition).fetchOne(0);
-			query = dsl.select(columnNames).from(t).where(condition).orderBy(columnOrdering).limit(offset, limit);
+			count = (int) dsl.select(DSL.count()).from(table).where(condition).fetchOne(0);
+			query = dsl.select(columnNames).from(table).where(condition).orderBy(columnOrdering).limit(offset, limit);
 		}
 		for (org.jooq.Record record : query.fetch()) {
 			records.add(Record.valueOf(record.intoMap()));
 		}
-		includer.addIncludes(table, records, tables, params, dsl);
+		includer.addIncludes(tableName, records, tables, params, dsl);
 		return new ListResponse(records.toArray(new Record[records.size()]), count);
 	}
 

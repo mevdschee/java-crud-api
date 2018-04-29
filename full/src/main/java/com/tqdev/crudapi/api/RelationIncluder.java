@@ -24,14 +24,14 @@ public class RelationIncluder {
 		this.columns = columns;
 	}
 
-	public void addMandatoryColumns(String tableName, DatabaseReflection tables, Params params) {
+	public void addMandatoryColumns(ReflectedTable table, DatabaseReflection tables, Params params) {
 		if (!params.containsKey("include") || !params.containsKey("columns")) {
 			return;
 		}
-		for (String includedTableNames : params.get("include")) {
-			ReflectedTable t1 = tables.get(tableName);
-			for (String includedTableName : includedTableNames.split(",")) {
-				ReflectedTable t2 = tables.get(includedTableName);
+		for (String tableNames : params.get("include")) {
+			ReflectedTable t1 = table;
+			for (String tableName : tableNames.split(",")) {
+				ReflectedTable t2 = tables.get(tableName);
 				if (t2 == null) {
 					continue;
 				}
