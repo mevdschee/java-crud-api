@@ -323,7 +323,7 @@ public class SampleTests {
 
 	@Test
 	public void test040AddPostFailure() throws Exception {
-		mockMvc.perform(post("/data/posts").contentType("application/json")).andExpect(status().isNotAcceptable())
+		mockMvc.perform(post("/data/posts").contentType("application/json").content("[\"truncat")).andExpect(status().isNotAcceptable())
 				.andExpect(content().string("{\"code\":1008,\"message\":\"Cannot read HTTP message\"}"));
 	}
 
