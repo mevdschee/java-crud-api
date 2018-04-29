@@ -61,19 +61,18 @@ public class RelationIncluder {
 		addIncludesToRecords(tableName, records, tables, params, dsl);
 	}
 
-	private PathTree<String, ReflectedTable> getIncludesAsPathTree(DatabaseReflection tables, Params params) {
-		PathTree<String, ReflectedTable> includes = new PathTree<>();
+	private PathTree<String, Boolean> getIncludesAsPathTree(DatabaseReflection tables, Params params) {
+		PathTree<String, Boolean> includes = new PathTree<>();
 		if (params.containsKey("include")) {
 			for (String includedTableNames : params.get("include")) {
 				LinkedList<String> path = new LinkedList<>();
-				ReflectedTable t = null;
 				for (String includedTableName : includedTableNames.split(",")) {
-					t = tables.get(includedTableName);
+					ReflectedTable t = tables.get(includedTableName);
 					if (t != null) {
 						path.add(t.getName());
 					}
 				}
-				includes.put(path, t);
+				includes.put(path, true);
 			}
 		}
 		return includes;
@@ -82,7 +81,7 @@ public class RelationIncluder {
 	public void addIncludesToRecords(String tableName, ArrayList<Record> records, DatabaseReflection tables, Params params,
 			DSLContext dsl) {
 
-		PathTree<String, ReflectedTable> includes = getIncludesAsPathTree(tables, params);
+		PathTree<String, Boolean> includes = getIncludesAsPathTree(tables, params);
 		addIncludesForTables(tables.get(tableName), includes, records, tables, params, dsl);
 	}
 
@@ -96,7 +95,7 @@ public class RelationIncluder {
 		return null;
 	}
 
-	private void addIncludesForTables(ReflectedTable t1, PathTree<String, ReflectedTable> includes, ArrayList<Record> records,
+	private void addIncludesForTables(ReflectedTable t1, PathTree<String, Boolean> includes, ArrayList<Record> records,
 			DatabaseReflection tables, Params params, DSLContext dsl) {
 		for (String t2Name : includes.getKeys()) {
 
