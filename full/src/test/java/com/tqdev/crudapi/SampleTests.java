@@ -329,7 +329,7 @@ public class SampleTests {
 
 	@Test
 	public void test041CorsPreFlight() throws Exception {
-		mockMvc.perform(options("/data/posts").header("Origin", "http://example.com")
+		mockMvc.perform(options("/data/posts/1?columns=id").header("Origin", "http://example.com")
 				.header("Access-Control-Request-Method", "POST")
 				.header("Access-Control-Request-Headers", "X-XSRF-TOKEN, X-Requested-With")).andExpect(status().isOk())
 				.andExpect(header().string("Access-Control-Allow-Origin", "http://example.com"))
@@ -341,7 +341,7 @@ public class SampleTests {
 
 	@Test
 	public void test042CorsHeaders() throws Exception {
-		mockMvc.perform(get("/data/posts").header("Origin", "http://example.com")).andExpect(status().isOk())
+		mockMvc.perform(get("/data/posts/1?columns=id").header("Origin", "http://example.com")).andExpect(status().isOk())
 				.andExpect(header().string("Access-Control-Allow-Origin", "http://example.com"))
 				.andExpect(header().string("Access-Control-Allow-Credentials", "true"));
 	}
