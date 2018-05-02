@@ -333,8 +333,8 @@ public class SampleTests {
 				.header("Access-Control-Request-Method", "POST")
 				.header("Access-Control-Request-Headers", "X-XSRF-TOKEN, X-Requested-With")).andExpect(status().isOk())
 				.andExpect(header().string("Access-Control-Allow-Origin", "http://example.com"))
-				.andExpect(header().string("Access-Control-Allow-Headers", "X-XSRF-TOKEN, X-Requested-With"))
-				.andExpect(header().string("Access-Control-Allow-Methods", "POST"))
+				.andExpect(header().string("Access-Control-Allow-Headers", "X-XSRF-TOKEN"))
+				.andExpect(header().string("Access-Control-Allow-Methods", "OPTIONS,GET,PUT,POST,DELETE,PATCH"))
 				.andExpect(header().string("Access-Control-Allow-Credentials", "true"))
 				.andExpect(header().string("Access-Control-Max-Age", "1728000"));
 	}
