@@ -471,7 +471,7 @@ public class SampleTests {
 	}
 
 	@Test
-	public void test060GetPostContentWithIncludedTagNames() throws Exception {
+	public void test061GetPostContentWithIncludedTagNames() throws Exception {
 		mockMvc.perform(get("/data/posts/1?columns=content,tags.name&include=tags")).andExpect(status().isOk())
 				.andExpect(content().string(
 						"{\"id\":1,\"content\":\"blog started\",\"post_tags\":[{\"id\":1,\"name\":\"funny\"},{\"id\":2,\"name\":\"important\"}]}"));
