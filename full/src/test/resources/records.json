@@ -163,6 +163,15 @@
 					"tag_id": 2
 				}
 			]
+		},
+		{
+			"name": "kunsthåndværk",
+			"records": [
+				{
+					"id": 1,
+					"Umlauts ä_ö_ü-COUNT": 1
+				}
+			]
 		}
 	]
 }

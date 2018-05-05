@@ -243,6 +243,20 @@
 					"type":"bit"
 				}
 			]
+		},
+		{
+			"name":"kunsthåndværk",
+			"columns":[
+				{
+					"name":"id",
+					"pk":true,
+					"type":"integer"
+				},
+				{
+					"name":"Umlauts ä_ö_ü-COUNT",
+					"type":"integer"
+				}
+			]
 		}
 	]
 }

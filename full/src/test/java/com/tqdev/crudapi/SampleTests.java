@@ -476,4 +476,11 @@ public class SampleTests {
 				.andExpect(content().string(
 						"{\"id\":1,\"content\":\"blog started\",\"post_tags\":[{\"id\":1,\"name\":\"funny\"},{\"id\":2,\"name\":\"important\"}]}"));
 	}
+
+	@Test
+	public void test062GetKunsthåndværk() throws Exception {
+   		mockMvc.perform(get("/data/kunsthåndværk").contentType("text/html; charset=UTF-8")).andExpect(status().isOk())
+				.andExpect(content().string(
+						"{\"records\":[{\"id\":1,\"Umlauts ä_ö_ü-COUNT\":1}]}"));
+	}
 }
