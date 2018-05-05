@@ -1,7 +1,6 @@
 server:
   port: 8080
   contextPath: /
-  URIEncoding: "UTF-8"
 
 spring:
   jooq:
