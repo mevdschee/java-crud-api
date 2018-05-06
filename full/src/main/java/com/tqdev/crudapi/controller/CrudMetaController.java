@@ -13,15 +13,15 @@ import com.tqdev.crudapi.meta.CrudMetaService;
 
 @RestController
 @RequestMapping("/meta")
-public class MetadataController extends BaseController {
+public class CrudMetaController extends BaseController {
 
-	public static final Logger logger = LoggerFactory.getLogger(MetadataController.class);
-
-	@Autowired
-	CrudApiService crudService;
+	public static final Logger logger = LoggerFactory.getLogger(CrudMetaController.class);
 
 	@Autowired
 	CrudMetaService metaService;
+
+	@Autowired
+	CrudApiService apiService;
 
 	@RequestMapping(value = "/columns", method = RequestMethod.GET)
 	public ResponseEntity<?> columns() {
@@ -32,7 +32,7 @@ public class MetadataController extends BaseController {
 	@RequestMapping(value = "/records", method = RequestMethod.GET)
 	public ResponseEntity<?> records() {
 		logger.info("Requesting records meta data");
-		return success(crudService.getDatabaseRecords());
+		return success(apiService.getDatabaseRecords());
 	}
 
 	@RequestMapping(value = "/openapi", method = RequestMethod.GET)
