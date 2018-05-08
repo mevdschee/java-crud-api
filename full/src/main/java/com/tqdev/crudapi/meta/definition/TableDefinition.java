@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashMap;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.jooq.Constraint;
 import org.jooq.DSLContext;
 import org.jooq.Field;
@@ -35,6 +36,7 @@ public class TableDefinition {
 		}
 	}
 
+	@JsonIgnore
 	public ColumnDefinition getPk() {
 		for (String key : columns.keySet()) {
 			ColumnDefinition column = columns.get(key);
