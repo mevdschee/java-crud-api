@@ -29,7 +29,7 @@ import org.springframework.web.context.WebApplicationContext;
 @RunWith(SpringJUnit4ClassRunner.class)
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 @WebAppConfiguration
-@ContextConfiguration(classes = CrudApiApp.class, loader = SpringBootContextLoader.class)
+@ContextConfiguration(classes = ApiApp.class, loader = SpringBootContextLoader.class)
 public class SampleTests {
 
 	@Autowired
