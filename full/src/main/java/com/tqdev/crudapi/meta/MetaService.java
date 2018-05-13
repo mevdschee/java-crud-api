@@ -7,12 +7,13 @@ import com.tqdev.crudapi.meta.definition.DatabaseDefinition;
 import com.tqdev.crudapi.meta.definition.DatabaseDefinitionException;
 import com.tqdev.crudapi.meta.openapi.OpenApiDefinition;
 import com.tqdev.crudapi.meta.reflection.DatabaseReflection;
+import com.tqdev.crudapi.meta.reflection.ReflectedTable;
 
 public interface MetaService {
 
 	// meta
 
-	DatabaseReflection getDatabaseReflection();
+	DatabaseReflection getDatabase();
 
 	DatabaseDefinition getDatabaseDefinition();
 
@@ -23,4 +24,7 @@ public interface MetaService {
 	void initialize(String columnsFilename, String openApiFilename)
 			throws IOException, DatabaseDefinitionException, DatabaseRecordsException;
 
+	boolean hasTable(String tableName);
+
+	ReflectedTable getTable(String tableName);
 }

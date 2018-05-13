@@ -37,7 +37,7 @@ public class JooqDataService extends BaseDataService implements DataService {
 
 	public JooqDataService(DSLContext dsl, MetaService meta) {
 		this.dsl = dsl;
-		tables = meta.getDatabaseReflection();
+		tables = meta.getDatabase();
 		columns = new ColumnSelector();
 		includer = new RelationIncluder(columns);
 		filters = new FilterInfo();

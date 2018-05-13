@@ -14,6 +14,10 @@ public enum ErrorCode {
 
 	RECORD_NOT_FOUND(1003, "Record '%s' not found", HttpStatus.NOT_FOUND),
 
+	ORIGIN_FORBIDDEN(1004, "Origin '%s' is forbidden", HttpStatus.FORBIDDEN),
+
+	COLUMN_NOT_FOUND(1005, "Column '%s' not found", HttpStatus.NOT_FOUND),
+
 	HTTP_MESSAGE_NOT_READABLE(1008, "Cannot read HTTP message", HttpStatus.NOT_ACCEPTABLE),
 
 	DUPLICATE_KEY_EXCEPTION(1009, "Duplicate key exception", HttpStatus.NOT_ACCEPTABLE),

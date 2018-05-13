@@ -4,6 +4,7 @@ import com.tqdev.crudapi.meta.definition.DatabaseDefinition;
 import com.tqdev.crudapi.meta.definition.DatabaseDefinitionException;
 import com.tqdev.crudapi.meta.openapi.OpenApiDefinition;
 import com.tqdev.crudapi.meta.reflection.DatabaseReflection;
+import com.tqdev.crudapi.meta.reflection.ReflectedTable;
 import org.jooq.DSLContext;
 
 import java.io.IOException;
@@ -22,7 +23,7 @@ public class JooqMetaService implements MetaService {
 	}
 
 	@Override
-	public DatabaseReflection getDatabaseReflection() {
+	public DatabaseReflection getDatabase() {
 		return tables;
 	}
 
@@ -44,6 +45,16 @@ public class JooqMetaService implements MetaService {
 		DatabaseDefinition.fromFile(columnsFilename).create(dsl);
 		tables.update();
 		baseOpenApiDefinition = OpenApiDefinition.fromFile(openApiFilename);
+	}
+
+	@Override
+	public boolean hasTable(String tableName) {
+		return this.tables.exists(tableName);
+	}
+
+	@Override
+	public ReflectedTable getTable(String tableName) {
+		return this.tables.get(tableName);
 	}
 
 }

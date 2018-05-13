@@ -483,4 +483,25 @@ public class SampleTests {
 				.andExpect(content().string(
 						"{\"records\":[{\"id\":1,\"Umlauts ä_ö_ü-COUNT\":1}]}"));
 	}
+
+	@Test
+	public void test062MetaGetDatabase() throws Exception {
+		mockMvc.perform(get("/meta")).andExpect(status().isOk())
+				.andExpect(content().string(
+						"{\"records\":[{\"id\":1,\"Umlauts ä_ö_ü-COUNT\":1}]}"));
+	}
+
+	@Test
+	public void test062MetaGetBarcodesTable() throws Exception {
+		mockMvc.perform(get("/meta/barcodes")).andExpect(status().isOk())
+				.andExpect(content().string(
+						"{\"records\":[{\"id\":1,\"Umlauts ä_ö_ü-COUNT\":1}]}"));
+	}
+
+	@Test
+	public void test062MetaGetBarcodesIdColumn() throws Exception {
+		mockMvc.perform(get("/meta/barcodes/id")).andExpect(status().isOk())
+				.andExpect(content().string(
+						"{\"records\":[{\"id\":1,\"Umlauts ä_ö_ü-COUNT\":1}]}"));
+	}
 }

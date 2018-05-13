@@ -27,7 +27,7 @@ public class ApiApp {
 
 	@Bean
 	@Autowired
-	public MetaService crudMetaService(DSLContext dsl) throws IOException,
+	public MetaService metaService(DSLContext dsl) throws IOException,
 			DatabaseDefinitionException, DatabaseRecordsException {
 		MetaService result;
 		SpatialDSL.registerDataTypes(dsl);
@@ -38,7 +38,7 @@ public class ApiApp {
 
 	@Bean
 	@Autowired
-	public DataService crudApiService(DSLContext dsl, MetaService meta) throws
+	public DataService dataService(DSLContext dsl, MetaService meta) throws
 			IOException, DatabaseDefinitionException, DatabaseRecordsException {
 		DataService result;
 		result = new JooqDataService(dsl, meta);
