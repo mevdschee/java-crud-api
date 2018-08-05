@@ -1,7 +1,8 @@
 package com.tqdev.crudapi.controller;
 
-import com.tqdev.crudapi.data.DataService;
-import com.tqdev.crudapi.meta.MetaService;
+import com.tqdev.crudapi.column.MetaService;
+import com.tqdev.crudapi.record.DataService;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -11,7 +11,7 @@ import org.springframework.core.io.ClassPathResource;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.tqdev.crudapi.data.DataService;
+import com.tqdev.crudapi.record.DataService;
 
 public class DatabaseRecords {
 
