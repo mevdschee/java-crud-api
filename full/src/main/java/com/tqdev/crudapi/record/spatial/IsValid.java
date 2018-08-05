@@ -1,4 +1,4 @@
-package com.tqdev.crudapi.data.spatial;
+package com.tqdev.crudapi.record.spatial;
 
 import org.jooq.Configuration;
 import org.jooq.Context;

@@ -6,10 +6,10 @@ import com.tqdev.crudapi.column.definition.DatabaseDefinition;
 import com.tqdev.crudapi.column.definition.DatabaseDefinitionException;
 import com.tqdev.crudapi.column.reflection.DatabaseReflection;
 import com.tqdev.crudapi.column.reflection.ReflectedTable;
-import com.tqdev.crudapi.data.record.DatabaseRecordsException;
 import com.tqdev.crudapi.openapi.OpenApiDefinition;
+import com.tqdev.crudapi.record.container.DatabaseRecordsException;
 
-public interface MetaService {
+public interface ColumnService {
 
 	// meta
 

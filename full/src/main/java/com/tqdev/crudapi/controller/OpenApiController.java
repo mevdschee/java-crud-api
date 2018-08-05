@@ -1,7 +1,7 @@
 package com.tqdev.crudapi.controller;
 
-import com.tqdev.crudapi.column.MetaService;
-import com.tqdev.crudapi.record.DataService;
+import com.tqdev.crudapi.column.ColumnService;
+import com.tqdev.crudapi.record.RecordService;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,7 +18,7 @@ public class OpenApiController extends BaseController {
 	public static final Logger logger = LoggerFactory.getLogger(OpenApiController.class);
 
 	@Autowired
-	MetaService metaService;
+	ColumnService metaService;
 
 	@RequestMapping(value = "/", method = RequestMethod.GET)
 	public ResponseEntity<?> openapi() {

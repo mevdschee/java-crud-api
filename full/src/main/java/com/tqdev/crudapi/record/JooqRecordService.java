@@ -16,16 +16,16 @@ import org.jooq.impl.DSL;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.tqdev.crudapi.column.MetaService;
+import com.tqdev.crudapi.column.ColumnService;
 import com.tqdev.crudapi.column.reflection.ReflectedTable;
-import com.tqdev.crudapi.data.record.DatabaseRecords;
-import com.tqdev.crudapi.data.record.DatabaseRecordsException;
-import com.tqdev.crudapi.data.record.Record;
-import com.tqdev.crudapi.data.record.document.ListDocument;
+import com.tqdev.crudapi.record.container.DatabaseRecords;
+import com.tqdev.crudapi.record.container.DatabaseRecordsException;
+import com.tqdev.crudapi.record.container.Record;
+import com.tqdev.crudapi.record.document.ListDocument;
 
-public class JooqDataService extends BaseDataService implements DataService {
+public class JooqRecordService extends BaseRecordService implements RecordService {
 
-	public static final Logger logger = LoggerFactory.getLogger(JooqDataService.class);
+	public static final Logger logger = LoggerFactory.getLogger(JooqRecordService.class);
 
 	private DSLContext dsl;
 
@@ -35,7 +35,7 @@ public class JooqDataService extends BaseDataService implements DataService {
 	private OrderingInfo ordering;
 	private PaginationInfo pagination;
 
-	public JooqDataService(DSLContext dsl, MetaService meta) {
+	public JooqRecordService(DSLContext dsl, ColumnService meta) {
 		this.dsl = dsl;
 		tables = meta.getDatabase();
 		columns = new ColumnSelector();

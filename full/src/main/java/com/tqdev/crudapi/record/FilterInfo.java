@@ -8,7 +8,7 @@ import org.jooq.Field;
 import org.jooq.impl.DSL;
 
 import com.tqdev.crudapi.column.reflection.ReflectedTable;
-import com.tqdev.crudapi.data.spatial.SpatialDSL;
+import com.tqdev.crudapi.record.spatial.SpatialDSL;
 
 public class FilterInfo {
 

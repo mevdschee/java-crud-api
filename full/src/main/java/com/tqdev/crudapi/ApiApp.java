@@ -1,12 +1,12 @@
 package com.tqdev.crudapi;
 
-import com.tqdev.crudapi.column.JooqMetaService;
-import com.tqdev.crudapi.column.MetaService;
+import com.tqdev.crudapi.column.JooqColumnService;
+import com.tqdev.crudapi.column.ColumnService;
 import com.tqdev.crudapi.column.definition.DatabaseDefinitionException;
-import com.tqdev.crudapi.data.record.DatabaseRecordsException;
-import com.tqdev.crudapi.data.spatial.SpatialDSL;
-import com.tqdev.crudapi.record.DataService;
-import com.tqdev.crudapi.record.JooqDataService;
+import com.tqdev.crudapi.record.RecordService;
+import com.tqdev.crudapi.record.container.DatabaseRecordsException;
+import com.tqdev.crudapi.record.JooqRecordService;
+import com.tqdev.crudapi.record.spatial.SpatialDSL;
 
 import org.jooq.DSLContext;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,21 +27,21 @@ public class ApiApp {
 
 	@Bean
 	@Autowired
-	public MetaService metaService(DSLContext dsl) throws IOException,
+	public ColumnService metaService(DSLContext dsl) throws IOException,
 			DatabaseDefinitionException, DatabaseRecordsException {
-		MetaService result;
+		ColumnService result;
 		SpatialDSL.registerDataTypes(dsl);
-		result = new JooqMetaService(dsl);
+		result = new JooqColumnService(dsl);
 		result.initialize("columns.json", "openapi.json");
 		return result;
 	}
 
 	@Bean
 	@Autowired
-	public DataService dataService(DSLContext dsl, MetaService meta) throws
+	public RecordService dataService(DSLContext dsl, ColumnService meta) throws
 			IOException, DatabaseDefinitionException, DatabaseRecordsException {
-		DataService result;
-		result = new JooqDataService(dsl, meta);
+		RecordService result;
+		result = new JooqRecordService(dsl, meta);
 		result.initialize("records.json");
 		return result;
 	}

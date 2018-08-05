@@ -1,6 +1,6 @@
 package com.tqdev.crudapi.controller;
 
-import com.tqdev.crudapi.column.MetaService;
+import com.tqdev.crudapi.column.ColumnService;
 import com.tqdev.crudapi.column.reflection.ReflectedTable;
 import com.tqdev.crudapi.record.ErrorCode;
 
@@ -17,7 +17,7 @@ public class ColumnController extends BaseController {
 	public static final Logger logger = LoggerFactory.getLogger(ColumnController.class);
 
 	@Autowired
-	MetaService service;
+	ColumnService service;
 
 	@RequestMapping(value = "/", method = RequestMethod.GET)
 	public ResponseEntity<?> getDatabase() {

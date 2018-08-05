@@ -1,4 +1,4 @@
-package com.tqdev.crudapi.data.record.document;
+package com.tqdev.crudapi.record.document;
 
 import com.tqdev.crudapi.record.ErrorCode;
 

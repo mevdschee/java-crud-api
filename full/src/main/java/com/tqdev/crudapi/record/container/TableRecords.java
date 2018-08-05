@@ -1,8 +1,8 @@
-package com.tqdev.crudapi.data.record;
+package com.tqdev.crudapi.record.container;
 
 import java.util.ArrayList;
 
-import com.tqdev.crudapi.record.DataService;
+import com.tqdev.crudapi.record.RecordService;
 import com.tqdev.crudapi.record.Params;
 
 public class TableRecords {
@@ -35,7 +35,7 @@ public class TableRecords {
 		this.records = records;
 	}
 
-	public void create(DataService service) throws DatabaseRecordsException {
+	public void create(RecordService service) throws DatabaseRecordsException {
 		for (Record record : records) {
 			if (!service.exists(name)) {
 				throw new DatabaseRecordsException(

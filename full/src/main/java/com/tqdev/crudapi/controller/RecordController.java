@@ -16,8 +16,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.tqdev.crudapi.data.record.Record;
-import com.tqdev.crudapi.record.DataService;
+import com.tqdev.crudapi.record.RecordService;
+import com.tqdev.crudapi.record.container.Record;
 import com.tqdev.crudapi.record.ErrorCode;
 import com.tqdev.crudapi.record.Params;
 
@@ -28,7 +28,7 @@ public class RecordController extends BaseController {
 	public static final Logger logger = LoggerFactory.getLogger(RecordController.class);
 
 	@Autowired
-	DataService service;
+	RecordService service;
 
 	@RequestMapping(value = "/{table}", method = RequestMethod.GET)
 	public ResponseEntity<?> list(@PathVariable("table") String table,

@@ -1,14 +1,14 @@
 package com.tqdev.crudapi.record;
 
 import com.tqdev.crudapi.column.definition.DatabaseDefinitionException;
-import com.tqdev.crudapi.data.record.DatabaseRecords;
-import com.tqdev.crudapi.data.record.DatabaseRecordsException;
-import com.tqdev.crudapi.data.record.Record;
-import com.tqdev.crudapi.data.record.document.ListDocument;
+import com.tqdev.crudapi.record.container.DatabaseRecords;
+import com.tqdev.crudapi.record.container.DatabaseRecordsException;
+import com.tqdev.crudapi.record.container.Record;
+import com.tqdev.crudapi.record.document.ListDocument;
 
 import java.io.IOException;
 
-public interface DataService {
+public interface RecordService {
 
 	// crud
 

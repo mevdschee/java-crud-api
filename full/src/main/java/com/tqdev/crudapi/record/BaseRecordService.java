@@ -5,10 +5,10 @@ import java.util.ArrayList;
 import org.jooq.Field;
 
 import com.tqdev.crudapi.column.reflection.DatabaseReflection;
-import com.tqdev.crudapi.data.record.DatabaseRecords;
-import com.tqdev.crudapi.data.record.Record;
+import com.tqdev.crudapi.record.container.DatabaseRecords;
+import com.tqdev.crudapi.record.container.Record;
 
-abstract class BaseDataService implements DataService {
+abstract class BaseRecordService implements RecordService {
 
 	protected DatabaseReflection tables;
 

@@ -1,4 +1,4 @@
-package com.tqdev.crudapi.data.record;
+package com.tqdev.crudapi.record.container;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -11,7 +11,7 @@ import org.springframework.core.io.ClassPathResource;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.tqdev.crudapi.record.DataService;
+import com.tqdev.crudapi.record.RecordService;
 
 public class DatabaseRecords {
 
@@ -41,7 +41,7 @@ public class DatabaseRecords {
 		return result;
 	}
 
-	public void create(DataService service) throws DatabaseRecordsException {
+	public void create(RecordService service) throws DatabaseRecordsException {
 		for (String table : tables.keySet()) {
 			tables.get(table).create(service);
 		}

@@ -1,8 +1,8 @@
-package com.tqdev.crudapi.data.record.document;
+package com.tqdev.crudapi.record.document;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
-import com.tqdev.crudapi.data.record.Record;
+import com.tqdev.crudapi.record.container.Record;
 
 public class ListDocument {
 

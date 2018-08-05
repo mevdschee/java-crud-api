@@ -14,7 +14,7 @@ import org.jooq.impl.DSL;
 
 import com.tqdev.crudapi.column.reflection.DatabaseReflection;
 import com.tqdev.crudapi.column.reflection.ReflectedTable;
-import com.tqdev.crudapi.data.record.Record;
+import com.tqdev.crudapi.record.container.Record;
 
 public class RelationIncluder {
 

@@ -10,7 +10,7 @@ import org.jooq.DSLContext;
 
 import java.io.IOException;
 
-public class JooqMetaService implements MetaService {
+public class JooqColumnService implements ColumnService {
 
 	private DSLContext dsl;
 
@@ -18,7 +18,7 @@ public class JooqMetaService implements MetaService {
 
 	private OpenApiDefinition baseOpenApiDefinition;
 
-	public JooqMetaService(DSLContext dsl) {
+	public JooqColumnService(DSLContext dsl) {
 		this.dsl = dsl;
 		this.tables = new DatabaseReflection(dsl);
 	}
