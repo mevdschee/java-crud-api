@@ -168,8 +168,30 @@
 			"name": "kunsthåndværk",
 			"records": [
 				{
-					"id": 1,
-					"Umlauts ä_ö_ü-COUNT": 1
+					"id": "e42c77c6-06a4-4502-816c-d112c7142e6d",
+					"Umlauts ä_ö_ü-COUNT": 1,
+					"user_id": 1
+				},
+				{
+					"id": "e31ecfe6-591f-4660-9fbd-1a232083037f",
+					"Umlauts ä_ö_ü-COUNT": 2,
+					"user_id": 2
+				}
+			]
+		},
+		{
+			"name": "invisibles",
+			"records": [
+				{
+					"id": "e42c77c6-06a4-4502-816c-d112c7142e6d"
+				}
+			]
+		},
+		{
+			"name": "nopk",
+			"records": [
+				{
+					"id": "e42c77c6-06a4-4502-816c-d112c7142e6d"
 				}
 			]
 		}

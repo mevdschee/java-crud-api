@@ -250,11 +250,42 @@
 				{
 					"name":"id",
 					"pk":true,
-					"type":"integer"
+					"type":"varchar",
+					"length":36
 				},
 				{
 					"name":"Umlauts ä_ö_ü-COUNT",
 					"type":"integer"
+				},
+				{
+					"name":"user_id",
+					"type":"integer",
+					"fk":"users"
+				},
+				{
+					"name":"invisible",
+					"type":"varchar",
+					"length":36
+				}
+			]
+		},
+		{
+			"name": "invisibles",
+			"columns": [
+				{
+					"name": "id",
+					"type": "varchar",
+					"length": 36
+				}
+			]
+		},
+		{
+			"name": "nopk",
+			"columns": [
+				{
+					"name": "id",
+					"type": "varchar",
+					"length": 36
 				}
 			]
 		}

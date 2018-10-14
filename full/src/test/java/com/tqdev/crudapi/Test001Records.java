@@ -5,6 +5,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.options;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -30,7 +31,7 @@ import org.springframework.web.context.WebApplicationContext;
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 @WebAppConfiguration
 @ContextConfiguration(classes = ApiApp.class, loader = SpringBootContextLoader.class)
-public class SampleTests {
+public class Test001Records {
 
 	@Autowired
 	private WebApplicationContext wac;
@@ -478,10 +479,98 @@ public class SampleTests {
 	}
 
 	@Test
-	public void test062GetKunsthåndværk() throws Exception {
-   		mockMvc.perform(get("/records/kunsthåndværk").contentType("text/html; charset=UTF-8")).andExpect(status().isOk())
+	public void test062ReadKunsthåndværk() throws Exception {
+   		mockMvc.perform(get("/records/kunsthåndværk/e42c77c6-06a4-4502-816c-d112c7142e6d").contentType("text/html; charset=UTF-8")).andExpect(status().isOk())
 				.andExpect(content().string(
-						"{\"records\":[{\"id\":1,\"Umlauts ä_ö_ü-COUNT\":1}]}"));
+						"{\"id\":\"e42c77c6-06a4-4502-816c-d112c7142e6d\",\"Umlauts ä_ö_ü-COUNT\":1,\"user_id\":1}"));
+	}
+
+	@Test
+	public void test063ListKunsthåndværk() throws Exception {
+		mockMvc.perform(get("/records/kunsthåndværk").contentType("text/html; charset=UTF-8")).andExpect(status().isOk())
+				.andExpect(content().string(
+						"{\"records\":[{\"id\":\"e42c77c6-06a4-4502-816c-d112c7142e6d\",\"Umlauts ä_ö_ü-COUNT\":1,\"user_id\":1}]}"));
+	}
+
+	@Test
+	public void test064AddKunsthåndværk() throws Exception {
+		mockMvc.perform(post("/records/kunsthåndværk").contentType("application/json")
+				.content("{\"id\":\"34451583-a747-4417-bdf0-bec7a5eacffa\",\"Umlauts ä_ö_ü-COUNT\":3}")).andExpect(status().isOk())
+				.andExpect(content().string("34451583-a747-4417-bdf0-bec7a5eacffa"));
+	}
+
+	@Test
+	public void test065EditKunsthåndværk() throws Exception {
+		mockMvc.perform(put("/records/kunsthåndværk/34451583-a747-4417-bdf0-bec7a5eacffa").contentType("application/json")
+				.content("{\"Umlauts ä_ö_ü-COUNT\":3}")).andExpect(status().isOk())
+				.andExpect(content().string("1"));
+	}
+
+	@Test
+	public void test066DeleteKunsthåndværk() throws Exception {
+		mockMvc.perform(delete("/records/kunsthåndværk/34451583-a747-4417-bdf0-bec7a5eacffa").contentType("text/html; charset=UTF-8")).andExpect(status().isOk())
+				.andExpect(content().string("1"));
+	}
+
+	@Test
+	public void test067EditCommentWithValidation() throws Exception {
+		mockMvc.perform(put("/records/comments/4").contentType("application/json")
+				.content("{\"post_id\":\"two\"}")).andExpect(status().isUnprocessableEntity())
+				.andExpect(content().string("{\"code\":1013,\"message\":\"Input validation failed for 'comments'\",\"details\":{\"post_id\":\"must be numeric\"}}"));
+	}
+
+	@Test
+	public void test068AddCommentWithSanitation() throws Exception {
+		mockMvc.perform(post("/records/comments").contentType("application/json")
+				.content("{\"user_id\":1,\"post_id\":2,\"message\":\"<h1>Title</h1> <p>Body</p>\"}")).andExpect(status().isOk())
+				.andExpect(content().string("5"));
+		mockMvc.perform(get("/records/comments/5")).andExpect(status().isOk())
+				.andExpect(content().string("{\"id\":5,\"post_id\":2,\"message\":\"Title Body\"}"));
+	}
+
+	@Test
+	public void test069IncrementEventVisitors() throws Exception {
+		mockMvc.perform(get("/records/events/1?include=visitors")).andExpect(status().isOk())
+				.andExpect(content().string("{\"visitors\":0}"));
+		mockMvc.perform(patch("/records/events/1").contentType("application/json")
+				.content("{\"visitors\":1}")).andExpect(status().isOk())
+				.andExpect(content().string("1"));
+		mockMvc.perform(patch("/records/events/1").contentType("application/json")
+				.content("{\"visitors\":1}")).andExpect(status().isOk())
+				.andExpect(content().string("1"));
+		mockMvc.perform(patch("/records/events/1,1").contentType("application/json")
+				.content("[{\"visitors\":1},{\"visitors\":1}]")).andExpect(status().isOk())
+				.andExpect(content().string("[1,1]"));
+		mockMvc.perform(get("/records/events/1?include=visitors")).andExpect(status().isOk())
+				.andExpect(content().string("{\"visitors\":4}"));
+		mockMvc.perform(patch("/records/events/1").contentType("application/json")
+				.content("{\"visitors\":-4}")).andExpect(status().isOk())
+				.andExpect(content().string("1"));
+		mockMvc.perform(get("/records/events/1?include=visitors")).andExpect(status().isOk())
+				.andExpect(content().string("{\"visitors\":0}"));
+	}
+
+	@Test
+	public void test070ListInvisibles() throws Exception {
+		mockMvc.perform(get("/records/invisibles").contentType("text/html; charset=UTF-8")).andExpect(status().isNotFound())
+				.andExpect(content().string(
+						"{\"code\":1001,\"message\":\"Table 'invisibles' not found\"}"));
+	}
+
+	@Test
+	public void test071AddCommentWithInvisibleRecord() throws Exception {
+		mockMvc.perform(post("/records/comments").contentType("application/json")
+				.content("{\"user_id\":1,\"post_id\":2,\"message\":\"invisible\"}")).andExpect(status().isOk())
+				.andExpect(content().string("6"));
+		mockMvc.perform(get("/records/comments/6")).andExpect(status().isNotFound())
+				.andExpect(content().string("{\"code\":1003,\"message\":\"Record '6' not found\"}"));
+	}
+
+	@Test
+	public void test072ListNoPk() throws Exception {
+		mockMvc.perform(get("/records/nopk").contentType("text/html; charset=UTF-8")).andExpect(status().isNotFound())
+				.andExpect(content().string(
+						"{\"records\":[{\"id\":\"e42c77c6-06a4-4502-816c-d112c7142e6d\"}]}"));
 	}
 
 	/*@Test
