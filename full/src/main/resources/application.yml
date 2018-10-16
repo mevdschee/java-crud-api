@@ -19,9 +19,9 @@ spring:
   jooq:
     sql-dialect: MYSQL
   datasource:
-    url: jdbc:mysql://localhost/php-crud-data?useSSL=false
-    username: php-crud-data
-    password: php-crud-data
+    url: jdbc:mysql://localhost/php-crud-api?useSSL=false
+    username: php-crud-api
+    password: php-crud-api
 
 #spring:
 #  jooq:

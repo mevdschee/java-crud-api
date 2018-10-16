@@ -96,7 +96,9 @@ public class ColumnDefinition {
 	public DataType<?> getDataType(DSLContext dsl) {
 		override(dsl);
 		DataType<?> result = DefaultDataType.getDataType(SQLDialect.DEFAULT, type);
-		result = result.identity(pk);
+		if (result.isNumeric() && !result.hasScale()) {
+			result = result.identity(pk);
+		}
 		if (length >= 0) {
 			result = result.length(length);
 		}

@@ -265,6 +265,7 @@
 				{
 					"name":"invisible",
 					"type":"varchar",
+					"nullable": true,
 					"length":36
 				}
 			]

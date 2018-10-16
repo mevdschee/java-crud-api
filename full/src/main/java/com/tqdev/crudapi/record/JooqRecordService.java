@@ -53,6 +53,9 @@ public class JooqRecordService extends BaseRecordService implements RecordServic
 		LinkedHashMap<Field<?>, Object> columnValues = columns.getValues(table, true, record, params);
 		Field<Object> pk = tables.get(tableName).getPk();
 		org.jooq.Record result = dsl.insertInto(table).set(columnValues).returning(pk).fetchOne();
+		if (result==null) {
+			return String.valueOf(columnValues.get(pk));
+		}
 		return String.valueOf(result.get(0));
 	}
 

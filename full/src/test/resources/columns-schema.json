@@ -75,6 +75,6 @@
 			}
 		}
 	},
-	"required": ["tables"],
+	"required": ["name","tables"],
 	"additionalProperties":false
 }
