@@ -29,9 +29,9 @@ public class ApiApp {
 
 	@Bean
 	@Autowired
-	public OpenApiService openApiService(DSLContext dsl, ColumnService meta) throws IOException {
+	public OpenApiService openApiService(DSLContext dsl, ColumnService columns) throws IOException {
 		OpenApiService result;
-		result = new JooqOpenApiService(dsl, meta);
+		result = new JooqOpenApiService(dsl, columns);
 		result.initialize("openapi.json");
 		return result;
 	}
@@ -49,10 +49,10 @@ public class ApiApp {
 
 	@Bean
 	@Autowired
-	public RecordService dataService(DSLContext dsl, ColumnService meta) throws
+	public RecordService dataService(DSLContext dsl, ColumnService columns) throws
 			IOException, DatabaseDefinitionException, DatabaseRecordsException {
 		RecordService result;
-		result = new JooqRecordService(dsl, meta);
+		result = new JooqRecordService(dsl, columns);
 		result.initialize("records.json");
 		return result;
 	}

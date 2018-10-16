@@ -32,7 +32,7 @@ abstract class BaseRecordService implements RecordService {
 
 	@Override
 	public boolean exists(String table) {
-		return reflection.exists(table);
+		return reflection.hasTable(table);
 	}
 
 	@Override

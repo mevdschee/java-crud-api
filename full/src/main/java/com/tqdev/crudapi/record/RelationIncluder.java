@@ -24,19 +24,19 @@ public class RelationIncluder {
 		this.columns = columns;
 	}
 
-	public void addMandatoryColumns(ReflectedTable table, DatabaseReflection tables, Params params) {
+	public void addMandatoryColumns(ReflectedTable table, DatabaseReflection reflection, Params params) {
 		if (!params.containsKey("include") || !params.containsKey("columns")) {
 			return;
 		}
 		for (String tableNames : params.get("include")) {
 			ReflectedTable t1 = table;
 			for (String tableName : tableNames.split(",")) {
-				ReflectedTable t2 = tables.getTable(tableName);
+				ReflectedTable t2 = reflection.getTable(tableName);
 				if (t2 == null) {
 					continue;
 				}
 				List<Field<Object>> fks1 = t1.getFksTo(t2.getName());
-				ReflectedTable t3 = hasAndBelongsToMany(t1, t2, tables);
+				ReflectedTable t3 = hasAndBelongsToMany(t1, t2, reflection);
 				if (t3 != null || !fks1.isEmpty()) {
 					params.add("mandatory", t2.getName() + "." + t2.getPk().getName());
 				}
@@ -55,13 +55,13 @@ public class RelationIncluder {
 		}
 	}
 
-	private PathTree<String, Boolean> getIncludesAsPathTree(DatabaseReflection tables, Params params) {
+	private PathTree<String, Boolean> getIncludesAsPathTree(DatabaseReflection reflection, Params params) {
 		PathTree<String, Boolean> includes = new PathTree<>();
 		if (params.containsKey("include")) {
 			for (String includedTableNames : params.get("include")) {
 				LinkedList<String> path = new LinkedList<>();
 				for (String includedTableName : includedTableNames.split(",")) {
-					ReflectedTable t = tables.getTable(includedTableName);
+					ReflectedTable t = reflection.getTable(includedTableName);
 					if (t != null) {
 						path.add(t.getName());
 					}
@@ -72,16 +72,16 @@ public class RelationIncluder {
 		return includes;
 	}
 
-	public void addIncludes(String tableName, ArrayList<Record> records, DatabaseReflection tables, Params params,
+	public void addIncludes(String tableName, ArrayList<Record> records, DatabaseReflection reflection, Params params,
 							DSLContext dsl) {
 
-		PathTree<String, Boolean> includes = getIncludesAsPathTree(tables, params);
-		addIncludesForTables(tables.getTable(tableName), includes, records, tables, params, dsl);
+		PathTree<String, Boolean> includes = getIncludesAsPathTree(reflection, params);
+		addIncludesForTables(reflection.getTable(tableName), includes, records, reflection, params, dsl);
 	}
 
-	private ReflectedTable hasAndBelongsToMany(ReflectedTable t1, ReflectedTable t2, DatabaseReflection tables) {
-		for (String tableName : tables.getTableNames()) {
-			ReflectedTable t3 = tables.getTable(tableName);
+	private ReflectedTable hasAndBelongsToMany(ReflectedTable t1, ReflectedTable t2, DatabaseReflection reflection) {
+		for (String tableName : reflection.getTableNames()) {
+			ReflectedTable t3 = reflection.getTable(tableName);
 			if (!t3.getFksTo(t1.getName()).isEmpty() && !t3.getFksTo(t2.getName()).isEmpty()) {
 				return t3;
 			}
@@ -90,14 +90,14 @@ public class RelationIncluder {
 	}
 
 	private void addIncludesForTables(ReflectedTable t1, PathTree<String, Boolean> includes, ArrayList<Record> records,
-			DatabaseReflection tables, Params params, DSLContext dsl) {
+			DatabaseReflection reflection, Params params, DSLContext dsl) {
 		for (String t2Name : includes.getKeys()) {
 
-			ReflectedTable t2 = tables.getTable(t2Name);
+			ReflectedTable t2 = reflection.getTable(t2Name);
 
 			boolean belongsTo = !t1.getFksTo(t2.getName()).isEmpty();
 			boolean hasMany = !t2.getFksTo(t1.getName()).isEmpty();
-			ReflectedTable t3 = hasAndBelongsToMany(t1, t2, tables);
+			ReflectedTable t3 = hasAndBelongsToMany(t1, t2, reflection);
 			boolean hasAndBelongsToMany = t3 != null;
 
 			ArrayList<Record> newRecords = new ArrayList<>();
@@ -118,7 +118,7 @@ public class RelationIncluder {
 				addFkRecords(t2, habtmValues.fkValues, params, dsl, newRecords);
 			}
 
-			addIncludesForTables(t2, includes.get(t2Name), newRecords, tables, params, dsl);
+			addIncludesForTables(t2, includes.get(t2Name), newRecords, reflection, params, dsl);
 
 			if (fkValues != null) {
 				fillFkValues(t2, newRecords, fkValues);

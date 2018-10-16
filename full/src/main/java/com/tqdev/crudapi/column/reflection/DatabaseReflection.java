@@ -22,7 +22,7 @@ public class DatabaseReflection {
 		this.tablePrefix = findTablePrefix();
 	}
 
-	public boolean exists(String tableName) {
+	public boolean hasTable(String tableName) {
 		return tables.containsKey(tableName);
 	}
 
