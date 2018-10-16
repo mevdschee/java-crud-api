@@ -12,7 +12,8 @@ public class DatabaseReflection {
 
 	private DSLContext dsl;
 
-	private LinkedHashMap<String, ReflectedTable> tables;
+	private LinkedHashMap<String, Table<?>> tables;
+    private LinkedHashMap<String, ReflectedTable> cachedTables;
 
 	private String tablePrefix;
 
@@ -25,8 +26,14 @@ public class DatabaseReflection {
 		return tables.containsKey(tableName);
 	}
 
-	public ReflectedTable get(String tableName) {
-		return tables.get(tableName);
+	public ReflectedTable getTable(String tableName) {
+        if (!tables.containsKey(tableName)) {
+            return null;
+        }
+        if (!cachedTables.containsKey(tableName)) {
+            cachedTables.put(tableName, new ReflectedTable(tables.get(tableName)));
+        }
+		return cachedTables.get(tableName);
 	}
 
 	private String findTablePrefix() {
@@ -57,13 +64,14 @@ public class DatabaseReflection {
 	}
 
 	public void update() {
-		tables = new LinkedHashMap<>();
-		for (Table<?> table : dsl.meta().getTables()) {
+        tables = new LinkedHashMap<>();
+        cachedTables = new LinkedHashMap<>();
+        for (Table<?> table : dsl.meta().getTables()) {
 			if (!(table.toString().startsWith(tablePrefix))) {
 				// table not in current catalog or schema
 				continue;
 			}
-			tables.put(table.getName(), new ReflectedTable(table));
+			tables.put(table.getName(), table);
 		}
 	}
 

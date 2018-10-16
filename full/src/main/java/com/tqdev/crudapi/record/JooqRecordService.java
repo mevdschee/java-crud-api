@@ -35,11 +35,11 @@ public class JooqRecordService extends BaseRecordService implements RecordServic
 	private OrderingInfo ordering;
 	private PaginationInfo pagination;
 
-	public JooqRecordService(DSLContext dsl, ColumnService meta) {
+	public JooqRecordService(DSLContext dsl, ColumnService columns) {
 		this.dsl = dsl;
-		tables = meta.getDatabase();
-		columns = new ColumnSelector();
-		includer = new RelationIncluder(columns);
+		reflection = columns.getDatabaseReflection();
+		this.columns = new ColumnSelector();
+		includer = new RelationIncluder(this.columns);
 		filters = new FilterInfo();
 		ordering = new OrderingInfo();
 		pagination = new PaginationInfo();
@@ -49,9 +49,9 @@ public class JooqRecordService extends BaseRecordService implements RecordServic
 	@Override
 	public String create(String tableName, Record record, Params params) {
 		sanitizeRecord(tableName, record, null);
-		ReflectedTable table = tables.get(tableName);
+		ReflectedTable table = reflection.getTable(tableName);
 		LinkedHashMap<Field<?>, Object> columnValues = columns.getValues(table, true, record, params);
-		Field<Object> pk = tables.get(tableName).getPk();
+		Field<Object> pk = reflection.getTable(tableName).getPk();
 		org.jooq.Record result = dsl.insertInto(table).set(columnValues).returning(pk).fetchOne();
 		if (result==null) {
 			return String.valueOf(columnValues.get(pk));
@@ -61,17 +61,17 @@ public class JooqRecordService extends BaseRecordService implements RecordServic
 
 	@Override
 	public Record read(String tableName, String id, Params params) {
-		ReflectedTable table = tables.get(tableName);
-		includer.addMandatoryColumns(table, tables, params);
+		ReflectedTable table = reflection.getTable(tableName);
+		includer.addMandatoryColumns(table, reflection, params);
 		ArrayList<Field<?>> columnNames = columns.getNames(table, true, params);
-		Field<Object> pk = tables.get(tableName).getPk();
+		Field<Object> pk = reflection.getTable(tableName).getPk();
 		org.jooq.Record record = dsl.select(columnNames).from(table).where(pk.eq(id)).fetchOne();
 		if (record == null) {
 			return null;
 		}
 		Record r = Record.valueOf(record.intoMap());
 		ArrayList<Record> records = new ArrayList<>(Arrays.asList(r));
-		includer.addIncludes(tableName, records, tables, params, dsl);
+		includer.addIncludes(tableName, records, reflection, params, dsl);
 		return r;
 	}
 
@@ -79,9 +79,9 @@ public class JooqRecordService extends BaseRecordService implements RecordServic
 	@Override
 	public int update(String tableName, String id, Record record, Params params) {
 		sanitizeRecord(tableName, record, id);
-		ReflectedTable table = tables.get(tableName);
+		ReflectedTable table = reflection.getTable(tableName);
 		LinkedHashMap<Field<?>, Object> columnValues = columns.getValues(table, true, record, params);
-		Field<Object> pk = tables.get(tableName).getPk();
+		Field<Object> pk = reflection.getTable(tableName).getPk();
 		return dsl.update(table).set(columnValues).where(pk.eq(id)).execute();
 	}
 
@@ -89,24 +89,24 @@ public class JooqRecordService extends BaseRecordService implements RecordServic
 	@Override
 	public int increment(String tableName, String id, Record record, Params params) {
 		sanitizeRecord(tableName, record, id);
-		ReflectedTable table = tables.get(tableName);
+		ReflectedTable table = reflection.getTable(tableName);
 		LinkedHashMap<Field<?>, Object> columnValues = columns.getValues(table, true, record, params);
-		Field<Object> pk = tables.get(tableName).getPk();
+		Field<Object> pk = reflection.getTable(tableName).getPk();
 		return dsl.update(table).set(columnValues).where(pk.eq(id)).execute();
 	}
 
 	@Override
 	public int delete(String tableName, String id, Params params) {
-		Table<?> table = tables.get(tableName);
-		Field<Object> pk = tables.get(tableName).getPk();
+		Table<?> table = reflection.getTable(tableName);
+		Field<Object> pk = reflection.getTable(tableName).getPk();
 		return dsl.deleteFrom(table).where(pk.eq(id)).execute();
 	}
 
 	@Override
 	public ListDocument list(String tableName, Params params) {
 		ArrayList<Record> records = new ArrayList<>();
-		ReflectedTable table = tables.get(tableName);
-		includer.addMandatoryColumns(table, tables, params);
+		ReflectedTable table = reflection.getTable(tableName);
+		includer.addMandatoryColumns(table, reflection, params);
 		ArrayList<Field<?>> columnNames = columns.getNames(table, true, params);
 		Condition condition= filters.getCombinedConditions(table, params);
 		ArrayList<SortField<?>> columnOrdering = ordering.getColumnOrdering(table, params);
@@ -127,13 +127,13 @@ public class JooqRecordService extends BaseRecordService implements RecordServic
 		for (org.jooq.Record record : query.fetch()) {
 			records.add(Record.valueOf(record.intoMap()));
 		}
-		includer.addIncludes(tableName, records, tables, params, dsl);
+		includer.addIncludes(tableName, records, reflection, params, dsl);
 		return new ListDocument(records.toArray(new Record[records.size()]), count);
 	}
 
 	@Override
 	public void update() {
-		tables.update();
+		reflection.update();
 	}
 
 	@Override

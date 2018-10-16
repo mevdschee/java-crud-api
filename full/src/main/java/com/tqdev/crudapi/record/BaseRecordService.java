@@ -10,19 +10,19 @@ import com.tqdev.crudapi.record.container.Record;
 
 abstract class BaseRecordService implements RecordService {
 
-	protected DatabaseReflection tables;
+	protected DatabaseReflection reflection;
 
 	protected void sanitizeRecord(String table, Record record, String id) {
 		String[] keyset = record.keySet().toArray(new String[] {});
 		for (String key : keyset) {
-			if (!tables.get(table).exists(key)) {
+			if (!reflection.getTable(table).exists(key)) {
 				record.remove(key);
 			}
 		}
 		if (id != null) {
-			Field<?> pk = tables.get(table).getPk();
-			for (String key : tables.get(table).fieldNames()) {
-				Field<?> field = tables.get(table).get(key);
+			Field<?> pk = reflection.getTable(table).getPk();
+			for (String key : reflection.getTable(table).fieldNames()) {
+				Field<?> field = reflection.getTable(table).get(key);
 				if (field.getName().equals(pk.getName())) {
 					record.remove(key);
 				}
@@ -32,13 +32,13 @@ abstract class BaseRecordService implements RecordService {
 
 	@Override
 	public boolean exists(String table) {
-		return tables.exists(table);
+		return reflection.exists(table);
 	}
 
 	@Override
 	public DatabaseRecords getDatabaseRecords() {
 		DatabaseRecords db = new DatabaseRecords();
-		for (String table : tables.getTableNames()) {
+		for (String table : reflection.getTableNames()) {
 			ArrayList<Record> records = new ArrayList<>();
 			for (Record record : list(table, new Params()).getRecords()) {
 				records.add(record);

@@ -3,6 +3,8 @@ package com.tqdev.crudapi;
 import com.tqdev.crudapi.column.JooqColumnService;
 import com.tqdev.crudapi.column.ColumnService;
 import com.tqdev.crudapi.column.definition.DatabaseDefinitionException;
+import com.tqdev.crudapi.openapi.JooqOpenApiService;
+import com.tqdev.crudapi.openapi.OpenApiService;
 import com.tqdev.crudapi.record.RecordService;
 import com.tqdev.crudapi.record.container.DatabaseRecordsException;
 import com.tqdev.crudapi.record.JooqRecordService;
@@ -27,12 +29,21 @@ public class ApiApp {
 
 	@Bean
 	@Autowired
+	public OpenApiService openApiService(DSLContext dsl, ColumnService meta) throws IOException {
+		OpenApiService result;
+		result = new JooqOpenApiService(dsl, meta);
+		result.initialize("openapi.json");
+		return result;
+	}
+
+	@Bean
+	@Autowired
 	public ColumnService metaService(DSLContext dsl) throws IOException,
 			DatabaseDefinitionException, DatabaseRecordsException {
 		ColumnService result;
 		SpatialDSL.registerDataTypes(dsl);
 		result = new JooqColumnService(dsl);
-		result.initialize("columns.json", "openapi.json");
+		result.initialize("columns.json");
 		return result;
 	}
 

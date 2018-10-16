@@ -31,7 +31,7 @@ public class RelationIncluder {
 		for (String tableNames : params.get("include")) {
 			ReflectedTable t1 = table;
 			for (String tableName : tableNames.split(",")) {
-				ReflectedTable t2 = tables.get(tableName);
+				ReflectedTable t2 = tables.getTable(tableName);
 				if (t2 == null) {
 					continue;
 				}
@@ -61,7 +61,7 @@ public class RelationIncluder {
 			for (String includedTableNames : params.get("include")) {
 				LinkedList<String> path = new LinkedList<>();
 				for (String includedTableName : includedTableNames.split(",")) {
-					ReflectedTable t = tables.get(includedTableName);
+					ReflectedTable t = tables.getTable(includedTableName);
 					if (t != null) {
 						path.add(t.getName());
 					}
@@ -76,12 +76,12 @@ public class RelationIncluder {
 							DSLContext dsl) {
 
 		PathTree<String, Boolean> includes = getIncludesAsPathTree(tables, params);
-		addIncludesForTables(tables.get(tableName), includes, records, tables, params, dsl);
+		addIncludesForTables(tables.getTable(tableName), includes, records, tables, params, dsl);
 	}
 
 	private ReflectedTable hasAndBelongsToMany(ReflectedTable t1, ReflectedTable t2, DatabaseReflection tables) {
 		for (String tableName : tables.getTableNames()) {
-			ReflectedTable t3 = tables.get(tableName);
+			ReflectedTable t3 = tables.getTable(tableName);
 			if (!t3.getFksTo(t1.getName()).isEmpty() && !t3.getFksTo(t2.getName()).isEmpty()) {
 				return t3;
 			}
@@ -93,7 +93,7 @@ public class RelationIncluder {
 			DatabaseReflection tables, Params params, DSLContext dsl) {
 		for (String t2Name : includes.getKeys()) {
 
-			ReflectedTable t2 = tables.get(t2Name);
+			ReflectedTable t2 = tables.getTable(t2Name);
 
 			boolean belongsTo = !t1.getFksTo(t2.getName()).isEmpty();
 			boolean hasMany = !t2.getFksTo(t1.getName()).isEmpty();

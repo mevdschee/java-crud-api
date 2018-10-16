@@ -1,7 +1,6 @@
 package com.tqdev.crudapi.controller;
 
-import com.tqdev.crudapi.column.ColumnService;
-
+import com.tqdev.crudapi.openapi.OpenApiService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +16,7 @@ public class OpenApiController extends BaseController {
 	public static final Logger logger = LoggerFactory.getLogger(OpenApiController.class);
 
 	@Autowired
-	ColumnService service;
+	OpenApiService service;
 
 	@RequestMapping(value = "/", method = RequestMethod.GET)
 	public ResponseEntity<?> openapi() {

@@ -4,7 +4,6 @@ import com.tqdev.crudapi.column.definition.DatabaseDefinition;
 import com.tqdev.crudapi.column.definition.DatabaseDefinitionException;
 import com.tqdev.crudapi.column.reflection.DatabaseReflection;
 import com.tqdev.crudapi.column.reflection.ReflectedTable;
-import com.tqdev.crudapi.openapi.OpenApiDefinition;
 
 import org.jooq.DSLContext;
 
@@ -16,15 +15,13 @@ public class JooqColumnService implements ColumnService {
 
 	private DatabaseReflection tables;
 
-	private OpenApiDefinition baseOpenApiDefinition;
-
 	public JooqColumnService(DSLContext dsl) {
 		this.dsl = dsl;
 		this.tables = new DatabaseReflection(dsl);
 	}
 
 	@Override
-	public DatabaseReflection getDatabase() {
+	public DatabaseReflection getDatabaseReflection() {
 		return tables;
 	}
 
@@ -34,18 +31,10 @@ public class JooqColumnService implements ColumnService {
 	}
 
 	@Override
-	public OpenApiDefinition getOpenApiDefinition() {
-		OpenApiDefinition copy = new OpenApiDefinition(baseOpenApiDefinition);
-		copy.inject(getDatabaseDefinition());
-		return copy;
-	}
-
-	@Override
-	public void initialize(String columnsFilename, String openApiFilename) throws
+	public void initialize(String columnsFilename) throws
 			IOException, DatabaseDefinitionException {
 		DatabaseDefinition.fromFile(columnsFilename).create(dsl);
 		tables.update();
-		baseOpenApiDefinition = OpenApiDefinition.fromFile(openApiFilename);
 	}
 
 	@Override
@@ -55,7 +44,7 @@ public class JooqColumnService implements ColumnService {
 
 	@Override
 	public ReflectedTable getTable(String tableName) {
-		return this.tables.get(tableName);
+		return this.tables.getTable(tableName);
 	}
 
 }

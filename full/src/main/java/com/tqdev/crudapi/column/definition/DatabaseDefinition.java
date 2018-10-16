@@ -66,7 +66,7 @@ public class DatabaseDefinition {
 	public DatabaseDefinition(DatabaseReflection database) {
 		tables = new LinkedHashMap<>();
 		for (String tableName : database.getTableNames()) {
-			ReflectedTable table = database.get(tableName);
+			ReflectedTable table = database.getTable(tableName);
 			tables.put(tableName, new TableDefinition(table));
 		}
 	}

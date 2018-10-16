@@ -122,6 +122,11 @@ public class ReflectedTable extends CustomTable {
 		return fks.get(field);
 	}
 
+	// TODO: detect views
+	public String getType() {
+		return "table";
+	}
+
 	public Set<String> fieldNames() {
 		return fields.keySet();
 	}

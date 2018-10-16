@@ -6,22 +6,19 @@ import com.tqdev.crudapi.column.definition.DatabaseDefinition;
 import com.tqdev.crudapi.column.definition.DatabaseDefinitionException;
 import com.tqdev.crudapi.column.reflection.DatabaseReflection;
 import com.tqdev.crudapi.column.reflection.ReflectedTable;
-import com.tqdev.crudapi.openapi.OpenApiDefinition;
 import com.tqdev.crudapi.record.container.DatabaseRecordsException;
 
 public interface ColumnService {
 
 	// meta
 
-	DatabaseReflection getDatabase();
+	DatabaseReflection getDatabaseReflection();
 
 	DatabaseDefinition getDatabaseDefinition();
 
-	OpenApiDefinition getOpenApiDefinition();
-
 	// initialization
 
-	void initialize(String columnsFilename, String openApiFilename)
+	void initialize(String columnsFilename)
 			throws IOException, DatabaseDefinitionException, DatabaseRecordsException;
 
 	boolean hasTable(String tableName);
