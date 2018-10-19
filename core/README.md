@@ -5,7 +5,7 @@ This is a Java port of the [php-crud-api](https://github.com/mevdschee/php-crud-
 
 Install dependencies using:
 
-    sudo apt-get install maven openjdk-7-jdk
+    sudo apt-get install maven openjdk-8-jdk
 
 Then build the server.
 
