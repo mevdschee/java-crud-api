@@ -3,6 +3,7 @@ package com.tqdev.crudapi;
 import com.tqdev.crudapi.column.JooqColumnService;
 import com.tqdev.crudapi.column.ColumnService;
 import com.tqdev.crudapi.column.definition.DatabaseDefinitionException;
+import com.tqdev.crudapi.controller.Responder;
 import com.tqdev.crudapi.openapi.JooqOpenApiService;
 import com.tqdev.crudapi.openapi.OpenApiService;
 import com.tqdev.crudapi.record.RecordService;
@@ -25,6 +26,12 @@ public class ApiApp {
 
 	public static void main(String[] args) {
 		SpringApplication.run(ApiApp.class, args);
+	}
+
+	@Bean
+	@Autowired
+	public Responder responder() {
+		return new Responder();
 	}
 
 	@Bean
