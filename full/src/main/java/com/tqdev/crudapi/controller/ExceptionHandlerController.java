@@ -2,6 +2,7 @@ package com.tqdev.crudapi.controller;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -13,7 +14,10 @@ import com.tqdev.crudapi.record.ErrorCode;
 
 @RestController
 @RestControllerAdvice
-public class ExceptionHandlerController extends BaseController {
+public class ExceptionHandlerController {
+
+	@Autowired
+	Responder responder;
 
 	@ExceptionHandler(Exception.class)
 	public ResponseEntity<?> exceptionHandler(Exception ex, HttpServletRequest request) {
@@ -35,12 +39,12 @@ public class ExceptionHandlerController extends BaseController {
 		default:
 			ex.printStackTrace();
 		}
-		return error(error, argument);
+		return responder.error(error, argument);
 	}
 
 	@RequestMapping(value = "/**")
 	public ResponseEntity<?> fallbackHandler(HttpServletRequest request) throws Exception {
-		return error(ErrorCode.ROUTE_NOT_FOUND,
+		return responder.error(ErrorCode.ROUTE_NOT_FOUND,
 				(String) request.getAttribute(HandlerMapping.PATH_WITHIN_HANDLER_MAPPING_ATTRIBUTE));
 	}
 }

@@ -12,9 +12,12 @@ import com.tqdev.crudapi.record.RecordService;
 
 @RestController
 @RequestMapping("/backup")
-public class BackupController extends BaseController {
+public class BackupController {
 
 	public static final Logger logger = LoggerFactory.getLogger(BackupController.class);
+
+	@Autowired
+	Responder responder;
 
 	@Autowired
 	RecordService service;
@@ -22,6 +25,6 @@ public class BackupController extends BaseController {
 	@RequestMapping(value = "/dump", method = RequestMethod.GET)
 	public ResponseEntity<?> dump() {
 		logger.info("Dumping records for backup");
-		return success(service.getDatabaseRecords());
+		return responder.success(service.getDatabaseRecords());
 	}
 }

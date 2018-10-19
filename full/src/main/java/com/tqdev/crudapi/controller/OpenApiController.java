@@ -11,9 +11,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/openapi")
-public class OpenApiController extends BaseController {
+public class OpenApiController {
 
 	public static final Logger logger = LoggerFactory.getLogger(OpenApiController.class);
+
+	@Autowired
+	Responder responder;
 
 	@Autowired
 	OpenApiService service;
@@ -21,6 +24,6 @@ public class OpenApiController extends BaseController {
 	@RequestMapping(value = "/", method = RequestMethod.GET)
 	public ResponseEntity<?> openapi() {
 		logger.info("Requesting openapi meta data");
-		return success(service.getOpenApiDefinition());
+		return responder.success(service.getOpenApiDefinition());
 	}
 }

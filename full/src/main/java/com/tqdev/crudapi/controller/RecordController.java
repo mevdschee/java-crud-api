@@ -23,9 +23,12 @@ import com.tqdev.crudapi.record.Params;
 
 @RestController
 @RequestMapping("/records")
-public class RecordController extends BaseController {
+public class RecordController {
 
 	public static final Logger logger = LoggerFactory.getLogger(RecordController.class);
+
+	@Autowired
+	Responder responder;
 
 	@Autowired
 	RecordService service;
@@ -35,9 +38,9 @@ public class RecordController extends BaseController {
 			@RequestParam LinkedMultiValueMap<String, String> params) {
 		logger.info("Listing table with name {} and parameters {}", table, params);
 		if (!service.exists(table)) {
-			return error(ErrorCode.TABLE_NOT_FOUND, table);
+			return responder.error(ErrorCode.TABLE_NOT_FOUND, table);
 		}
-		return success(service.list(table, new Params(params)));
+		return responder.success(service.list(table, new Params(params)));
 	}
 
 	@RequestMapping(value = "/{table}/{id}", method = RequestMethod.GET)
@@ -45,7 +48,7 @@ public class RecordController extends BaseController {
 			@RequestParam LinkedMultiValueMap<String, String> params) {
 		logger.info("Reading record from {} with id {} and parameters {}", table, id, params);
 		if (!service.exists(table)) {
-			return error(ErrorCode.TABLE_NOT_FOUND, table);
+			return responder.error(ErrorCode.TABLE_NOT_FOUND, table);
 		}
 		if (id.indexOf(',') >= 0) {
 			String[] ids = id.split(",");
@@ -53,13 +56,13 @@ public class RecordController extends BaseController {
 			for (int i = 0; i < ids.length; i++) {
 				result.add(service.read(table, ids[i], new Params(params)));
 			}
-			return success(result);
+			return responder.success(result);
 		} else {
 			Object response = service.read(table, id, new Params(params));
 			if (response == null) {
-				return error(ErrorCode.RECORD_NOT_FOUND, id);
+				return responder.error(ErrorCode.RECORD_NOT_FOUND, id);
 			}
-			return success(response);
+			return responder.success(response);
 		}
 	}
 
@@ -77,7 +80,7 @@ public class RecordController extends BaseController {
 			@RequestParam LinkedMultiValueMap<String, String> params) {
 		logger.info("Creating record in {} with properties {}", table, record);
 		if (!service.exists(table)) {
-			return error(ErrorCode.TABLE_NOT_FOUND, table);
+			return responder.error(ErrorCode.TABLE_NOT_FOUND, table);
 		}
 		if (record instanceof ArrayList<?>) {
 			ArrayList<?> records = (ArrayList<?>) record;
@@ -85,9 +88,9 @@ public class RecordController extends BaseController {
 			for (int i = 0; i < records.size(); i++) {
 				result.add(service.create(table, Record.valueOf(records.get(i)), new Params(params)));
 			}
-			return success(result);
+			return responder.success(result);
 		} else {
-			return success(service.create(table, Record.valueOf(record), new Params(params)));
+			return responder.success(service.create(table, Record.valueOf(record), new Params(params)));
 		}
 	}
 
@@ -132,24 +135,24 @@ public class RecordController extends BaseController {
 			@RequestBody Object record, @RequestParam LinkedMultiValueMap<String, String> params) {
 		logger.info("Inrementing record in {} with id {} and properties {}", table, id, record);
 		if (!service.exists(table)) {
-			return error(ErrorCode.TABLE_NOT_FOUND, table);
+			return responder.error(ErrorCode.TABLE_NOT_FOUND, table);
 		}
 		String[] ids = id.split(",");
 		if (record instanceof ArrayList<?>) {
 			ArrayList<?> records = (ArrayList<?>) record;
 			if (ids.length != records.size()) {
-				return error(ErrorCode.ARGUMENT_COUNT_MISMATCH, id);
+				return responder.error(ErrorCode.ARGUMENT_COUNT_MISMATCH, id);
 			}
 			ArrayList<Object> result = new ArrayList<>();
 			for (int i = 0; i < ids.length; i++) {
 				result.add(service.update(table, ids[i], Record.valueOf(records.get(i)), new Params(params)));
 			}
-			return success(result);
+			return responder.success(result);
 		} else {
 			if (ids.length != 1) {
-				return error(ErrorCode.ARGUMENT_COUNT_MISMATCH, id);
+				return responder.error(ErrorCode.ARGUMENT_COUNT_MISMATCH, id);
 			}
-			return success(service.update(table, id, Record.valueOf(record), new Params(params)));
+			return responder.success(service.update(table, id, Record.valueOf(record), new Params(params)));
 		}
 	}
 
@@ -167,24 +170,24 @@ public class RecordController extends BaseController {
 			@RequestBody Object record, @RequestParam LinkedMultiValueMap<String, String> params) {
 		logger.info("Updating record in {} with id {} and properties {}", table, id, record);
 		if (!service.exists(table)) {
-			return error(ErrorCode.TABLE_NOT_FOUND, table);
+			return responder.error(ErrorCode.TABLE_NOT_FOUND, table);
 		}
 		String[] ids = id.split(",");
 		if (record instanceof ArrayList<?>) {
 			ArrayList<?> records = (ArrayList<?>) record;
 			if (ids.length != records.size()) {
-				return error(ErrorCode.ARGUMENT_COUNT_MISMATCH, id);
+				return responder.error(ErrorCode.ARGUMENT_COUNT_MISMATCH, id);
 			}
 			ArrayList<Object> result = new ArrayList<>();
 			for (int i = 0; i < ids.length; i++) {
 				result.add(service.increment(table, ids[i], Record.valueOf(records.get(i)), new Params(params)));
 			}
-			return success(result);
+			return responder.success(result);
 		} else {
 			if (ids.length != 1) {
-				return error(ErrorCode.ARGUMENT_COUNT_MISMATCH, id);
+				return responder.error(ErrorCode.ARGUMENT_COUNT_MISMATCH, id);
 			}
-			return success(service.increment(table, id, Record.valueOf(record), new Params(params)));
+			return responder.success(service.increment(table, id, Record.valueOf(record), new Params(params)));
 		}
 	}
 
@@ -193,7 +196,7 @@ public class RecordController extends BaseController {
 			@RequestParam LinkedMultiValueMap<String, String> params) {
 		logger.info("Deleting record from {} with id {}", table, id);
 		if (!service.exists(table)) {
-			return error(ErrorCode.TABLE_NOT_FOUND, table);
+			return responder.error(ErrorCode.TABLE_NOT_FOUND, table);
 		}
 		String[] ids = id.split(",");
 		if (ids.length > 1) {
@@ -201,9 +204,9 @@ public class RecordController extends BaseController {
 			for (int i = 0; i < ids.length; i++) {
 				result.add(service.delete(table, ids[i], new Params(params)));
 			}
-			return success(result);
+			return responder.success(result);
 		} else {
-			return success(service.delete(table, id, new Params(params)));
+			return responder.success(service.delete(table, id, new Params(params)));
 		}
 	}
 

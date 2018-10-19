@@ -6,7 +6,7 @@ import org.springframework.http.ResponseEntity;
 import com.tqdev.crudapi.record.ErrorCode;
 import com.tqdev.crudapi.record.document.ErrorDocument;
 
-public class BaseController {
+public class Responder {
 
 	protected ResponseEntity<?> error(ErrorCode error, String argument) {
 		return new ResponseEntity<>(new ErrorDocument(error, argument), error.getStatus());
