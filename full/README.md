@@ -16,8 +16,8 @@ These features match features in PHP-CRUD-API.
   - [x] Supports POST variables as input (x-www-form-urlencoded)
   - [x] Supports a JSON object as input
   - [x] Supports a JSON array as input (batch insert)
-  - [ ] Supports file upload from web forms (multipart/form-data)
-  - [ ] Optional condensed JSON: only first row contains field names
+  - [ ] ~~Supports file upload from web forms (multipart/form-data)~~
+  - [ ] ~~Optional condensed JSON: only first row contains field names~~
   - [ ] Sanitize and validate input using callbacks
   - [ ] Permission system for databases, tables, columns and records
   - [ ] Multi-tenant database layouts are supported
@@ -29,8 +29,8 @@ These features match features in PHP-CRUD-API.
   - [x] Atomic increment support via PATCH (for counters)
   - [x] Binary fields supported with base64 encoding
   - [x] Spatial/GIS fields and filters supported with WKT
-  - [ ] Unstructured data support through JSON/JSONB
-  - [ ] Generate API documentation using OpenAPI tools
+  - [ ] ~~Unstructured data support through JSON/JSONB~~
+  - [x] Generate API documentation using OpenAPI tools
   - [ ] Authentication via JWT token or username/password
 
 ### Extra Features
