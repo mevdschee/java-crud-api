@@ -14,7 +14,7 @@
     <hikari.version>3.4.1</hikari.version>
     <slf4j.version>1.7.28</slf4j.version>
     <gson.version>2.8.9</gson.version>
-    <mysql.version>8.0.28</mysql.version>
+    <mysql.version>26.10.0</mysql.version>
   </properties>
   <dependencies>
     <dependency>
@@ -53,8 +53,8 @@
       <version>${jetty.version}</version>
     </dependency>
     <dependency>
-      <groupId>mysql</groupId>
-      <artifactId>mysql-connector-java</artifactId>
+      <groupId>com.mysql</groupId>
+      <artifactId>mysql-connector-j</artifactId>
       <version>${mysql.version}</version>
     </dependency>
   </dependencies>
