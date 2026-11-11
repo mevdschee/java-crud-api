@@ -1,13 +1,14 @@
 package com.tqdev;
 
+import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.ServletException;
+import org.eclipse.jetty.ee10.servlet.ServletContextHandler;
+import org.eclipse.jetty.ee10.servlet.ServletHolder;
 import org.eclipse.jetty.server.Connector;
-import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
-import org.eclipse.jetty.server.handler.AbstractHandler;
 import org.eclipse.jetty.server.HttpConfiguration;
 import org.eclipse.jetty.server.HttpConnectionFactory;
 import java.io.IOException;
@@ -23,7 +24,7 @@ import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import java.util.Properties;
 
-public class CrudApiHandler extends AbstractHandler 
+public class CrudApiHandler extends HttpServlet 
 {
   protected HikariDataSource dataSource;
   
@@ -41,7 +42,9 @@ public class CrudApiHandler extends AbstractHandler
     connector.setHost(properties.getProperty("host"));
     connector.setPort(Integer.parseInt(properties.getProperty("port")));
     server.addConnector(connector);
-    server.setHandler(new CrudApiHandler());
+    ServletContextHandler context = new ServletContextHandler();
+    context.addServlet(new ServletHolder(new CrudApiHandler()), "/*");
+    server.setHandler(context);
     server.start();
     server.join();
   }
@@ -77,7 +80,8 @@ public class CrudApiHandler extends AbstractHandler
     return link;
   }
 
-  public void handle(String target,Request baseReq,HttpServletRequest req,HttpServletResponse resp) 
+  @Override
+  protected void service(HttpServletRequest req,HttpServletResponse resp)
         throws IOException, ServletException
   {
     Gson gson = new Gson();
@@ -159,6 +163,5 @@ public class CrudApiHandler extends AbstractHandler
       if (statement != null) try { statement.close(); } catch (SQLException ignore) {}
       if (link != null) try { link.close(); } catch (SQLException ignore) {}
     }
-    baseReq.setHandled(true);
   }
 }
